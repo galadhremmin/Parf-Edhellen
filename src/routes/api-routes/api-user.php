@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\Api\v3\AccountApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
+use App\Http\Controllers\Api\v3\LexicalEntryFeaturedPromotionApiController;
 use App\Http\Controllers\Api\v3\PasskeyApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SubscriptionApiController;
@@ -51,6 +52,10 @@ Route::group([
 
     Route::post('sentence/suggest-glosses', [SentenceApiController::class, 'suggestFragments']);
 
+    Route::post('book/featured-entry', [LexicalEntryFeaturedPromotionApiController::class, 'store'])
+        ->middleware('throttle:30,1')
+        ->name('api.book.featured-entry.store');
+
     // Word Lists API
     Route::get('word-lists', [WordListApiController::class, 'index'])
         ->name('api.word-lists.index');
@@ -65,7 +70,7 @@ Route::group([
     Route::delete('word-lists/{id}', [WordListApiController::class, 'destroy'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.destroy');
-    
+
     Route::post('word-lists/check-membership', [WordListApiController::class, 'checkMembership'])
         ->name('api.word-lists.check-membership');
 

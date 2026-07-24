@@ -1,0 +1,34 @@
+// Shared per-step content styling for LexicalEntryDerivations (ancestry, "⇐") and
+// LexicalEntryDerivatives (descendants, "⇒") — the list/step mechanics themselves live in the
+// DerivationStepList component; these mixins cover the word/language/gloss/reconstructed-marker
+// shape each caller builds inside its own <DerivationStep>.
+
+// Prefixed before the word, matching GlossList.tsx's convention (e.g. "S. celeb") rather than
+// trailing it in parens.
+@mixin derivation-language-badge {
+  color: var(--ed-text-muted);
+  font-size: 0.85em;
+  margin-right: 0.3rem;
+}
+
+@mixin derivation-gloss {
+  font-size: 0.9em;
+  margin-left: 0.3rem;
+
+  &::before {
+    content: "\201C";
+  }
+
+  &::after {
+    content: "\201D";
+  }
+}
+
+@mixin derivation-reconstructed-marker {
+  font-style: italic;
+
+  &::before {
+    content: "\2731";
+    margin-right: 0.1rem;
+  }
+}

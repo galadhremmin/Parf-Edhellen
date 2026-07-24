@@ -50,6 +50,15 @@ $gloss-border-color: var(--ed-border);
     }
   }
 
+  // The featured (best match) entry renders full-width above the columns.
+  .ed-glossary__language__featured {
+    padding-top: 1rem;
+
+    + .ed-glossary__language__words {
+      padding-top: 1rem;
+    }
+  }
+
   // CSS columns with column-width: entries pack vertically (each takes
   // only its natural height) and the browser decides how many columns
   // fit based on the available width.
@@ -63,6 +72,27 @@ $gloss-border-color: var(--ed-border);
     &:has(> :only-child) {
       columns: auto;
     }
+  }
+
+  // Divider introducing the demoted outdated-source entries.
+  .ed-glossary__language__outdated-label {
+    margin-top: 1.5rem;
+    padding-bottom: 0.25rem;
+    font-family: $font-family-tiny;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ed-text);
+    border-bottom: 1px solid var(--ed-border);
+  }
+
+  // Outdated entries live in their own column container — CSS columns pack
+  // vertically, so a trailing group inside the main container would climb
+  // back up into the first column.
+  .ed-glossary__language__words--outdated {
+    padding-top: 0.75rem;
+    column-width: 20rem;
   }
 
   @media (max-width: map-get($grid-breakpoints, 'sm')) {

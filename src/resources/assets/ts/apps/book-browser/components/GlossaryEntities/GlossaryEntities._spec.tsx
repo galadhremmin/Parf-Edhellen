@@ -45,7 +45,7 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
         const sections = SectionsReducer(null, action);
         const languages = LanguagesReducer(null, action);
 
-        render(<GlossaryEntities
+        const { container } = render(<GlossaryEntities
             sections={sections}
             isEmpty={false}
             languages={languages.common}
@@ -71,6 +71,20 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
             const expectedWords = Object.values(sections).flat(1) as ILexicalEntryEntity[];
             expect(wordBlocks).toHaveLength(expectedWords.length + 1 /* because of "There are more words but they are from Tolkien's earlier conceptional periods" */);
             expect(wordBlocks.map(block => block.textContent)).toContain('There are more words but they are from Tolkien\'s earlier conceptional periods');
+
+            // Each language section features its best match full-width at the top.
+            const featuredCards = container.querySelectorAll('.ed-glossary__language__featured .lexical-entry--featured');
+            const sectionsWithFeaturedEntry = Object.values(sections).filter((entries: ILexicalEntryEntity[]) =>
+                entries.length >= 2 && entries.some((e) => e.isLatest && ! e.isRejected && ! e.isOld));
+            expect(featuredCards).toHaveLength(sectionsWithFeaturedEntry.length);
+            const firstSectionTopEntry = sections[languages.common[0].id][0];
+            expect(featuredCards[0].querySelector('[itemprop="headline"]').textContent).toEqual(firstSectionTopEntry.word);
+
+            // Outdated (is_old) entries are demoted and grouped after current entries.
+            const demotedCards = container.querySelectorAll('.ed-glossary__language__words--outdated .lexical-entry--demoted');
+            const expectedOldWords = expectedWords.filter((entry) => !! entry.isOld);
+            expect(demotedCards).toHaveLength(expectedOldWords.length);
+            expect(container.textContent).toContain('Older sources');
         });
     });
 });

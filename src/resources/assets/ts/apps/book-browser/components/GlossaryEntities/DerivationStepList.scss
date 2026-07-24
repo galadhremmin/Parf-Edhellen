@@ -1,0 +1,22 @@
+.DerivationStepList {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+
+  &--step {
+    display: block;
+    margin-left: calc(var(--ed-derivation-depth, 0) * 1.25rem);
+
+    &:not(:first-child) {
+      margin-top: 0.15rem;
+    }
+  }
+}
+
+// LexicalEntryDetails.scss gives every <ul>/<ol> in a details body a left padding for regular
+// bullet lists — this list's own indentation comes entirely from --ed-derivation-depth per step,
+// not list padding, so it needs to opt back out. Three classes outweighs two classes + a tag, so
+// this reliably wins without a `:not()` exclusion cluttering the general rule.
+.GlossDetails .details__body .DerivationStepList {
+  padding-left: 0;
+}

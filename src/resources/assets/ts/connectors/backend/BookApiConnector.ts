@@ -8,6 +8,7 @@ import type {
     IFindResponse,
     IGlossaryResponse,
     ILanguagesResponse,
+    IPromoteFeaturedEntryRequest,
     ISentenceRequest,
     ISentenceResponse,
     ISpecificEntityRequest,
@@ -48,5 +49,9 @@ export default class BookApiConnector implements IBookApi {
 
     public sentence(args: ISentenceRequest) {
         return this._api.get<ISentenceResponse>(`sentence/${args.id}`);
+    }
+
+    public promoteFeaturedEntry(args: IPromoteFeaturedEntryRequest): Promise<void> {
+        return this._api.post<void>('book/featured-entry', args);
     }
 }

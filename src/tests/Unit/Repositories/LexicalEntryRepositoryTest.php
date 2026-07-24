@@ -2,11 +2,15 @@
 
 namespace Tests\Unit\Repositories;
 
-use App\Models\LexicalEntryDetail;
-use App\Models\LexicalEntry;
 use App\Models\Gloss;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryDerivation;
+use App\Models\LexicalEntryDetail;
+use App\Models\LexicalEntryPhoneticDevelopment;
 use App\Repositories\Enumerations\LexicalEntryChange;
+use App\Repositories\LexicalEntryDerivationRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
 
@@ -274,4 +278,54 @@ class LexicalEntryRepositoryTest extends TestCase
         $this->assertEquals(count($details), $lexicalEntry->lexical_entry_details->count());
     }
 
+    /**
+     * getLexicalEntries() (and the other callers of createLexicalEntryQuery()/
+     * getLexicalEntriesWithDetails()) return raw stdClass rows from a query-builder query, not
+     * Eloquent LexicalEntry instances — this is the path most dictionary views (search results,
+     * word lookups) actually go through. Derivations/phonetic developments must be attached onto
+     * those rows the same way lexical_entry_details already is.
+     */
+    public function test_get_lexical_entries_attaches_derivations_and_phonetic_developments()
+    {
+        $r = $this->getLexicalEntryRepository();
+
+        extract($this->createLexicalEntry(__FUNCTION__.'-root', 'KIRIS'));
+        $root = $r->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        extract($this->createLexicalEntry(__FUNCTION__.'-child', 'crist'));
+        $child = $r->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        $uuid = (string) Uuid::uuid4();
+        $derivationRepository = resolve(LexicalEntryDerivationRepository::class);
+        $derivationRepository->saveManyOnLexicalEntry($child, collect([
+            new LexicalEntryDerivation([
+                'derivation_group_uuid' => $uuid,
+                'order' => 0,
+                'parent_external_id' => $root->external_id,
+                'parent_form' => 'KIRIS',
+            ]),
+        ]), collect([
+            new LexicalEntryPhoneticDevelopment([
+                'derivation_group_uuid' => $uuid,
+                'order' => 0,
+                'word' => 'crist',
+            ]),
+        ]));
+        $derivationRepository->resolveParentReferences();
+
+        $rows = $r->getLexicalEntries([$child->id]);
+
+        // One row per gloss (the query joins glosses without aggregating) — all sharing the
+        // same lexical_entry_id, so each carries the same attached derivation/development rows.
+        $this->assertCount(count($glosses), $rows);
+        $this->assertEquals(\stdClass::class, get_class($rows[0]));
+        $this->assertCount(1, $rows[0]->lexical_entry_derivations);
+        $this->assertEquals($root->id, $rows[0]->lexical_entry_derivations->first()->parent_lexical_entry_id);
+        $this->assertCount(1, $rows[0]->lexical_entry_phonetic_developments);
+
+        // An entry without derivations still gets an (empty) collection, not a missing property.
+        $rootRows = $r->getLexicalEntries([$root->id]);
+        $this->assertCount(0, $rootRows[0]->lexical_entry_derivations);
+        $this->assertCount(0, $rootRows[0]->lexical_entry_phonetic_developments);
+    }
 }

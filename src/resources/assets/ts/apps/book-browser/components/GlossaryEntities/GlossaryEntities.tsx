@@ -16,6 +16,7 @@ import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
 import GlossaryLanguages from './GlossaryLanguages';
 import GlossaryMinimap from './GlossaryMinimap';
 import UnusualLanguagesWarning from './UnusualLanguagesWarning';
+import { LanguageLookupProvider } from './LanguageLookupContext';
 import { WordListMembershipProvider } from './WordListMembershipContext';
 
 import './GlossaryEntities.scss';
@@ -34,6 +35,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
     const {
         entityMorph,
         forceShowUnusualLanguages,
+        languageDictionary,
         languages: commonLanguages,
         loading,
         isEmpty,
@@ -108,33 +110,39 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         {showMinimap && <GlossaryMinimap languages={minimapLanguages} sections={sections} />}
         {loading && <GlossaryEntitiesLoading minHeight={glossaryContainerRef.current?.offsetHeight || 500} />}
         {! loading && isEmpty && <GlossaryEntitiesEmpty word={word} />}
-        {! loading && ! isEmpty && <WordListMembershipProvider sections={sections}>
-            <Waypoint onPositionChange={_onPositionChange} bottomOffset="50%">
-                <div className="ed-glossary-waypoint" ref={waypointRef}>
-                    <GlossaryLanguages
-                        languages={commonLanguages}
-                        entityMorph={entityMorph}
-                        sections={sections}
-                        single={single}
-                        onReferenceClick={onReferenceClick}
-                    />
-                    {unusualLanguages?.length > 0 && <>
-                        <UnusualLanguagesWarning
-                            showOverrideOption={! forceShowUnusualLanguages && ! showUnusualLanguages}
-                            onOverrideOptionTriggered={_onUnusualLanguagesShowClick}
-                        />
-                        {showUnusual && <GlossaryLanguages
-                            className="ed-glossary--unusual"
-                            languages={unusualLanguages}
+        {! loading && ! isEmpty && <LanguageLookupProvider languages={languageDictionary || []}>
+            <WordListMembershipProvider sections={sections}>
+                <Waypoint onPositionChange={_onPositionChange} bottomOffset="50%">
+                    <div className="ed-glossary-waypoint" ref={waypointRef}>
+                        <GlossaryLanguages
+                            languages={commonLanguages}
                             entityMorph={entityMorph}
+                            featureBestMatch={true}
                             sections={sections}
                             single={single}
+                            word={word}
                             onReferenceClick={onReferenceClick}
-                        />}
-                    </>}
-                </div>
-            </Waypoint>
-        </WordListMembershipProvider>}
+                        />
+                        {unusualLanguages?.length > 0 && <>
+                            <UnusualLanguagesWarning
+                                showOverrideOption={! forceShowUnusualLanguages && ! showUnusualLanguages}
+                                onOverrideOptionTriggered={_onUnusualLanguagesShowClick}
+                            />
+                            {showUnusual && <GlossaryLanguages
+                                className="ed-glossary--unusual"
+                                languages={unusualLanguages}
+                                entityMorph={entityMorph}
+                                featureBestMatch={true}
+                                sections={sections}
+                                single={single}
+                                word={word}
+                                onReferenceClick={onReferenceClick}
+                            />}
+                        </>}
+                    </div>
+                </Waypoint>
+            </WordListMembershipProvider>
+        </LanguageLookupProvider>}
     </div>;
 }
 

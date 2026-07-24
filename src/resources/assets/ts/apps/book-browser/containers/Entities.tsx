@@ -98,6 +98,7 @@ const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
     entityMorph: state.entities.entityMorph,
     groupId: state.entities.groupId,
     groupName: state.entities.groupIntlName,
+    languageDictionary: state.entities.languages,
     loading: state.entities.loading,
     sections: state.sections,
     single: state.entities.single,

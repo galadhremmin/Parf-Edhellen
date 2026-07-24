@@ -6,5 +6,7 @@ import type {
 
 export interface IProps extends IEventProps {
     entries: ILexicalEntryEntity[];
+    featured?: boolean;
     language: ILanguageEntity;
+    word: string;
 }

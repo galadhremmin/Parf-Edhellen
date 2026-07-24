@@ -34,6 +34,47 @@ class LexicalEntryDerivationRepository
             ->get();
     }
 
+    /**
+     * Raw material for the "words derived from this root" (Derivatives) tree: every row of
+     * every hypothesis that names the given entry as an ancestor at some point in its chain,
+     * grouped by hypothesis (derivation_group_uuid) so each descendant's full path from the
+     * root down can be walked (see `BookAdapter::adaptDerivatives()`). Two bounded, indexed
+     * queries — `parent_lexical_entry_id` is indexed, so this never scans the table.
+     */
+    public function getDescendantTree(int $rootLexicalEntryId): Collection
+    {
+        return $this->getDescendantTreesForLexicalEntries([$rootLexicalEntryId]);
+    }
+
+    /**
+     * Batched version of getDescendantTree() for several roots at once — used when loading a
+     * page of entries so the cost stays two indexed queries total (not two per entry). Returns
+     * one shared collection of grouped rows spanning every root in $rootLexicalEntryIds;
+     * `BookAdapter::adaptDerivatives()` filters it down to whichever hypotheses actually name a
+     * given root as an ancestor when adapting that entry.
+     */
+    public function getDescendantTreesForLexicalEntries($rootLexicalEntryIds): Collection
+    {
+        $ids = collect($rootLexicalEntryIds)->unique()->values();
+        if ($ids->isEmpty()) {
+            return collect();
+        }
+
+        $hitGroupUuids = LexicalEntryDerivation::whereIn('parent_lexical_entry_id', $ids)
+            ->pluck('derivation_group_uuid')
+            ->unique();
+
+        if ($hitGroupUuids->isEmpty()) {
+            return collect();
+        }
+
+        return LexicalEntryDerivation::whereIn('derivation_group_uuid', $hitGroupUuids)
+            ->with('lexical_entry.word', 'lexical_entry.glosses', 'parent_lexical_entry.word', 'parent_lexical_entry.glosses')
+            ->orderBy('order')
+            ->get()
+            ->groupBy('derivation_group_uuid');
+    }
+
     public function getPhoneticDevelopmentsForLexicalEntry(int $lexicalEntryId): Collection
     {
         return LexicalEntry::findOrFail($lexicalEntryId)

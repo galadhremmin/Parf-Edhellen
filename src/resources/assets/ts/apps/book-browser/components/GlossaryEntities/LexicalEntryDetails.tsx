@@ -1,6 +1,8 @@
 
-import HtmlInject from '@root/components/HtmlInject';
 import LexicalEntryDetail from './LexicalEntryDetail';
+import LexicalEntryDerivations from './LexicalEntryDerivations';
+import LexicalEntryDerivatives from './LexicalEntryDerivatives';
+import LexicalEntryPhoneticDevelopments from './LexicalEntryPhoneticDevelopments';
 import type { IProps } from './LexicalEntryDetails._types';
 
 import './LexicalEntryDetails.scss';
@@ -11,11 +13,21 @@ const LexicalEntryDetails = (props: IProps) => {
         onReferenceLinkClick,
         showDetails = true,
     } = props;
+
+    const renderDetail = (d: typeof lexicalEntry.lexicalEntryDetails[number]) =>
+        <LexicalEntryDetail key={`${d.order}_${d.category}`} detail={d} onReferenceLinkClick={onReferenceLinkClick} />;
+
     return <>
-        <HtmlInject html={lexicalEntry.comments} onReferenceLinkClick={onReferenceLinkClick} />
-        {showDetails && lexicalEntry.lexicalEntryDetails.map(
-            (d) => <LexicalEntryDetail key={`${d.order}_${d.category}`} detail={d} onReferenceLinkClick={onReferenceLinkClick} />,
-        )}
+        {showDetails && <>
+            {lexicalEntry.lexicalEntryDetails.map(renderDetail)}
+            <LexicalEntryDerivatives derivatives={lexicalEntry.derivatives} />
+            <LexicalEntryDerivations derivations={lexicalEntry.derivations} />
+            <LexicalEntryPhoneticDevelopments
+                derivations={lexicalEntry.derivations}
+                phoneticDevelopments={lexicalEntry.phoneticDevelopments}
+                word={lexicalEntry.word}
+            />
+        </>}
     </>;
 };
 
