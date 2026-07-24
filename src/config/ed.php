@@ -97,6 +97,10 @@ return [
     // gloss repository configuration
     'gloss_repository_maximum_results' => 1000,
 
+    // maximum number of descendant leaves BookAdapter::adaptDerivatives() will render for a
+    // heavily-cited root (e.g. a common sound-root with many attested descendants)
+    'book_derivatives_maximum_leaves' => 150,
+
     // search index repository configuration
     'search_index_expands_english_infinitives' => true,
 

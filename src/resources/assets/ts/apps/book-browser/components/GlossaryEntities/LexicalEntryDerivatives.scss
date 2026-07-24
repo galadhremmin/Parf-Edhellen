@@ -1,0 +1,41 @@
+@import './_derivation-step';
+
+.LexicalEntryDerivatives {
+  // Same staircase as LexicalEntryDerivations, mirrored: the arrow points the other way
+  // ("⇒" — towards descendants, not ancestors) and every line gets one, since there's no
+  // "word 0" to anchor the first line against — the root is the current page.
+  .DerivationStepList--step::before {
+    content: "⇒ ";
+    color: var(--ed-text-muted);
+  }
+
+  &--language {
+    @include derivation-language-badge;
+  }
+
+  &--gloss {
+    @include derivation-gloss;
+  }
+
+  &--source {
+    color: var(--ed-text-muted);
+    font-size: 0.85em;
+    margin-left: 0.4rem;
+  }
+
+  &--source-icon {
+    color: var(--ed-text-muted);
+  }
+
+  .reconstructed {
+    @include derivation-reconstructed-marker;
+  }
+
+  &--truncated-note {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    color: var(--ed-text-muted);
+    font-size: 0.85em;
+    font-style: italic;
+  }
+}

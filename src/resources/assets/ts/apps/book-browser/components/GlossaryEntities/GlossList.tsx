@@ -6,8 +6,8 @@ const GlossList = (props: IProps) => {
         lexicalEntry,
     } = props;
 
-    return <p>
-        <span title={lexicalEntry.language.name}>{lexicalEntry.language.shortName.toLocaleUpperCase()}.</span>
+    return <p className="lexical-entry__gloss-list">
+        <span className="word-language" title={lexicalEntry.language.name}>{lexicalEntry.language.shortName.toLocaleUpperCase()}.</span>
         {' '}
         <Tengwar text={lexicalEntry.tengwar} />
         {' '}

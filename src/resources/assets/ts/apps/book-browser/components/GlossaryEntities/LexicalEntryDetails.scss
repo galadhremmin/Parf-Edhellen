@@ -1,24 +1,14 @@
-@mixin list-styles($symbol) {
-    list-style: none;
-    padding-left: 0;
-    li::before {
-      content: "#{$symbol} ";
-    }
-}
-
 .GlossDetails .details__body {
-    &.derivations {
-        ul {
-            @include list-styles("<");
-        }
-    }
-    &.derivatives {
-        ul {
-            @include list-styles(">");
-        }
-    }
-    ul, ol {
+    font-size: 0.85rem;
+    line-height: 1.45;
+
+    > ul, > ol {
         padding-left: 1rem;
+        margin-bottom: 0;
+    }
+    li {
+        // Citation runs (MR/182; PE17/060; …) recede; word links keep --ed-link.
+        color: var(--ed-text-muted);
     }
     table {
         font-size: 0.85rem;

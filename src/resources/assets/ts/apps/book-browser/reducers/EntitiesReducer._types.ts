@@ -1,4 +1,4 @@
-import type { IGlossaryResponse } from '@root/connectors/backend/IBookApi';
+import type { IGlossaryResponse, ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import type { IReduxAction } from '@root/_types';
 
 export interface IEntitiesAction<T = IGlossaryResponse> extends IReduxAction {
@@ -14,6 +14,8 @@ export interface IEntitiesState {
     entityMorph?: string;
     groupId: number;
     groupIntlName: string;
+    languages: ILanguageEntity[];
+    leadWithUnusual?: boolean;
     loading: boolean;
     single: boolean;
     word: string;

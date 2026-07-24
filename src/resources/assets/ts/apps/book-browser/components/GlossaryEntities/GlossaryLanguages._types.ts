@@ -7,9 +7,11 @@ export interface IProps {
     abstract?: string;
     className?: string;
     entityMorph: string;
+    featureBestMatch?: boolean;
     languages: ILanguageEntity[];
     sections: ISectionsState<ILexicalEntryEntity>;
     single?: boolean;
+    word: string;
 
     onReferenceClick: ComponentEventHandler<IReferenceLinkClickDetails>
 }

@@ -7,7 +7,6 @@ import { DI } from '@root/di/keys';
 
 import type { IProps } from './LexicalEntryTitle._types';
 
-import LexicalEntryGroupLabel from './LexicalEntryGroupLabel';
 import NumberOfComments from './NumberOfComments';
 import ShareLink from './ShareLink';
 import VersionsLink from './VersionsLink';
@@ -17,6 +16,7 @@ const ToolbarAsync = lazy(() => import('./toolbar'));
 const LexicalEntryTitle = (props: IProps) => {
     const {
         lexicalEntry,
+        onPromoteFeatured,
         toolbar,
         roleManager,
     } = props;
@@ -31,7 +31,6 @@ const LexicalEntryTitle = (props: IProps) => {
         <span itemProp="headline" className={className}>
             {lexicalEntry.word}
         </span>
-        <LexicalEntryGroupLabel lexicalEntry={lexicalEntry} />
         {lexicalEntry._inflectedWord && <span className="gloss-word__inflection">
             {lexicalEntry._inflectedWord.word.toLocaleLowerCase() !== lexicalEntry.word.toLocaleLowerCase() &&
                 <span className="gloss-word__inflection__word">
@@ -46,8 +45,8 @@ const LexicalEntryTitle = (props: IProps) => {
                 </span>)}
         </span>}
         {toolbar && <div className="gloss-word--toolbar">
-            {! roleManager.isAnonymous && <Suspense fallback={null}>
-                <ToolbarAsync lexicalEntry={lexicalEntry} />
+            {! roleManager?.isAnonymous && <Suspense fallback={null}>
+                <ToolbarAsync lexicalEntry={lexicalEntry} onPromoteFeatured={onPromoteFeatured} />
             </Suspense>}
             <ShareLink lexicalEntry={lexicalEntry} />
             <VersionsLink lexicalEntry={lexicalEntry} />

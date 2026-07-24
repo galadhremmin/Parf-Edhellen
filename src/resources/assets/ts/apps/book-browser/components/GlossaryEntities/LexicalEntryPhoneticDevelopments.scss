@@ -1,0 +1,29 @@
+.LexicalEntryPhoneticDevelopments {
+  &--development {
+    font-style: italic;
+  }
+
+  &--arrow {
+    color: var(--ed-text-muted);
+    margin: 0 0.3rem;
+  }
+
+  &--rule {
+    color: var(--ed-text-muted);
+    font-size: 0.85em;
+    margin-left: 0.2rem;
+  }
+
+  &--source-icon {
+    color: var(--ed-text-muted);
+  }
+
+  &--source {
+    display: block;
+    white-space: nowrap;
+  }
+
+  &--sources {
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,87 @@
+@import './_derivation-step';
+
+.LexicalEntryDerivations {
+  // Every step gets the arrow, including the first — it always represents "the word being
+  // viewed (not itself rendered here) derives from this", true even for a single-step chain.
+  .DerivationStepList--step {
+    &::before {
+      content: "⇐ ";
+      color: var(--ed-text-muted);
+    }
+
+    &.rejected {
+      color: var(--ed-text-muted);
+      text-decoration: line-through;
+    }
+  }
+
+  &--language {
+    @include derivation-language-badge;
+  }
+
+  &--rejected-label {
+    color: var(--ed-text-muted);
+    font-size: 0.8em;
+    margin-left: 0.3rem;
+    text-decoration: none;
+  }
+
+  &--note {
+    display: block;
+    color: var(--ed-text-muted);
+    font-size: 0.85em;
+    margin-top: 0.15rem;
+  }
+
+  &--gloss {
+    @include derivation-gloss;
+  }
+
+  .reconstructed {
+    @include derivation-reconstructed-marker;
+  }
+
+  &--intermediate-stages {
+    list-style: none;
+    padding-left: 1.25rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    border-left: 2px solid var(--ed-border);
+  }
+
+  // The intermediate spelling waypoints (e.g. "malþorn < malt-ornē") are plain-text stages
+  // of a single citation, not ancestor steps — always one inline row, no depth staircase (so
+  // this deliberately doesn't use DerivationStepList; see the comment on IntermediateStages).
+  &--intermediate-chain {
+    font-size: 0.9em;
+    padding-left: 0.5rem;
+
+    &:not(:last-child) {
+      margin-bottom: 0.15rem;
+    }
+
+    .LexicalEntryDerivations--stage-list {
+      display: inline-flex;
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    // The arrow is off the first waypoint: it's anchored to the citation form named in the
+    // preceding note text, which is rendered, not implicit (unlike the main chain above).
+    .LexicalEntryDerivations--stage:not(:first-child) {
+      margin-left: 0.35rem;
+
+      &::before {
+        content: "⇐ ";
+        color: var(--ed-text-muted);
+      }
+    }
+
+    .LexicalEntryDerivations--note {
+      display: inline;
+      margin-top: 0;
+      margin-left: 0.35rem;
+    }
+  }
+}

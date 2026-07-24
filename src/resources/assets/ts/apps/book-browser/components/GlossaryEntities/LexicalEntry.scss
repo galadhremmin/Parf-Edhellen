@@ -3,18 +3,26 @@
 $gloss-border-color: var(--ed-border);
 
 blockquote.lexical-entry {
-  padding: 1rem;
+  padding: 1.25rem;
+  line-height: 1.55;
   break-inside: avoid;
   page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
   transform: translateZ(0); // https://stackoverflow.com/questions/17881923/box-shadow-trimmed-in-css-columns-in-chrome
 
   footer {
-    font-size: 0.8rem;
+    margin-top: 1.15rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ed-border);
+    font-size: 0.75rem;
+    color: var(--ed-text-muted);
   }
 
   h3.gloss-word {
     margin-top: 0;
-    
+    margin-bottom: 0.35rem;
+    font-size: 1.35rem;
+    line-height: 1.25;
+
     .gloss-word__neologism {
       .badge {
         font-size: 0.8rem;
@@ -38,8 +46,8 @@ blockquote.lexical-entry {
       float: right;
       a {
         margin-left: 0.5rem;
-        font-size: 1rem;
-        color: inherit;
+        font-size: 0.85rem;
+        color: var(--ed-text-muted);
         > .TextIcon {
           transition: transform 1s;
         }
@@ -47,15 +55,15 @@ blockquote.lexical-entry {
         > .TextIcon--heart.filled {
           background-color: red;
         }
-  
+
         &:hover {
-          color: inherit;
+          color: var(--ed-text);
 
           > .TextIcon {
             transform: scale(1.25);
           }
         }
-  
+
         &.neologism {
           float: none;
           content: '*';
@@ -63,7 +71,7 @@ blockquote.lexical-entry {
 
         &.ed-comments-no {
           text-decoration: none;
-  
+
           &:hover, &:active, &:visited {
             text-decoration: none;
           }
@@ -73,6 +81,15 @@ blockquote.lexical-entry {
 
     .rejected {
       text-decoration: line-through;
+    }
+  }
+  .lexical-entry__gloss-list {
+    margin-bottom: 1rem;
+
+    .word-language,
+    .word-type {
+      color: var(--ed-text-muted);
+      font-size: 0.9em;
     }
   }
   .word-type {
@@ -85,10 +102,74 @@ blockquote.lexical-entry {
     overflow: hidden;
   }
   section.details {
+    margin-top: 1.15rem;
+
     header > h4 {
-      margin-top: 0;
-      font-size: inherit;
-      font-style: italic;
+      margin: 0 0 0.3rem;
+      font-family: $font-family-tiny;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-style: normal;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ed-text);
+    }
+  }
+
+  // Featured entry — the best match leads the glossary at full width, like a
+  // print dictionary's main entry.
+  &.lexical-entry--featured {
+    padding: 1.5rem 1.75rem;
+
+    h3.gloss-word {
+      font-size: 1.9rem;
+    }
+
+    .lexical-entry__gloss-list {
+      font-size: 1.05rem;
+    }
+
+    // Full-width prose becomes hard to read beyond ~72 characters per line.
+    .lexical-entry__summary {
+      max-width: 72ch;
+    }
+
+    @media (min-width: map-get($grid-breakpoints, 'lg')) {
+      .lexical-entry__body {
+        column-width: 24rem;
+        column-gap: 2.5rem;
+
+        section.details {
+          break-inside: avoid;
+          margin-top: 0;
+          margin-bottom: 1.15rem;
+        }
+      }
+    }
+  }
+
+  // Demoted entry (outdated sources) — recessed and compact, but the text stays
+  // at accessible contrast (--ed-text-muted is the floor; never --ed-text-faint).
+  &.lexical-entry--demoted {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.875rem;
+    background-color: var(--ed-bg-surface);
+    border-color: var(--ed-border) !important;
+    box-shadow: none !important;
+    color: var(--ed-text-muted);
+
+    h3.gloss-word {
+      font-size: 1.05rem;
+      color: var(--ed-text);
+    }
+
+    section.details {
+      margin-top: 0.75rem;
+    }
+
+    footer {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
     }
   }
 }

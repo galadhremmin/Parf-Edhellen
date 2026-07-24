@@ -4,9 +4,14 @@ namespace Tests\Unit;
 
 use App\Adapters\BookAdapter;
 use App\Models\Gloss;
+use App\Models\LexicalEntryDerivation;
+use App\Models\LexicalEntryPhoneticDevelopment;
+use App\Repositories\LexicalEntryDerivationRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
 
@@ -18,7 +23,7 @@ class BookAdapterTest extends TestCase
     }
     use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
-    private $_adapter;
+    private BookAdapter $_adapter;
 
     protected function setUp(): void
     {
@@ -63,6 +68,137 @@ class BookAdapterTest extends TestCase
         $this->assertEquals(1, count($adaptedGlossary));
         $this->assertNotNull($adaptedGlossary[0]->lexical_entry_details);
         $this->assertEquals(0, count($adaptedGlossary[0]->lexical_entry_details));
+    }
+
+    public function test_adapt_derivations_and_phonetic_developments()
+    {
+        // Emulate S. crist < ✶kirissē < √KIRIS (resolved) and crist < *ris (unresolved parent).
+        extract($this->createLexicalEntry(__FUNCTION__.'-root', 'KIRIS'));
+        $lexicalEntry->label = 'Reconstructed';
+        $root = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        extract($this->createLexicalEntry(__FUNCTION__.'-child', 'crist'));
+        $child = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        $resolvedUuid = (string) Uuid::uuid4();
+        $unresolvedUuid = (string) Uuid::uuid4();
+
+        $derivationRepository = resolve(LexicalEntryDerivationRepository::class);
+        $derivationRepository->saveManyOnLexicalEntry($child, collect([
+            new LexicalEntryDerivation([
+                'derivation_group_uuid' => $resolvedUuid,
+                'order' => 0,
+                'parent_external_id' => $root->external_id,
+                'parent_form' => 'KIRIS',
+                'parent_language_id' => $root->language_id,
+                'source' => 'SA/kir',
+            ]),
+            new LexicalEntryDerivation([
+                'derivation_group_uuid' => $unresolvedUuid,
+                'order' => 0,
+                'parent_form' => 'ris',
+                'is_uncertain' => true,
+            ]),
+        ]), collect([
+            new LexicalEntryPhoneticDevelopment([
+                'derivation_group_uuid' => $resolvedUuid,
+                'order' => 0,
+                'word' => 'kirisse',
+            ]),
+            new LexicalEntryPhoneticDevelopment([
+                'derivation_group_uuid' => $resolvedUuid,
+                'order' => 1,
+                'word' => 'krist',
+                'rule' => 'iri-ri',
+                'previous_word' => 'kirisse',
+            ]),
+        ]));
+        $derivationRepository->resolveParentReferences();
+
+        $child->load(
+            'lexical_entry_derivations.parent_lexical_entry.word', 'lexical_entry_derivations.parent_lexical_entry.glosses',
+            'lexical_entry_phonetic_developments',
+        );
+
+        $adapted = $this->_adapter->adaptLexicalEntry($child, new Collection([$child->language]));
+
+        $this->assertCount(2, $adapted->derivations);
+
+        $resolvedChain = collect($adapted->derivations)->first(fn ($chain) => $chain->first()['parent_lexical_entry_id'] === $root->id);
+        $this->assertNotNull($resolvedChain);
+        $this->assertEquals($root->language_id, $resolvedChain->first()['parent_language_id']);
+        $this->assertStringContainsString((string) $root->id, $resolvedChain->first()['parent_url']);
+        $this->assertEquals($root->word->word, $resolvedChain->first()['parent_word']);
+        $this->assertEquals('Reconstructed', $resolvedChain->first()['parent_label']);
+        // Only the first gloss is shown, not every sense joined — an ancestor can carry several
+        // overlapping senses recorded across citations, and joining all of them reads as garbled.
+        $this->assertEquals('test 0', $resolvedChain->first()['parent_gloss']);
+
+        $unresolvedChain = collect($adapted->derivations)->first(fn ($chain) => $chain->first()['parent_lexical_entry_id'] === null);
+        $this->assertNotNull($unresolvedChain);
+        $this->assertNull($unresolvedChain->first()['parent_url']);
+        $this->assertTrue($unresolvedChain->first()['is_uncertain']);
+        $this->assertNull($unresolvedChain->first()['parent_word']);
+        $this->assertNull($unresolvedChain->first()['parent_label']);
+        $this->assertNull($unresolvedChain->first()['parent_gloss']);
+
+        $this->assertCount(1, $adapted->phonetic_developments);
+        $this->assertEquals(['kirisse', 'krist'], $adapted->phonetic_developments[0]->pluck('word')->toArray());
+    }
+
+    /**
+     * Most dictionary views (search results, word lookups) fetch entries via the query-builder
+     * path (LexicalEntryRepository::getLexicalEntries() etc.), which returns stdClass rows, not
+     * Eloquent LexicalEntry instances. adaptLexicalEntry() must adapt derivations/phonetic
+     * developments from that path too, not only from a directly-loaded Eloquent entity.
+     */
+    public function test_adapt_derivations_via_query_builder_rows()
+    {
+        extract($this->createLexicalEntry(__FUNCTION__.'-root', 'KIRIS'));
+        $root = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        extract($this->createLexicalEntry(__FUNCTION__.'-child', 'crist'));
+        $child = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        // Primitive Elvish — deliberately a different language than the child's own (Sindarin),
+        // so we can prove it's pulled into the top-level `languages` dictionary purely by virtue
+        // of being referenced by a derivation, without also spawning a spurious section for it.
+        $primitiveElvishId = \App\Models\Language::where('name', 'Primitive elvish')->firstOrFail()->id;
+
+        $uuid = (string) Uuid::uuid4();
+        $derivationRepository = resolve(LexicalEntryDerivationRepository::class);
+        $derivationRepository->saveManyOnLexicalEntry($child, collect([
+            new LexicalEntryDerivation([
+                'derivation_group_uuid' => $uuid,
+                'order' => 0,
+                'parent_external_id' => $root->external_id,
+                'parent_form' => 'KIRIS',
+                'parent_language_id' => $primitiveElvishId,
+            ]),
+        ]), collect([
+            new LexicalEntryPhoneticDevelopment([
+                'derivation_group_uuid' => $uuid,
+                'order' => 0,
+                'word' => 'crist',
+            ]),
+        ]));
+        $derivationRepository->resolveParentReferences();
+
+        $rows = resolve(LexicalEntryRepository::class)->getLexicalEntries([$child->id]);
+        $this->assertEquals(\stdClass::class, get_class($rows[0]));
+
+        $adapted = $this->_adapter->adaptLexicalEntries($rows, collect([]), [], $rows[0]->word);
+        $adaptedEntry = $adapted['sections'][0]['entities'][0];
+
+        $this->assertCount(1, $adaptedEntry->derivations);
+        $this->assertEquals($root->id, $adaptedEntry->derivations[0][0]['parent_lexical_entry_id']);
+        $this->assertEquals($primitiveElvishId, $adaptedEntry->derivations[0][0]['parent_language_id']);
+        $this->assertCount(1, $adaptedEntry->phonetic_developments);
+
+        // The derivation-only language must be in the top-level dictionary...
+        $this->assertTrue(collect($adapted['languages'])->contains('id', $primitiveElvishId));
+        // ...but must not have spawned its own section, since no entity is actually in that language.
+        $this->assertFalse(collect($adapted['sections'])->contains(fn ($section) => $section['language']->id === $primitiveElvishId));
     }
 
     public function test_rating()
@@ -136,9 +272,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_exact_word_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree word');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'galadh');
-        
+
         // Exact word match should get highest score (100 * 1000000 = 100000000)
         $this->assertEquals(100000000, $lexicalEntry->rating);
     }
@@ -146,9 +282,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_exact_translation_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is about trees');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Exact translation match should get high score
         $this->assertGreaterThan(8000000, $lexicalEntry->rating);
         $this->assertLessThan(100000000, $lexicalEntry->rating);
@@ -157,9 +293,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_word_boundary_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['big tree'], 'This is about trees');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Word boundary match should get good score
         $this->assertGreaterThan(7000000, $lexicalEntry->rating);
     }
@@ -167,9 +303,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_comment_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'This word means tree in Sindarin');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Comment match should get medium score
         $this->assertGreaterThan(600000, $lexicalEntry->rating);
         $this->assertLessThan(8000000, $lexicalEntry->rating);
@@ -178,11 +314,11 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_lexical_entry_details_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No tree here', [
-            ['category' => 'Etymology', 'text' => 'From tree root']
+            ['category' => 'Etymology', 'text' => 'From tree root'],
         ]);
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Gloss details match should get lower score
         // Multiple search terms can contribute, so expect higher score
         $this->assertGreaterThan(50000, $lexicalEntry->rating);
@@ -193,9 +329,9 @@ class BookAdapterTest extends TestCase
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No tree here');
         $lexicalEntry->source = 'Tree Dictionary';
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Source match should get lowest score
         // Multiple search terms can contribute significantly
         $this->assertGreaterThan(1000, $lexicalEntry->rating);
@@ -205,9 +341,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_normalized_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'GALADH');
-        
+
         // Normalized match should work
         $this->assertGreaterThan(90000000, $lexicalEntry->rating);
     }
@@ -215,9 +351,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_starts_with_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'gal');
-        
+
         // Starts with match should work
         $this->assertGreaterThan(70000000, $lexicalEntry->rating);
     }
@@ -225,9 +361,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_contains_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'ala');
-        
+
         // Contains match should work
         $this->assertGreaterThan(50000000, $lexicalEntry->rating);
     }
@@ -235,9 +371,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_similarity_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'galad');
-        
+
         // Similarity match should work
         $this->assertGreaterThan(70000000, $lexicalEntry->rating);
     }
@@ -245,9 +381,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_no_match()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No tree here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'completely_different');
-        
+
         // No match should get default score
         $this->assertEquals(10, $lexicalEntry->rating);
     }
@@ -256,9 +392,9 @@ class BookAdapterTest extends TestCase
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
         $lexicalEntry->is_uncertain = true;
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Uncertain gloss should be ranked lower but still positive
         $this->assertGreaterThan(0, $lexicalEntry->rating);
         $this->assertLessThan(1000000, $lexicalEntry->rating); // Should be much lower than certain gloss
@@ -268,9 +404,9 @@ class BookAdapterTest extends TestCase
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
         $lexicalEntry->is_canon = false;
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Non-canon gloss should be ranked lower but still positive
         $this->assertGreaterThan(0, $lexicalEntry->rating);
         $this->assertLessThan(1000000, $lexicalEntry->rating); // Should be much lower than canon gloss
@@ -279,9 +415,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_empty_search_word()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
-        
+
         $result = BookAdapter::calculateRating($lexicalEntry, '');
-        
+
         // Empty search word should return maximum value
         $this->assertEquals(1 << 31, $result);
     }
@@ -289,9 +425,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_multiple_translations()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light', 'tree', 'bright'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Should match the best translation
         $this->assertGreaterThan(8000000, $lexicalEntry->rating);
     }
@@ -300,11 +436,11 @@ class BookAdapterTest extends TestCase
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No match here', [
             ['category' => 'Etymology', 'text' => 'From light root'],
-            ['category' => 'Usage', 'text' => 'Used for tree in some contexts']
+            ['category' => 'Usage', 'text' => 'Used for tree in some contexts'],
         ]);
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Should match the best detail
         $this->assertGreaterThan(50000, $lexicalEntry->rating);
     }
@@ -313,12 +449,12 @@ class BookAdapterTest extends TestCase
     {
         // Create gloss with matches in different fields
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'This word means tree in Sindarin', [
-            ['category' => 'Etymology', 'text' => 'From tree root']
+            ['category' => 'Etymology', 'text' => 'From tree root'],
         ]);
         $lexicalEntry->source = 'Tree Dictionary';
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'tree');
-        
+
         // Should prioritize word > translations > comments > details > source
         // Since no word/translation match, comments should win
         $this->assertGreaterThan(600000, $lexicalEntry->rating);
@@ -327,9 +463,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_diacritics_handling()
     {
         $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'galádh');
-        
+
         // Should handle diacritics
         $this->assertGreaterThan(90000000, $lexicalEntry->rating);
     }
@@ -337,9 +473,9 @@ class BookAdapterTest extends TestCase
     public function test_calculate_rating_case_insensitive()
     {
         $lexicalEntry = $this->createMockLexicalEntry('Galadh', ['Tree'], 'No match here');
-        
+
         BookAdapter::calculateRating($lexicalEntry, 'galadh');
-        
+
         // Should be case insensitive
         $this->assertGreaterThan(90000000, $lexicalEntry->rating);
     }
@@ -350,21 +486,21 @@ class BookAdapterTest extends TestCase
         $certainLexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
         $certainLexicalEntry->is_canon = true;
         $certainLexicalEntry->is_uncertain = false;
-        
+
         $uncertainLexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
         $uncertainLexicalEntry->is_canon = true;
         $uncertainLexicalEntry->is_uncertain = true;
-        
+
         BookAdapter::calculateRating($certainLexicalEntry, 'tree');
         BookAdapter::calculateRating($uncertainLexicalEntry, 'tree');
-        
+
         // Certain gloss should have higher rating than uncertain gloss
         $this->assertGreaterThan($uncertainLexicalEntry->rating, $certainLexicalEntry->rating);
-        
+
         // Both should be positive
         $this->assertGreaterThan(0, $certainLexicalEntry->rating);
         $this->assertGreaterThan(0, $uncertainLexicalEntry->rating);
-        
+
         // Uncertain gloss should be about 10% of certain gloss rating
         $this->assertEquals($uncertainLexicalEntry->rating, $certainLexicalEntry->rating * 0.1, '', 0.1);
     }
@@ -374,7 +510,7 @@ class BookAdapterTest extends TestCase
      */
     private function createMockLexicalEntry(string $word, array $glosses, string $comments = '', array $glossDetails = []): \stdClass
     {
-        $gloss = new \stdClass();
+        $gloss = new \stdClass;
         $gloss->word = $word;
         $gloss->comments = $comments;
         $gloss->source = '';
@@ -383,18 +519,19 @@ class BookAdapterTest extends TestCase
         // Create gloss objects
         $gloss->glosses = collect([]);
         foreach ($glosses as $glossText) {
-            $glossObj = new \stdClass();
+            $glossObj = new \stdClass;
             $glossObj->translation = $glossText;
             $gloss->glosses->push($glossObj);
         }
         // Create gloss detail objects
         $gloss->lexical_entry_details = collect([]);
         foreach ($glossDetails as $detail) {
-            $detailObj = new \stdClass();
+            $detailObj = new \stdClass;
             $detailObj->text = $detail['text'];
             $detailObj->category = $detail['category'];
             $gloss->lexical_entry_details->push($detailObj);
         }
+
         return $gloss;
     }
 }

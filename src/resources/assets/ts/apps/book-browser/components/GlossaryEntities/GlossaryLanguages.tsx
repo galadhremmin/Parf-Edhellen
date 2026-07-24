@@ -9,9 +9,11 @@ function GlossaryLanguages(props: IProps) {
         abstract,
         className,
         entityMorph,
+        featureBestMatch,
         languages,
         sections,
         single,
+        word,
 
         onReferenceClick,
     } = props;
@@ -21,7 +23,8 @@ function GlossaryLanguages(props: IProps) {
         {languages.map(
             (language) => <Fragment key={language.id}>
                 <GlossaryLanguage language={language}
-                    entries={sections[language.id]} onReferenceLinkClick={onReferenceClick} />
+                    featured={!! featureBestMatch && ! single}
+                    entries={sections[language.id]} word={word} onReferenceLinkClick={onReferenceClick} />
                 {single && <section className="mt-3">
                     <Suspense fallback={<Spinner />}>
                         <DiscussAsync entityId={sections[language.id][0].latestLexicalEntryVersionId} entityType={entityMorph} prefetched={false} />

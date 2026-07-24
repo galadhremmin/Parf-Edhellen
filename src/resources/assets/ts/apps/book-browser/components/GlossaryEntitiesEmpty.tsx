@@ -16,9 +16,17 @@ function GlossaryEntitiesEmpty({ word, roleManager, utilityApi }: IProps) {
     const [reported, setReported] = useState(false);
 
     const onReport = async () => {
-        if (reported || !utilityApi) return;
-        await utilityApi.reportMissingWord(word);
-        setReported(true);
+        if (reported || !utilityApi) { 
+            return;
+        }
+
+        try {
+            await utilityApi.reportMissingWord(word);
+            setReported(true);
+        } catch (err) {
+            alert(`Failed to report ${word} as missing. Error: ${err}`);
+            setReported(false);
+        }
     };
 
     const isAnonymous = roleManager?.isAnonymous ?? true;
