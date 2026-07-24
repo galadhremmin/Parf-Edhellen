@@ -70,7 +70,7 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
             });
             const expectedWords = Object.values(sections).flat(1) as ILexicalEntryEntity[];
             expect(wordBlocks).toHaveLength(expectedWords.length + 1 /* because of "There are more words but they are from Tolkien's earlier conceptional periods" */);
-            expect(wordBlocks.map(block => block.textContent)).toContain('There are more words but they are from Tolkien\'s earlier conceptional periods');
+            expect(wordBlocks.map(block => block.textContent)).toContain('The entries below are from Tolkien\'s earlier conceptional periods');
 
             // Each language section features its best match full-width at the top.
             const featuredCards = container.querySelectorAll('.ed-glossary__language__featured .lexical-entry--featured');
