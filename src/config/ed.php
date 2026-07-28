@@ -101,12 +101,12 @@ return [
     // heavily-cited root (e.g. a common sound-root with many attested descendants)
     'book_derivatives_maximum_leaves' => env('ED_LEXICAL_ENTRIES_MAXIMUM_LEAVES', 150),
 
-    // maximum number of root entries within a single multi-entry result page (e.g. a /w/{word}
-    // search matching several roots) that LexicalEntryRepository::getLexicalEntriesWithDetails()
-    // will fetch descendant trees for. gloss_repository_maximum_results allows up to 1,000 rows
-    // in one page; each root's tree is separately capped at book_derivatives_maximum_leaves, so
-    // without this a pathological search matching hundreds of roots could still multiply out to
-    // a very large response. In practice a result page names only a handful of roots at most.
+    // maximum number of entries within a single multi-entry result page (e.g. a /w/{word} search)
+    // that BookAdapter::adaptLexicalEntries() will fetch descendant trees for. Candidates are the
+    // top-rated, non-old entry of each language section, so this is naturally bounded by the
+    // number of languages shown on the page — this cap is a safety net for a page with an
+    // unusually large number of language sections, not the primary control. Each candidate's tree
+    // is separately capped at book_derivatives_maximum_leaves.
     'book_derivatives_maximum_roots_per_page' => env('ED_LEXICAL_ENTRIES_MAXIMUM_ROOTS_PER_PAGE', 50),
 
     // Speech::name values that mark a lexical entry as a root (e.g. √GAL) rather than an

@@ -94,10 +94,12 @@ class LexicalEntryRepository
             return $q;
         });
 
-        // Also opts into derivatives now: restricted internally to root entries (see
-        // getLexicalEntriesWithDetails), so the common case (a handful of results, at most a
-        // couple of which are roots) stays cheap even though this path can return up to $limit rows.
-        return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources, includeDerivatives: true);
+        // Derivatives are deliberately NOT fetched here: this path can return up to $limit rows,
+        // and which (if any) deserve a descendant tree depends on match confidence — a signal that
+        // only exists after BookAdapter ranks the adapted results. See
+        // BookAdapter::adaptLexicalEntries()'s $includeDerivatives second pass, which fetches
+        // derivatives for a small, rating-selected subset after the fact instead.
+        return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
     /**
@@ -690,11 +692,13 @@ class LexicalEntryRepository
      * result set and making the row limit unpredictable.
      *
      * $includeDerivatives additionally attaches the "words derived from this entry" descendant
-     * tree data (two more indexed queries, batched across the whole result set, and restricted to
-     * rows whose speech is a root — see config('ed.book_root_speech_names') — since only roots ever
-     * have anything to show there). It defaults to false; callers whose result set is expected to
-     * be small (a direct id/external-id page load) or where roots are the point of the query
-     * (word search) should opt in.
+     * tree data (two more indexed queries, batched across the whole result set). Any entry can
+     * be cited as a derivation's parent, not just formally-typed roots, so this isn't restricted
+     * by entry type — it defaults to false because the descendant tree can fan out widely for
+     * heavily-cited entries; callers whose result set is guaranteed small (a direct id/external-id
+     * page load, at most a handful of rows) should opt in. General multi-entry search results
+     * should not — see BookAdapter::adaptLexicalEntries()'s $includeDerivatives second pass instead,
+     * which fetches derivatives only for a small, rating-selected subset after ranking.
      */
     protected function getLexicalEntriesWithDetails(Builder $query, int $limit, bool $includeDerivatives = false): array
     {
@@ -731,21 +735,9 @@ class LexicalEntryRepository
                 ->groupBy('lexical_entry_id');
 
         // Shared across every row rather than queried per-entry — BookAdapter::adaptDerivatives()
-        // filters it down to whichever hypotheses actually name that row as an ancestor. Restricted
-        // to root entries: only roots ever have descendants worth showing, and a multi-entry search
-        // page can return up to $limit rows, so skipping the non-root majority keeps the batched
-        // query's IN-list (and the result it fetches) bounded to what's actually rendered. Further
-        // capped at book_derivatives_maximum_roots_per_page in case a single result page names an
-        // unusually large number of roots — each root's tree is already capped on its own
-        // (book_derivatives_maximum_leaves), but that alone doesn't bound how many roots a page
-        // can contain.
-        $rootEntryIds = $rows
-            ->filter(fn ($row) => in_array($row->type ?? null, config('ed.book_root_speech_names'), true))
-            ->pluck('id')
-            ->unique()
-            ->take(config('ed.book_derivatives_maximum_roots_per_page'));
-        $descendantDerivationRows = $includeDerivatives && ! $rootEntryIds->isEmpty()
-            ? $this->_lexicalEntryDerivationRepository->getDescendantTreesForLexicalEntries($rootEntryIds)
+        // filters it down to whichever hypotheses actually name that row as an ancestor.
+        $descendantDerivationRows = $includeDerivatives && ! $entryIds->isEmpty()
+            ? $this->_lexicalEntryDerivationRepository->getDescendantTreesForLexicalEntries($entryIds)
             : collect();
 
         foreach ($rows as $row) {

@@ -67,6 +67,7 @@ class BookAdapter
             ));
             $allLanguages = Language::whereIn('id', $languageIds)->get();
             $language = $allLanguages->firstWhere('id', $lexicalEntry->language_id);
+            $adaptedEntry = $this->adaptLexicalEntry($lexicalEntry, $allLanguages, $inflections, $commentsById, $atomDate);
 
             return [
                 'word' => $word,
@@ -74,7 +75,7 @@ class BookAdapter
                     [
                         // Load the language by examining the first (and only) element of the array
                         'language' => $language,
-                        'entities' => [$this->adaptLexicalEntry($lexicalEntry, $allLanguages, $inflections, $commentsById, $atomDate)],
+                        'entities' => [$adaptedEntry],
                     ],
                 ],
                 'languages' => $allLanguages,
@@ -551,6 +552,24 @@ class BookAdapter
             })
             ->values()
             ->all();
+    }
+
+    /**
+     * Attaches already-fetched descendant ("Derivatives") tree data onto each of the given adapted
+     * entries' `derivatives` property. Pure transform: this does not query anything — it's the
+     * caller's job to decide which entries deserve a tree and to fetch $groupedDerivationRows (e.g.
+     * via LexicalEntryDerivationRepository::getDescendantTreesForLexicalEntries()). Deciding *which*
+     * entries qualify is a ranking/orchestration concern, not something an adapter should reach
+     * into a repository to resolve on its own — that lives in the resolver that already coordinates
+     * repositories and this adapter (see GlossSearchIndexResolver::resolve()).
+     *
+     * @param  array<int, \stdClass>  $entriesById  adapted entries keyed by their own lexical entry ID
+     */
+    public function attachDerivatives(array $entriesById, Collection $groupedDerivationRows): void
+    {
+        foreach ($entriesById as $id => $entry) {
+            $entry->derivatives = $this->adaptDerivatives($groupedDerivationRows, $id, $this->_linkHelper);
+        }
     }
 
     /**
