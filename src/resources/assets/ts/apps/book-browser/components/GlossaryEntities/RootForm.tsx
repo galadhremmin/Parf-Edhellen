@@ -1,4 +1,5 @@
 import { useLanguageLookup } from './LanguageLookupContext';
+import ReferenceLink from './ReferenceLink';
 import type { IProps } from './RootForm._types';
 
 import './RootForm.scss';
@@ -13,19 +14,15 @@ import './RootForm.scss';
  * convention entirely.
  */
 const RootForm = (props: IProps) => {
-    const { form, languageId, url } = props;
+    const { form, languageId, lexicalEntryId, url } = props;
     const { getLanguage } = useLanguageLookup();
     const mark = languageId ? getLanguage(languageId)?.mark : null;
 
-    const content = <>
+    return <ReferenceLink className="RootForm" lexicalEntryId={lexicalEntryId} url={url}>
         {mark && <sup className="RootForm--mark">{mark}</sup>}
         <span className="RootForm--radical">√</span>
         {form.toLocaleUpperCase()}
-    </>;
-
-    return url
-        ? <a className="RootForm" href={url}>{content}</a>
-        : <span className="RootForm">{content}</span>;
+    </ReferenceLink>;
 };
 
 export default RootForm;

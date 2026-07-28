@@ -7,6 +7,7 @@ import TextIcon from '@root/components/TextIcon';
 import type { IDerivationEntity } from '@root/connectors/backend/IBookApi';
 import { DerivationStep, DerivationStepList } from './DerivationStepList';
 import { useLanguageLookup } from './LanguageLookupContext';
+import ReferenceLink from './ReferenceLink';
 import RootForm from './RootForm';
 import type { IProps, IGroupedChain, ICitation } from './LexicalEntryDerivations._types';
 
@@ -56,13 +57,15 @@ function groupByChainContent(derivations: IDerivationEntity[][]): IGroupedChain[
 function LanguagedWord(props: {
     displayWord: string;
     isReconstructed: boolean;
+    lexicalEntryId: number | null;
     url: string | null;
 }) {
-    const { displayWord, isReconstructed, url } = props;
+    const { displayWord, isReconstructed, lexicalEntryId, url } = props;
 
-    return url
-        ? <a className={classNames({ reconstructed: isReconstructed })} href={url}>{displayWord}</a>
-        : <span className={classNames({ reconstructed: isReconstructed })}>{displayWord}</span>;
+    return <ReferenceLink className={classNames({ reconstructed: isReconstructed })}
+        lexicalEntryId={lexicalEntryId} url={url}>
+        {displayWord}
+    </ReferenceLink>;
 }
 
 function AncestorStep(props: {
@@ -82,8 +85,10 @@ function AncestorStep(props: {
     return <DerivationStep depth={depth} className={classNames({ rejected: step.isRejected })}>
         {language && <span className="LexicalEntryDerivations--language" title={language.name}>{(language.shortName || language.name).toLocaleUpperCase()}.</span>}
         {step.parentIsRoot
-            ? <RootForm form={displayWord} languageId={step.parentLanguageId} url={step.parentUrl} />
-            : <LanguagedWord displayWord={displayWord} isReconstructed={isReconstructed} url={step.parentUrl} />}
+            ? <RootForm form={displayWord} languageId={step.parentLanguageId}
+                lexicalEntryId={step.parentLexicalEntryId} url={step.parentUrl} />
+            : <LanguagedWord displayWord={displayWord} isReconstructed={isReconstructed}
+                lexicalEntryId={step.parentLexicalEntryId} url={step.parentUrl} />}
         {step.parentGloss && <span className="LexicalEntryDerivations--gloss">{step.parentGloss}</span>}
         {step.isUncertain && <span className="uncertain" title="Uncertain etymology">
             <TextIcon icon="asterisk" />

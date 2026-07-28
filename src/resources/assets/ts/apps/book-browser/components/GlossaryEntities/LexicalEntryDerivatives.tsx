@@ -2,6 +2,7 @@ import classNames from '@root/utilities/ClassNames';
 import type { IDerivativeNode } from '@root/connectors/backend/IBookApi';
 import { DerivationStep, DerivationStepList } from './DerivationStepList';
 import { useLanguageLookup } from './LanguageLookupContext';
+import ReferenceLink from './ReferenceLink';
 import type { IProps } from './LexicalEntryDerivatives._types';
 
 import './LexicalEntryDerivatives.scss';
@@ -21,9 +22,10 @@ function DerivativeNode(props: { node: IDerivativeNode; depth: number }) {
     return <>
         <DerivationStep depth={depth}>
             {language && <span className="LexicalEntryDerivatives--language" title={language.name}>{(language.shortName || language.name).toLocaleUpperCase()}.</span>}
-            {node.url
-                ? <a className={classNames({ reconstructed: ! node.isWord })} href={node.url}>{displayWord}</a>
-                : <span className={classNames({ reconstructed: ! node.isWord })}>{displayWord}</span>}
+            <ReferenceLink className={classNames({ reconstructed: ! node.isWord })}
+                lexicalEntryId={node.lexicalEntryId} url={node.url}>
+                {displayWord}
+            </ReferenceLink>
             {node.gloss && <span className="LexicalEntryDerivatives--gloss">{node.gloss}</span>}
             {node.source && <span className="LexicalEntryDerivatives--source">
                 <span className="LexicalEntryDerivatives--source-icon">&#10022;</span> {node.source}
