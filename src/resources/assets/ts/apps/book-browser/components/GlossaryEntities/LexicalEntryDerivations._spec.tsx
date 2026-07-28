@@ -15,6 +15,7 @@ function makeStep(overrides: Partial<IDerivationEntity> = {}): IDerivationEntity
         order: 0,
         parentForm: 'KIRIS',
         parentGloss: null,
+        parentIsRoot: false,
         parentLabel: null,
         parentLanguageId: null,
         parentLexicalEntryId: null,
@@ -200,18 +201,68 @@ describe('apps/book-browser/components/GlossaryEntities/LexicalEntryDerivations'
         expect(container.querySelector('.LexicalEntryDerivations--gloss')?.textContent).toBe('gold-tree');
     });
 
-    test('resolves the language badge from the LanguageLookupProvider, not an embedded object', () => {
+    test('resolves the language badge from the LanguageLookupProvider for an ordinary ancestor', () => {
         const { container } = render(
             <LanguageLookupProvider languages={[{ id: 35, name: 'Old Sindarin', shortName: 'os' }]}>
-                <LexicalEntryDerivations derivations={[[makeStep({ parentLanguageId: 35 })]]} />
+                <LexicalEntryDerivations derivations={[[makeStep({ parentForm: 'galadā', parentLanguageId: 35 })]]} />
             </LanguageLookupProvider>,
         );
 
         expect(container.querySelector('.LexicalEntryDerivations--language')?.textContent).toBe('OS.');
+        expect(container.querySelector('.RootForm')).toBeFalsy();
+        expect(stepsAtDepth(container, 0)[0].textContent).toContain('galadā');
     });
 
-    test('renders no language badge when the ID cannot be resolved', () => {
+    test('renders no language badge when the language id cannot be resolved', () => {
         const { container } = render(<LexicalEntryDerivations derivations={[[makeStep({ parentLanguageId: 999 })]]} />);
         expect(container.querySelector('.LexicalEntryDerivations--language')).toBeFalsy();
+    });
+
+    test('renders a root ancestor via RootForm: uppercase spelling with a "√" prefix', () => {
+        const { container } = render(<LexicalEntryDerivations derivations={[
+            [makeStep({ parentForm: 'GAL', parentWord: 'gal', parentIsRoot: true })],
+        ]} />);
+
+        const root = container.querySelector('.RootForm');
+        expect(root?.textContent).toBe('√GAL');
+    });
+
+    test('shows the language badge in front of a root, same as any other ancestor', () => {
+        const { container } = render(
+            <LanguageLookupProvider languages={[{ id: 96, name: 'Middle Primitive Elvish', shortName: 'mp', mark: 'M' }]}>
+                <LexicalEntryDerivations derivations={[
+                    [makeStep({ parentForm: 'GAL', parentIsRoot: true, parentLanguageId: 96 })],
+                ]} />
+            </LanguageLookupProvider>,
+        );
+
+        expect(container.querySelector('.LexicalEntryDerivations--language')?.textContent).toBe('MP.');
+        expect(container.querySelector('.RootForm')?.textContent).toBe('M√GAL');
+    });
+
+    test('root uses its own cited spelling (parentForm), not the resolved entry\'s plain-cased word', () => {
+        const { container } = render(<LexicalEntryDerivations derivations={[
+            [makeStep({ parentForm: 'gal', parentWord: 'gal', parentIsRoot: true })],
+        ]} />);
+
+        expect(container.querySelector('.RootForm')?.textContent).toBe('√GAL');
+    });
+
+    test('marks a root with whatever superscript is configured on its language', () => {
+        const { container } = render(
+            <LanguageLookupProvider languages={[
+                { id: 96, name: 'Middle Primitive Elvish', shortName: 'mp', mark: 'M' },
+                { id: 20, name: 'Primitive elvish', shortName: 'p', mark: null },
+            ]}>
+                <LexicalEntryDerivations derivations={[
+                    [makeStep({ groupUuid: 'middle', parentForm: 'GAL', parentIsRoot: true, parentLanguageId: 96 })],
+                    [makeStep({ groupUuid: 'late', parentForm: 'GALAD', parentIsRoot: true, parentLanguageId: 20 })],
+                ]} />
+            </LanguageLookupProvider>,
+        );
+
+        const roots = container.querySelectorAll('.RootForm');
+        expect(roots[0].querySelector('.RootForm--mark')?.textContent).toBe('M');
+        expect(roots[1].querySelector('.RootForm--mark')).toBeFalsy();
     });
 });

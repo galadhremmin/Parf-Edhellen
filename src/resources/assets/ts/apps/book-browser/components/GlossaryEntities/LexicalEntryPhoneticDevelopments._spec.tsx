@@ -25,6 +25,7 @@ function makeDerivation(overrides: Partial<IDerivationEntity> = {}): IDerivation
         order: 0,
         parentForm: 'galadā',
         parentGloss: null,
+        parentIsRoot: false,
         parentLabel: null,
         parentLanguageId: null,
         parentLexicalEntryId: null,

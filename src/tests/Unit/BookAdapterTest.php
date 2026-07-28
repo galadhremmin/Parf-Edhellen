@@ -6,6 +6,7 @@ use App\Adapters\BookAdapter;
 use App\Models\Gloss;
 use App\Models\LexicalEntryDerivation;
 use App\Models\LexicalEntryPhoneticDevelopment;
+use App\Models\Speech;
 use App\Repositories\LexicalEntryDerivationRepository;
 use App\Repositories\LexicalEntryRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -53,6 +54,20 @@ class BookAdapterTest extends TestCase
         $this->assertEquals(implode(config('ed.gloss_translations_separator'), array_map(function ($g) {
             return $g->translation;
         }, $glosses)), $adapted->all_glosses);
+        $this->assertFalse($adapted->is_root);
+    }
+
+    public function test_adapt_lexical_entry_flags_root_speech_as_is_root()
+    {
+        extract($this->createLexicalEntry(__FUNCTION__, 'GAL'));
+        $lexicalEntry->speech_id = Speech::where('name', config('ed.book_root_speech_names')[0])->firstOrFail()->id;
+        $root = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $root->load('speech');
+
+        $adapted = $this->_adapter->adaptLexicalEntry($root, new Collection([$root->language]));
+
+        $this->assertEquals('root', $adapted->type);
+        $this->assertTrue($adapted->is_root);
     }
 
     public function test_adapt_glosses_without_details()
@@ -199,6 +214,43 @@ class BookAdapterTest extends TestCase
         $this->assertTrue(collect($adapted['languages'])->contains('id', $primitiveElvishId));
         // ...but must not have spawned its own section, since no entity is actually in that language.
         $this->assertFalse(collect($adapted['sections'])->contains(fn ($section) => $section['language']->id === $primitiveElvishId));
+    }
+
+    /**
+     * A descendant's language can differ from the root's own language and from any language an
+     * ancestor citation references (e.g. a root's derived words spanning several languages) —
+     * collectReferencedLanguageIds() must also walk the descendant/derivatives tree, not only
+     * ancestor derivations, or LexicalEntryDerivatives silently drops the language badge for
+     * that descendant on the frontend (it can't resolve an id missing from the dictionary).
+     */
+    public function test_languages_dictionary_includes_languages_only_referenced_by_descendants()
+    {
+        extract($this->createLexicalEntry(__FUNCTION__.'-root', 'GAL'));
+        $root = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        $noldorinId = \App\Models\Language::where('name', 'Noldorin')->firstOrFail()->id;
+        extract($this->createLexicalEntry(__FUNCTION__.'-child', 'galon'));
+        $lexicalEntry->language_id = $noldorinId;
+        $child = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        $derivationRepository = resolve(LexicalEntryDerivationRepository::class);
+        $derivationRepository->saveManyOnLexicalEntry($child, collect([
+            new LexicalEntryDerivation([
+                'derivation_group_uuid' => (string) Uuid::uuid4(),
+                'order' => 0,
+                'parent_external_id' => $root->external_id,
+                'parent_form' => 'GAL',
+                'parent_language_id' => $root->language_id,
+            ]),
+        ]), collect([]));
+        $derivationRepository->resolveParentReferences();
+
+        $rootEntity = resolve(LexicalEntryRepository::class)->getLexicalEntry($root->id)->first();
+        $this->assertNotEquals($root->language_id, $noldorinId);
+
+        $adapted = $this->_adapter->adaptLexicalEntries([$rootEntity], collect([]), [], $rootEntity->word->word);
+
+        $this->assertTrue(collect($adapted['languages'])->contains('id', $noldorinId));
     }
 
     public function test_rating()

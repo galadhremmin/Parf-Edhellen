@@ -288,6 +288,9 @@ class BookAdapter
             $lexicalEntry->word = $entity->word->word;
             $lexicalEntry->normalized_word = $entity->word->normalized_word;
             $lexicalEntry->type = $entity->speech_id ? $entity->speech->name : null;
+            // Roots (e.g. √GAL) get their own title styling (RootForm on the frontend) — see
+            // adaptDerivations() for the same check applied to derivation ancestors.
+            $lexicalEntry->is_root = in_array($lexicalEntry->type, config('ed.book_root_speech_names'), true);
             $lexicalEntry->lexical_entry_group_id = $entity->lexical_entry_group_id ?: null;
             $lexicalEntry->lexical_entry_group_label = $entity->lexical_entry_group_id ? $entity->lexical_entry_group->label : null;
             $lexicalEntry->lexical_entry_group_name = $entity->lexical_entry_group_id ? $entity->lexical_entry_group->name : null;
@@ -328,6 +331,10 @@ class BookAdapter
             }
 
         } else {
+            // Roots (e.g. √GAL) get their own title styling (RootForm on the frontend) — see
+            // adaptDerivations() for the same check applied to derivation ancestors. `type`
+            // (speech name) is already selected as `s.name as type` by the raw query builder.
+            $lexicalEntry->is_root = in_array($lexicalEntry->type ?? null, config('ed.book_root_speech_names'), true);
             $lexicalEntry->all_glosses = $lexicalEntry->glosses->map(fn ($g) => $g->translation)->implode($separator);
             $lexicalEntry->derivations = property_exists($lexicalEntry, 'lexical_entry_derivations')
                 ? $this->adaptDerivations($lexicalEntry->lexical_entry_derivations, $linker)
@@ -441,6 +448,28 @@ class BookAdapter
                     $ids[] = $d->parent_language_id;
                 }
             }
+
+            // Derivatives (descendant tree) rows are grouped by derivation_group_uuid — a
+            // Collection of Collections, unlike the flat lexical_entry_derivations above. Each
+            // row can reference a language via its own citation (parent_language_id) or, for
+            // the leaf/resolved end of the chain, via the resolved entry's own language_id —
+            // both need to be in the dictionary, or LexicalEntryDerivatives silently drops the
+            // language badge for descendants in a language the top-level search results never
+            // otherwise reference (e.g. a root's descendants spanning several languages).
+            $descendantRows = $lexicalEntry instanceof LexicalEntry || $lexicalEntry instanceof LexicalEntryVersion
+                ? ($lexicalEntry->relationLoaded('descendant_derivation_rows') ? $lexicalEntry->descendant_derivation_rows : collect())
+                : ($lexicalEntry->lexical_entry_derivative_rows ?? collect());
+
+            foreach ($descendantRows as $chain) {
+                foreach ($chain as $row) {
+                    if ($row->parent_language_id) {
+                        $ids[] = $row->parent_language_id;
+                    }
+                    if ($row->lexical_entry?->language_id) {
+                        $ids[] = $row->lexical_entry->language_id;
+                    }
+                }
+            }
         }
 
         return array_unique($ids);
@@ -474,6 +503,11 @@ class BookAdapter
                         'parent_form' => $d->parent_form,
                         'parent_word' => $parentLexicalEntry?->word?->word,
                         'parent_label' => $parentLexicalEntry?->label,
+                        // Roots (e.g. √GAL) are cited in their own uppercase root spelling, but
+                        // the resolved entry's Word record stores the plain lowercase form used
+                        // elsewhere on the site (e.g. "gal") — the frontend renders roots from
+                        // parent_form, not parent_word, so this flag alone decides which is used.
+                        'parent_is_root' => in_array($parentLexicalEntry?->speech?->name, config('ed.book_root_speech_names'), true),
                         // Ancestors can carry several near-duplicate/overlapping senses recorded
                         // across different citations (e.g. one entry's glosses might read "grow,
                         // flourish, bloom" and "grow, flourish, bloom, thrive" from two sources) —

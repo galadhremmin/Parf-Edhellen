@@ -17,7 +17,7 @@ class LexicalEntryDerivationRepository
     public function getDerivationsForLexicalEntry(int $lexicalEntryId): Collection
     {
         return LexicalEntryDerivation::where('lexical_entry_id', $lexicalEntryId)
-            ->with('parent_lexical_entry', 'parent_language')
+            ->with('parent_lexical_entry.speech', 'parent_language')
             ->orderBy('order')
             ->get()
             ->groupBy('derivation_group_uuid');

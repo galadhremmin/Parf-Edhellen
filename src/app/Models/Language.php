@@ -9,7 +9,7 @@ class Language extends ModelBase
     ];
 
     protected $fillable = [
-        'name', 'is_invented', 'category', 'description', 'short_name', 'is_unusual', 'tengwar_mode', 'order',
+        'name', 'is_invented', 'category', 'description', 'short_name', 'mark', 'is_unusual', 'tengwar_mode', 'order',
     ];
 
     public function scopeShortName($query, string $shortName)

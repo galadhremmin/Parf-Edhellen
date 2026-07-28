@@ -7,6 +7,7 @@ import TextIcon from '@root/components/TextIcon';
 import type { IDerivationEntity } from '@root/connectors/backend/IBookApi';
 import { DerivationStep, DerivationStepList } from './DerivationStepList';
 import { useLanguageLookup } from './LanguageLookupContext';
+import RootForm from './RootForm';
 import type { IProps, IGroupedChain, ICitation } from './LexicalEntryDerivations._types';
 
 import './LexicalEntryDerivations.scss';
@@ -51,6 +52,19 @@ function groupByChainContent(derivations: IDerivationEntity[][]): IGroupedChain[
     return Array.from(groups.values());
 }
 
+/** Non-root ancestor: bare word, styling-wise — the language badge is rendered by AncestorStep. */
+function LanguagedWord(props: {
+    displayWord: string;
+    isReconstructed: boolean;
+    url: string | null;
+}) {
+    const { displayWord, isReconstructed, url } = props;
+
+    return url
+        ? <a className={classNames({ reconstructed: isReconstructed })} href={url}>{displayWord}</a>
+        : <span className={classNames({ reconstructed: isReconstructed })}>{displayWord}</span>;
+}
+
 function AncestorStep(props: {
     step: IDerivationEntity;
     depth: number;
@@ -60,14 +74,16 @@ function AncestorStep(props: {
     const { depth, intermediateStagesNode, note, step } = props;
     const { getLanguage } = useLanguageLookup();
     const isReconstructed = step.parentLabel === 'Reconstructed';
-    const displayWord = step.parentWord || step.parentForm;
+    // Roots are cited in their own uppercase spelling (parentForm), never the resolved entry's
+    // plain-cased Word record — see RootForm and BookAdapter::adaptDerivations() for why.
+    const displayWord = step.parentIsRoot ? step.parentForm : (step.parentWord || step.parentForm);
     const language = step.parentLanguageId ? getLanguage(step.parentLanguageId) : undefined;
 
     return <DerivationStep depth={depth} className={classNames({ rejected: step.isRejected })}>
         {language && <span className="LexicalEntryDerivations--language" title={language.name}>{(language.shortName || language.name).toLocaleUpperCase()}.</span>}
-        {step.parentUrl
-            ? <a className={classNames({ reconstructed: isReconstructed })} href={step.parentUrl}>{displayWord}</a>
-            : <span className={classNames({ reconstructed: isReconstructed })}>{displayWord}</span>}
+        {step.parentIsRoot
+            ? <RootForm form={displayWord} languageId={step.parentLanguageId} url={step.parentUrl} />
+            : <LanguagedWord displayWord={displayWord} isReconstructed={isReconstructed} url={step.parentUrl} />}
         {step.parentGloss && <span className="LexicalEntryDerivations--gloss">{step.parentGloss}</span>}
         {step.isUncertain && <span className="uncertain" title="Uncertain etymology">
             <TextIcon icon="asterisk" />
