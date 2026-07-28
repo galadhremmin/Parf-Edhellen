@@ -92,14 +92,14 @@ return [
     ],
 
     // sentence repository configuration
-    'sentence_repository_maximum_fragments' => 100,
+    'sentence_repository_maximum_fragments' => env('ED_SENTENCE_REPOSITORY_MAXIMUM_FRAGMENTS', 100),
 
     // gloss repository configuration
-    'gloss_repository_maximum_results' => 1000,
+    'gloss_repository_maximum_results' => env('ED_LEXICAL_ENTRIES_MAXIMUM_RESULTS', 1000),
 
     // maximum number of descendant leaves BookAdapter::adaptDerivatives() will render for a
     // heavily-cited root (e.g. a common sound-root with many attested descendants)
-    'book_derivatives_maximum_leaves' => 150,
+    'book_derivatives_maximum_leaves' => env('ED_LEXICAL_ENTRIES_MAXIMUM_LEAVES', 150),
 
     // maximum number of root entries within a single multi-entry result page (e.g. a /w/{word}
     // search matching several roots) that LexicalEntryRepository::getLexicalEntriesWithDetails()
@@ -107,7 +107,7 @@ return [
     // in one page; each root's tree is separately capped at book_derivatives_maximum_leaves, so
     // without this a pathological search matching hundreds of roots could still multiply out to
     // a very large response. In practice a result page names only a handful of roots at most.
-    'book_derivatives_maximum_roots_per_page' => 25,
+    'book_derivatives_maximum_roots_per_page' => env('ED_LEXICAL_ENTRIES_MAXIMUM_ROOTS_PER_PAGE', 50),
 
     // Speech::name values that mark a lexical entry as a root (e.g. √GAL) rather than an
     // ordinary word — used by BookAdapter::adaptDerivations() to flag root ancestors so the
