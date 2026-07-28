@@ -8,6 +8,7 @@ import { DI } from '@root/di/keys';
 import type { IProps } from './LexicalEntryTitle._types';
 
 import NumberOfComments from './NumberOfComments';
+import RootForm from './RootForm';
 import ShareLink from './ShareLink';
 import VersionsLink from './VersionsLink';
 
@@ -29,7 +30,9 @@ const LexicalEntryTitle = (props: IProps) => {
             <TextIcon icon="asterisk" className="fs-5" />
         </span>}
         <span itemProp="headline" className={className}>
-            {lexicalEntry.word}
+            {lexicalEntry.isRoot
+                ? <RootForm form={lexicalEntry.word} languageId={lexicalEntry.languageId} />
+                : lexicalEntry.word}
         </span>
         {lexicalEntry._inflectedWord && <span className="gloss-word__inflection">
             {lexicalEntry._inflectedWord.word.toLocaleLowerCase() !== lexicalEntry.word.toLocaleLowerCase() &&

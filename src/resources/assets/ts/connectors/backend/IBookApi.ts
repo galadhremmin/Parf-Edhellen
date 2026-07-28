@@ -67,6 +67,8 @@ export interface ILanguageEntity {
     id: number;
     isInvented?: boolean;
     isUnusual?: boolean;
+    /** Superscript prefix Eldamo shows in front of a word/root of this language, e.g. "M" for Middle Primitive Elvish (ᴹ√GALAD). Null/absent means no prefix. */
+    mark?: string | null;
     name: string;
     shortName?: string;
     tengwar?: string;
@@ -99,6 +101,8 @@ export interface ILexicalEntryEntity {
     isOld: boolean;
     isLatest: boolean;
     isRejected: boolean;
+    /** True when `type` (speech) is one of the configured root speech names, e.g. "root". */
+    isRoot: boolean;
     isUncertain: boolean;
     label: string;
     language: ILanguageEntity;
@@ -140,6 +144,7 @@ export interface IDerivationEntity {
     order: number;
     parentForm: string;
     parentGloss: string | null;
+    parentIsRoot: boolean;
     parentLabel: string | null;
     parentLanguageId: number | null;
     parentLexicalEntryId: number | null;

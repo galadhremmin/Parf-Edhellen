@@ -101,6 +101,11 @@ return [
     // heavily-cited root (e.g. a common sound-root with many attested descendants)
     'book_derivatives_maximum_leaves' => 150,
 
+    // Speech::name values that mark a lexical entry as a root (e.g. √GAL) rather than an
+    // ordinary word — used by BookAdapter::adaptDerivations() to flag root ancestors so the
+    // frontend renders them via RootForm ("√" + uppercase) instead of a plain word.
+    'book_root_speech_names' => explode(',', env('ED_BOOK_ROOT_SPEECH_NAMES', 'root')),
+
     // search index repository configuration
     'search_index_expands_english_infinitives' => true,
 
