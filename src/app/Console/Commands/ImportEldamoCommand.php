@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\ProcessDerivationResolution;
 use App\Jobs\ProcessGlossDeprecation;
 use App\Jobs\ProcessGlossImport;
+use App\Jobs\RebuildLexicalEntryDerivationData;
 use App\Models\Account;
 use App\Models\Gloss;
 use App\Models\Inflection;
@@ -105,6 +106,12 @@ class ImportEldamoCommand extends Command
                         }, array_values($this->_lexicalEntryGroups));
                         ProcessDerivationResolution::dispatch($groupIds)->onQueue('import');
                         $this->line('!! dispatched derivation resolution job');
+
+                        // Same queue, dispatched immediately after — the sequential 'import' queue
+                        // guarantees this runs after parent references are resolved, so the
+                        // descendant ("Derivatives") tree it precomputes sees complete data.
+                        RebuildLexicalEntryDerivationData::dispatch()->onQueue('import');
+                        $this->line('!! dispatched derivation data rebuild job');
 
                     } else {
                         $data = $this->createImportData($entity);

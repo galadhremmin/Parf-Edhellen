@@ -9,7 +9,6 @@ use App\Models\LexicalEntry;
 use App\Models\SearchKeyword;
 use App\Models\Sense;
 use App\Repositories\DiscussRepository;
-use App\Repositories\LexicalEntryDerivationRepository;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
@@ -23,8 +22,6 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     private LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
-    private LexicalEntryDerivationRepository $_lexicalEntryDerivationRepository;
-
     private DiscussRepository $_discussRepository;
 
     private BookAdapter $_bookAdapter;
@@ -34,11 +31,10 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
     private ?string $_senseMorph;
 
     public function __construct(LexicalEntryRepository $lexicalEntryRepository, LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
-        LexicalEntryDerivationRepository $lexicalEntryDerivationRepository, DiscussRepository $discussRepository, BookAdapter $bookAdapter)
+        DiscussRepository $discussRepository, BookAdapter $bookAdapter)
     {
         $this->_lexicalEntryRepository = $lexicalEntryRepository;
         $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
-        $this->_lexicalEntryDerivationRepository = $lexicalEntryDerivationRepository;
         $this->_discussRepository = $discussRepository;
         $this->_bookAdapter = $bookAdapter;
 
@@ -48,13 +44,6 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     public function resolve(SearchIndexSearchValue $value): array
     {
-        // The id/external-id branches already carry derivatives unconditionally, fetched at the
-        // repository layer (see getLexicalEntries()/getLexicalEntriesByExternalId()) — their result
-        // sets are always small (a direct page load), so there's no confidence filtering to do.
-        // Only the general word-search branch needs the rating-selected second pass below, since it
-        // can return many rows across many candidate matches.
-        $isWordSearch = false;
-
         if ($value instanceof SpecificEntitiesSearchValue) {
             $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntries($value->getIds());
 
@@ -64,7 +53,6 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             );
 
         } else {
-            $isWordSearch = true;
             // Sense morph is technically not supported by the search engine but there's plenty of them in the
             // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
             // when the migration was implemented, to associate disassociated senses with the right lexical entry, resulting
@@ -144,52 +132,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             : collect([]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, $lexicalEntryIds);
 
-        $result = $this->_bookAdapter->adaptLexicalEntries($lexicalEntries, $inflections, $comments, $value->getWord());
-
-        /*if ($isWordSearch) {
-            $this->attachDerivativesForTopMatches($result);
-        }*/
-
-        return $result;
-    }
-
-    /**
-     * Fetches and attaches descendant ("Derivatives") trees for a rating-selected subset of a
-     * word-search result: any entry can be cited as a derivation's parent, not just formally-typed
-     * roots, but the result set here can be large (up to gloss_repository_maximum_results rows), so
-     * fetching it for every row isn't viable. Instead, only the top-rated, non-old entry of each
-     * language section qualifies (sections are already sorted best-first by BookAdapter, so
-     * `entities[0]` is exactly that) — naturally bounded by the number of language sections shown,
-     * with book_derivatives_maximum_roots_per_page as a defensive cap on top of that.
-     */
-    private function attachDerivativesForTopMatches(array &$result): void
-    {
-        $candidates = [];
-
-        if ($result['single'] ?? false) {
-            $entry = $result['sections'][0]['entities'][0] ?? null;
-            if ($entry !== null && empty($entry->is_old)) {
-                $candidates[$entry->id] = $entry;
-            }
-        } else {
-            foreach ($result['sections'] as $section) {
-                $topEntry = $section['entities'][0] ?? null;
-                if ($topEntry !== null && empty($topEntry->is_old)) {
-                    $candidates[$topEntry->id] = $topEntry;
-                }
-            }
-        }
-
-        if (empty($candidates)) {
-            return;
-        }
-
-        $candidates = array_slice($candidates, 0, config('ed.book_derivatives_maximum_roots_per_page'), preserve_keys: true);
-
-        $descendantDerivationRows = $this->_lexicalEntryDerivationRepository
-            ->getDescendantTreesForLexicalEntries(array_keys($candidates));
-
-        $this->_bookAdapter->attachDerivatives($candidates, $descendantDerivationRows);
+        return $this->_bookAdapter->adaptLexicalEntries($lexicalEntries, $inflections, $comments, $value->getWord());
     }
 
     public function resolveId(int $entityId): array

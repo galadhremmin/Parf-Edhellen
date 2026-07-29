@@ -98,16 +98,10 @@ return [
     'gloss_repository_maximum_results' => env('ED_LEXICAL_ENTRIES_MAXIMUM_RESULTS', 1000),
 
     // maximum number of descendant leaves BookAdapter::adaptDerivatives() will render for a
-    // heavily-cited root (e.g. a common sound-root with many attested descendants)
+    // heavily-cited root (e.g. a common sound-root with many attested descendants). Only applies
+    // at precompute time (RebuildLexicalEntryDerivationData) — there's no live computation to
+    // bound anymore.
     'book_derivatives_maximum_leaves' => env('ED_LEXICAL_ENTRIES_MAXIMUM_LEAVES', 150),
-
-    // maximum number of entries within a single multi-entry result page (e.g. a /w/{word} search)
-    // that BookAdapter::adaptLexicalEntries() will fetch descendant trees for. Candidates are the
-    // top-rated, non-old entry of each language section, so this is naturally bounded by the
-    // number of languages shown on the page — this cap is a safety net for a page with an
-    // unusually large number of language sections, not the primary control. Each candidate's tree
-    // is separately capped at book_derivatives_maximum_leaves.
-    'book_derivatives_maximum_roots_per_page' => env('ED_LEXICAL_ENTRIES_MAXIMUM_ROOTS_PER_PAGE', 50),
 
     // Speech::name values that mark a lexical entry as a root (e.g. √GAL) rather than an
     // ordinary word — used by BookAdapter::adaptDerivations() to flag root ancestors so the

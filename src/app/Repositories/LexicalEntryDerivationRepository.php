@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDerivation;
+use App\Models\LexicalEntryDerivationData;
 use App\Models\LexicalEntryPhoneticDevelopment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -73,6 +74,25 @@ class LexicalEntryDerivationRepository
             ->orderBy('order')
             ->get()
             ->groupBy('derivation_group_uuid');
+    }
+
+    /**
+     * Precomputed derivations/derivatives/phonetic-developments for one entry — see
+     * App\Jobs\RebuildLexicalEntryDerivationData, which populates this table on import. No live
+     * fallback: a missing row means the entry has none of the three, and self-heals on the next
+     * import's rebuild.
+     */
+    public function getPrecomputedDerivationData(int $lexicalEntryId): ?LexicalEntryDerivationData
+    {
+        return LexicalEntryDerivationData::find($lexicalEntryId);
+    }
+
+    /**
+     * Batched version of getPrecomputedDerivationData() for a page of entries at once.
+     */
+    public function getPrecomputedDerivationDataForLexicalEntries($lexicalEntryIds): Collection
+    {
+        return LexicalEntryDerivationData::whereIn('lexical_entry_id', $lexicalEntryIds)->get()->keyBy('lexical_entry_id');
     }
 
     public function getPhoneticDevelopmentsForLexicalEntry(int $lexicalEntryId): Collection

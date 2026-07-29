@@ -3,8 +3,10 @@
 namespace Tests\Unit;
 
 use App\Adapters\BookAdapter;
+use App\Jobs\RebuildLexicalEntryDerivationData;
 use App\Models\Gloss;
 use App\Models\LexicalEntryDerivation;
+use App\Models\LexicalEntryDerivationData;
 use App\Models\LexicalEntryPhoneticDevelopment;
 use App\Models\Speech;
 use App\Repositories\LexicalEntryDerivationRepository;
@@ -130,35 +132,37 @@ class BookAdapterTest extends TestCase
         ]));
         $derivationRepository->resolveParentReferences();
 
-        $child->load(
-            'lexical_entry_derivations.parent_lexical_entry.word', 'lexical_entry_derivations.parent_lexical_entry.glosses',
-            'lexical_entry_phonetic_developments',
-        );
+        // Precomputed by RebuildLexicalEntryDerivationData — nothing is computed live anymore, so
+        // the test has to populate lexical_entry_derivation_data the same way production does.
+        $this->rebuildDerivationData();
+        $child->precomputed_derivation_data = LexicalEntryDerivationData::find($child->id);
 
         $adapted = $this->_adapter->adaptLexicalEntry($child, new Collection([$child->language]));
 
         $this->assertCount(2, $adapted->derivations);
 
-        $resolvedChain = collect($adapted->derivations)->first(fn ($chain) => $chain->first()['parent_lexical_entry_id'] === $root->id);
+        // Precomputed data round-trips through JSON storage, so nested chains are plain arrays,
+        // not Collections — unlike the adaptDerivations() output before it's persisted.
+        $resolvedChain = collect($adapted->derivations)->first(fn ($chain) => $chain[0]['parent_lexical_entry_id'] === $root->id);
         $this->assertNotNull($resolvedChain);
-        $this->assertEquals($root->language_id, $resolvedChain->first()['parent_language_id']);
-        $this->assertStringContainsString((string) $root->id, $resolvedChain->first()['parent_url']);
-        $this->assertEquals($root->word->word, $resolvedChain->first()['parent_word']);
-        $this->assertEquals('Reconstructed', $resolvedChain->first()['parent_label']);
+        $this->assertEquals($root->language_id, $resolvedChain[0]['parent_language_id']);
+        $this->assertStringContainsString((string) $root->id, $resolvedChain[0]['parent_url']);
+        $this->assertEquals($root->word->word, $resolvedChain[0]['parent_word']);
+        $this->assertEquals('Reconstructed', $resolvedChain[0]['parent_label']);
         // Only the first gloss is shown, not every sense joined — an ancestor can carry several
         // overlapping senses recorded across citations, and joining all of them reads as garbled.
-        $this->assertEquals('test 0', $resolvedChain->first()['parent_gloss']);
+        $this->assertEquals('test 0', $resolvedChain[0]['parent_gloss']);
 
-        $unresolvedChain = collect($adapted->derivations)->first(fn ($chain) => $chain->first()['parent_lexical_entry_id'] === null);
+        $unresolvedChain = collect($adapted->derivations)->first(fn ($chain) => $chain[0]['parent_lexical_entry_id'] === null);
         $this->assertNotNull($unresolvedChain);
-        $this->assertNull($unresolvedChain->first()['parent_url']);
-        $this->assertTrue($unresolvedChain->first()['is_uncertain']);
-        $this->assertNull($unresolvedChain->first()['parent_word']);
-        $this->assertNull($unresolvedChain->first()['parent_label']);
-        $this->assertNull($unresolvedChain->first()['parent_gloss']);
+        $this->assertNull($unresolvedChain[0]['parent_url']);
+        $this->assertTrue($unresolvedChain[0]['is_uncertain']);
+        $this->assertNull($unresolvedChain[0]['parent_word']);
+        $this->assertNull($unresolvedChain[0]['parent_label']);
+        $this->assertNull($unresolvedChain[0]['parent_gloss']);
 
         $this->assertCount(1, $adapted->phonetic_developments);
-        $this->assertEquals(['kirisse', 'krist'], $adapted->phonetic_developments[0]->pluck('word')->toArray());
+        $this->assertEquals(['kirisse', 'krist'], collect($adapted->phonetic_developments[0])->pluck('word')->toArray());
     }
 
     /**
@@ -198,6 +202,7 @@ class BookAdapterTest extends TestCase
             ]),
         ]));
         $derivationRepository->resolveParentReferences();
+        $this->rebuildDerivationData();
 
         $rows = resolve(LexicalEntryRepository::class)->getLexicalEntries([$child->id]);
         $this->assertEquals(\stdClass::class, get_class($rows[0]));
@@ -244,6 +249,7 @@ class BookAdapterTest extends TestCase
             ]),
         ]), collect([]));
         $derivationRepository->resolveParentReferences();
+        $this->rebuildDerivationData();
 
         $rootEntity = resolve(LexicalEntryRepository::class)->getLexicalEntry($root->id)->first();
         $this->assertNotEquals($root->language_id, $noldorinId);
@@ -555,6 +561,17 @@ class BookAdapterTest extends TestCase
 
         // Uncertain gloss should be about 10% of certain gloss rating
         $this->assertEquals($uncertainLexicalEntry->rating, $certainLexicalEntry->rating * 0.1, '', 0.1);
+    }
+
+    /**
+     * Runs RebuildLexicalEntryDerivationData::handle() directly rather than via dispatchSync() —
+     * dispatchSync() silently no-ops here (its interaction with the Queue::fake() set up in
+     * setUp() leaves the job never actually executing), so tests need this to reliably populate
+     * lexical_entry_derivation_data the same way production's queued dispatch does.
+     */
+    private function rebuildDerivationData(): void
+    {
+        app()->call([new RebuildLexicalEntryDerivationData, 'handle']);
     }
 
     /**

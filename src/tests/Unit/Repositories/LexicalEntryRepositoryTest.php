@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Jobs\RebuildLexicalEntryDerivationData;
 use App\Models\Gloss;
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDerivation;
@@ -313,19 +314,27 @@ class LexicalEntryRepositoryTest extends TestCase
         ]));
         $derivationRepository->resolveParentReferences();
 
+        // Precomputed by RebuildLexicalEntryDerivationData — nothing is computed live anymore.
+        app()->call([new RebuildLexicalEntryDerivationData, 'handle']);
+
         $rows = $r->getLexicalEntries([$child->id]);
 
         // One row per gloss (the query joins glosses without aggregating) — all sharing the
-        // same lexical_entry_id, so each carries the same attached derivation/development rows.
+        // same lexical_entry_id, so each carries the same attached precomputed data.
         $this->assertCount(count($glosses), $rows);
         $this->assertEquals(\stdClass::class, get_class($rows[0]));
-        $this->assertCount(1, $rows[0]->lexical_entry_derivations);
-        $this->assertEquals($root->id, $rows[0]->lexical_entry_derivations->first()->parent_lexical_entry_id);
-        $this->assertCount(1, $rows[0]->lexical_entry_phonetic_developments);
+        $this->assertNotNull($rows[0]->precomputed_derivation_data);
+        $this->assertCount(1, $rows[0]->precomputed_derivation_data->derivations);
+        $this->assertEquals($root->id, $rows[0]->precomputed_derivation_data->derivations[0][0]['parent_lexical_entry_id']);
+        $this->assertCount(1, $rows[0]->precomputed_derivation_data->phonetic_developments);
 
-        // An entry without derivations still gets an (empty) collection, not a missing property.
+        // The root itself has no derivations/phonetic-developments of its own, but it does have a
+        // precomputed row — it's cited as the child's parent, so it has a non-empty derivatives
+        // (descendant) tree.
         $rootRows = $r->getLexicalEntries([$root->id]);
-        $this->assertCount(0, $rootRows[0]->lexical_entry_derivations);
-        $this->assertCount(0, $rootRows[0]->lexical_entry_phonetic_developments);
+        $this->assertNotNull($rootRows[0]->precomputed_derivation_data);
+        $this->assertCount(0, $rootRows[0]->precomputed_derivation_data->derivations);
+        $this->assertCount(0, $rootRows[0]->precomputed_derivation_data->phonetic_developments);
+        $this->assertCount(1, $rootRows[0]->precomputed_derivation_data->derivatives['children']);
     }
 }
