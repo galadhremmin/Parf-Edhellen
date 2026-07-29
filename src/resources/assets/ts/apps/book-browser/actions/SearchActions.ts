@@ -11,7 +11,6 @@ import type {
 } from '@root/connectors/backend/IBookApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import { stringHashAll } from '@root/utilities/func/hashing';
 import { mapArrayGroupBy } from '@root/utilities/func/mapper';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
 import { capitalize } from '@root/utilities/func/string-manipulation';
@@ -54,11 +53,13 @@ export default class SearchActions {
                 try {
                     const rawResults = await this._api.find(args);
 
-                    // generate a unique ID for each result item. We need to use an counter since
-                    // the keyword and the normalized keyword both may not be unique.
+                    // generate a unique ID for each result item. We need to use a counter since
+                    // the keyword and the normalized keyword both may not be unique, and a hash of
+                    // their contents isn't collision-free either (32-bit hash space).
+                    let nextId = 0;
                     keywords = mapArrayGroupBy<IFindEntity, ISearchResult>({
                         groupId: 'g',
-                        id: (v) => stringHashAll(v.k, v.nk, v.ok, v.g.toString(10)),
+                        id: () => nextId++,
                         normalizedWord: 'nk',
                         originalWord: 'ok',
                         word: 'k',

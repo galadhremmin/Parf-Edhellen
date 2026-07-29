@@ -34,6 +34,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
     const [ showUnusualLanguages, setShowUnusualLanguages ] = useState<boolean>(false);
 
     const {
+        dispatch,
         entityMorph,
         forceShowUnusualLanguages,
         languageDictionary,
@@ -59,7 +60,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         const actions = new SearchActions();
         actionsRef.current = actions;
 
-        const __onPopState = onPopState.bind(this, actionsRef.current, actions);
+        const __onPopState = onPopState.bind(this, actionsRef.current, dispatch);
         window.addEventListener('popstate', __onPopState);
 
         return () => {

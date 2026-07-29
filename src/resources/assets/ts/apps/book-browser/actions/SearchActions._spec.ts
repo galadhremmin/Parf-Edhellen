@@ -8,7 +8,6 @@ import {
 import * as sinon from 'sinon';
 
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
-import { stringHashAll } from '@root/utilities/func/hashing';
 
 import SearchActions from '../actions/SearchActions';
 import type { ISearchAction } from '../reducers/SearchReducer._types';
@@ -66,9 +65,9 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
         expect(fakeDispatch.secondCall.args.length).toEqual(1);
         expect(fakeDispatch.secondCall.args[0].type).toEqual(Actions.ReceiveSearchResults);
 
-        const items = TestSearchResults.keywords.map((r) => ({
+        const items = TestSearchResults.keywords.map((r, index) => ({
             groupId: r.g,
-            id: stringHashAll(r.k, r.nk, r.ok, r.g.toString(10)),
+            id: index,
             normalizedWord: r.nk,
             originalWord: r.ok,
             word: r.k,

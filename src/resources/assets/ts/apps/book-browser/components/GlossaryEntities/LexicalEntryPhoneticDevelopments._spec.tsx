@@ -135,6 +135,35 @@ describe('apps/book-browser/components/GlossaryEntities/LexicalEntryPhoneticDeve
         expect(sources).toEqual(['✦ Let/426', '✦ PE17/025', '✦ PE17/050']);
     });
 
+    test('dedupes sources when two distinct citations collapsed into one row share the same source', () => {
+        // Two different derivation records (different groupUuid) can independently cite the
+        // same source page for what collapses into a single Development/Stages row. Listing the
+        // source twice would be wrong content and duplicate the React key it's rendered with.
+        const identicalChain = () => [
+            makeStep({ order: 0, word: 'galadā' }),
+            makeStep({ order: 1, word: 'galada', rule: '-Să', previousWord: 'galadā' }),
+        ];
+
+        const { container } = render(<LexicalEntryPhoneticDevelopments
+            derivations={[
+                [makeDerivation({ groupUuid: 'a', source: 'PE17/151' })],
+                [makeDerivation({ groupUuid: 'b', source: 'PE17/151' })],
+            ]}
+            phoneticDevelopments={[
+                identicalChain().map((s) => ({ ...s, groupUuid: 'a' })),
+                identicalChain().map((s) => ({ ...s, groupUuid: 'b' })),
+            ]}
+            word="galadh"
+        />);
+
+        const rows = container.querySelectorAll('.LexicalEntryPhoneticDevelopments--row');
+        expect(rows).toHaveLength(1);
+
+        const sources = Array.from(rows[0].querySelectorAll('.LexicalEntryPhoneticDevelopments--source'))
+            .map((el) => el.textContent);
+        expect(sources).toEqual(['✦ PE17/151']);
+    });
+
     test('keeps a distinct row for a citation with a genuinely different chain (e.g. NM/352\'s shorter derivation)', () => {
         const { container } = render(<LexicalEntryPhoneticDevelopments
             derivations={[

@@ -5,6 +5,7 @@ import {
     test,
 } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
+import * as sinon from 'sinon';
 
 import type { ILexicalEntryEntity, IEntitiesResponse } from '@root/connectors/backend/IBookApi';
 import setupContainer from '@root/di/config';
@@ -85,6 +86,32 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
             const expectedOldWords = expectedWords.filter((entry) => !! entry.isOld);
             expect(demotedCards).toHaveLength(expectedOldWords.length);
             expect(container.textContent).toContain('Older sources');
+        });
+    });
+
+    test('dispatches the real Redux dispatch (not the SearchActions instance) on popstate', async () => {
+        const dispatch = sinon.spy();
+
+        render(<GlossaryEntities
+            dispatch={dispatch}
+            sections={{}}
+            isEmpty={true}
+            loading={false}
+            single={false}
+            word=""
+        />);
+
+        window.dispatchEvent(new PopStateEvent('popstate', {
+            state: {
+                glossary: true,
+                groupId: 1,
+                word: 'galadh',
+            },
+        }));
+
+        await waitFor(() => {
+            expect(dispatch.calledOnce).toBe(true);
+            expect(typeof dispatch.firstCall.args[0]).toBe('function');
         });
     });
 });
