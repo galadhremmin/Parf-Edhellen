@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\SearchDefinition;
 use App\Models\SearchViewEvent;
+use App\Models\SearchViewHourlyStat;
 use Carbon\Carbon;
 
 class TrendingRepository
@@ -46,12 +47,14 @@ class TrendingRepository
 
     public function getViewsPerHour(Carbon $from, Carbon $to): array
     {
-        return SearchViewEvent::query()
-            ->selectRaw("DATE_FORMAT(viewed_at, '%Y-%m-%d %H:00') AS date, COUNT(*) AS count")
-            ->whereBetween('viewed_at', [$from, $to])
-            ->groupByRaw("DATE_FORMAT(viewed_at, '%Y-%m-%d %H:00')")
-            ->orderBy('date')
+        return SearchViewHourlyStat::query()
+            ->whereBetween('hour', [$from, $to])
+            ->orderBy('hour')
             ->get()
+            ->map(fn (SearchViewHourlyStat $stat) => [
+                'date' => $stat->hour->format('Y-m-d H:00'),
+                'count' => $stat->views,
+            ])
             ->toArray();
     }
 

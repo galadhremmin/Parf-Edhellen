@@ -45,7 +45,7 @@ function groupByDevelopmentAndStages(
 
         const group = groups.get(key);
         if (group) {
-            if (primary?.source) {
+            if (primary?.source && ! group.sources.includes(primary.source)) {
                 group.sources.push(primary.source);
             }
         } else {

@@ -6,6 +6,7 @@ use App\Models\SearchDefinition;
 use App\Models\SearchViewEvent;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SearchDefinitionRepository
 {
@@ -42,6 +43,14 @@ class SearchDefinitionRepository
             'search_id' => $id,
             'viewed_at' => Carbon::now(),
         ]);
+
+        // Atomic upsert-increment; Eloquent has no equivalent for "update = existing + 1" on conflict.
+        DB::statement(
+            'INSERT INTO search_view_hourly_stats (hour, views, created_at, updated_at)
+             VALUES (?, 1, NOW(), NOW())
+             ON DUPLICATE KEY UPDATE views = views + 1',
+            [Carbon::now()->startOfHour()]
+        );
     }
 
     /**

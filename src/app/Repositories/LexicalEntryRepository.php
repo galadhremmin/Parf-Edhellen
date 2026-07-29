@@ -12,9 +12,7 @@ use App\Models\Gloss;
 use App\Models\Keyword;
 use App\Models\Language;
 use App\Models\LexicalEntry;
-use App\Models\LexicalEntryDerivation;
 use App\Models\LexicalEntryDetail;
-use App\Models\LexicalEntryPhoneticDevelopment;
 use App\Models\Sense;
 use App\Models\Versioning\GlossVersion;
 use App\Models\Versioning\LexicalEntryDetailVersion;
@@ -94,11 +92,6 @@ class LexicalEntryRepository
             return $q;
         });
 
-        // Derivatives are deliberately NOT fetched here: this path can return up to $limit rows,
-        // and which (if any) deserve a descendant tree depends on match confidence — a signal that
-        // only exists after BookAdapter ranks the adapted results. See
-        // BookAdapter::adaptLexicalEntries()'s $includeDerivatives second pass, which fetches
-        // derivatives for a small, rating-selected subset after the fact instead.
         return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
@@ -116,9 +109,7 @@ class LexicalEntryRepository
             return $q->whereIn('g.id', $ids);
         });
 
-        // This is the direct id-lookup path (e.g. /wt/{id}) — a single-entry page load, so it's
-        // safe/expected to also carry descendant ("Derivatives") tree data.
-        return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources, includeDerivatives: true);
+        return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
     /**
@@ -140,8 +131,7 @@ class LexicalEntryRepository
             return $q;
         });
 
-        // Also a direct page-load path (external-source lookup) — see getLexicalEntries() above.
-        return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources, includeDerivatives: true);
+        return $this->getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
     /**
@@ -152,23 +142,17 @@ class LexicalEntryRepository
     public function getLexicalEntry(int $id)
     {
         $lexicalEntry = LexicalEntry::where('id', $id)
-            ->with(
-                'account', 'sense', 'speech', 'sense.word', 'lexical_entry_group', 'word', 'glosses', 'lexical_entry_details',
-                'lexical_entry_derivations.parent_lexical_entry.word', 'lexical_entry_derivations.parent_lexical_entry.glosses',
-            )
+            ->with('account', 'sense', 'speech', 'sense.word', 'lexical_entry_group', 'word', 'glosses', 'lexical_entry_details')
             ->first();
 
         if ($lexicalEntry === null) {
             return new Collection; // Empty collection, i.e. no lexical entry was found.
         }
 
-        // Not eager-loadable via `with()` — the descendant tree needs two separate queries
-        // (see getDescendantTree()) — so it's attached as a synthetic relation instead, read
-        // back via relationLoaded() in BookAdapter the same way the other two are.
-        $lexicalEntry->setRelation(
-            'descendant_derivation_rows',
-            $this->_lexicalEntryDerivationRepository->getDescendantTree($lexicalEntry->id),
-        );
+        // Precomputed at import time — see RebuildLexicalEntryDerivationData. No live fallback: a
+        // missing row just means the entry has no derivations/derivatives/phonetic-developments
+        // until the next rebuild.
+        $lexicalEntry->precomputed_derivation_data = $this->_lexicalEntryDerivationRepository->getPrecomputedDerivationData($id);
 
         return new Collection([$lexicalEntry]);
     }
@@ -686,21 +670,14 @@ class LexicalEntryRepository
     }
 
     /**
-     * Executes a query created by `createLexicalEntryQuery` and attaches lexical entry details,
-     * derivations, and phonetic developments through separate queries. Joining any of these
-     * tables onto the main query would yield a cross product of rows per entry, inflating the
-     * result set and making the row limit unpredictable.
-     *
-     * $includeDerivatives additionally attaches the "words derived from this entry" descendant
-     * tree data (two more indexed queries, batched across the whole result set). Any entry can
-     * be cited as a derivation's parent, not just formally-typed roots, so this isn't restricted
-     * by entry type — it defaults to false because the descendant tree can fan out widely for
-     * heavily-cited entries; callers whose result set is guaranteed small (a direct id/external-id
-     * page load, at most a handful of rows) should opt in. General multi-entry search results
-     * should not — see BookAdapter::adaptLexicalEntries()'s $includeDerivatives second pass instead,
-     * which fetches derivatives only for a small, rating-selected subset after ranking.
+     * Executes a query created by `createLexicalEntryQuery` and attaches lexical entry details plus
+     * precomputed derivations/derivatives/phonetic-developments (see
+     * RebuildLexicalEntryDerivationData — none of these are computed live, for any result set
+     * size). Joining lexical_entry_details onto the main query would yield a cross product of rows
+     * per entry, inflating the result set and making the row limit unpredictable, so it's fetched
+     * through a separate query instead.
      */
-    protected function getLexicalEntriesWithDetails(Builder $query, int $limit, bool $includeDerivatives = false): array
+    protected function getLexicalEntriesWithDetails(Builder $query, int $limit): array
     {
         $rows = $query->limit($limit)->get();
 
@@ -721,30 +698,13 @@ class LexicalEntryRepository
                     })->values();
                 });
 
-        $derivationsByEntryId = $entryIds->isEmpty()
+        $precomputedByEntryId = $entryIds->isEmpty()
             ? collect([])
-            : LexicalEntryDerivation::whereIn('lexical_entry_id', $entryIds)
-                ->with('parent_lexical_entry.word', 'parent_lexical_entry.glosses')
-                ->get()
-                ->groupBy('lexical_entry_id');
-
-        $phoneticDevelopmentsByEntryId = $entryIds->isEmpty()
-            ? collect([])
-            : LexicalEntryPhoneticDevelopment::whereIn('lexical_entry_id', $entryIds)
-                ->get()
-                ->groupBy('lexical_entry_id');
-
-        // Shared across every row rather than queried per-entry — BookAdapter::adaptDerivatives()
-        // filters it down to whichever hypotheses actually name that row as an ancestor.
-        $descendantDerivationRows = $includeDerivatives && ! $entryIds->isEmpty()
-            ? $this->_lexicalEntryDerivationRepository->getDescendantTreesForLexicalEntries($entryIds)
-            : collect();
+            : $this->_lexicalEntryDerivationRepository->getPrecomputedDerivationDataForLexicalEntries($entryIds);
 
         foreach ($rows as $row) {
             $row->lexical_entry_details = $detailsByEntryId->get($row->id, collect([]));
-            $row->lexical_entry_derivations = $derivationsByEntryId->get($row->id, collect([]));
-            $row->lexical_entry_phonetic_developments = $phoneticDevelopmentsByEntryId->get($row->id, collect([]));
-            $row->lexical_entry_derivative_rows = $descendantDerivationRows;
+            $row->precomputed_derivation_data = $precomputedByEntryId->get($row->id);
         }
 
         return $rows->all();

@@ -307,18 +307,12 @@ class BookAdapter
                     'type' => $d->type,
                 ]);
             });
-            $lexicalEntry->derivations = $entity->relationLoaded('lexical_entry_derivations')
-                ? $this->adaptDerivations($entity->lexical_entry_derivations, $linker)
-                : [];
-            $lexicalEntry->phonetic_developments = $entity->relationLoaded('lexical_entry_phonetic_developments')
-                ? $this->adaptPhoneticDevelopments($entity->lexical_entry_phonetic_developments)
-                : [];
-            // Only populated for the single-entry view (LexicalEntryRepository::getLexicalEntry())
-            // — the descendant tree can fan out widely for heavily-cited roots, so it's
-            // deliberately not loaded for multi-entry glossary/search results.
-            $lexicalEntry->derivatives = $entity->relationLoaded('descendant_derivation_rows')
-                ? $this->adaptDerivatives($entity->descendant_derivation_rows, $entity->id, $linker)
-                : ['children' => [], 'truncated' => false];
+            // Precomputed at import time by RebuildLexicalEntryDerivationData (see
+            // LexicalEntryRepository::getLexicalEntry()) — none of these are computed live.
+            $precomputed = $entity->precomputed_derivation_data ?? null;
+            $lexicalEntry->derivations = $precomputed->derivations ?? [];
+            $lexicalEntry->phonetic_developments = $precomputed->phonetic_developments ?? [];
+            $lexicalEntry->derivatives = $precomputed->derivatives ?? ['children' => [], 'truncated' => false];
 
             unset(
                 $lexicalEntry->word_id,
@@ -337,18 +331,15 @@ class BookAdapter
             // (speech name) is already selected as `s.name as type` by the raw query builder.
             $lexicalEntry->is_root = in_array($lexicalEntry->type ?? null, config('ed.book_root_speech_names'), true);
             $lexicalEntry->all_glosses = $lexicalEntry->glosses->map(fn ($g) => $g->translation)->implode($separator);
-            $lexicalEntry->derivations = property_exists($lexicalEntry, 'lexical_entry_derivations')
-                ? $this->adaptDerivations($lexicalEntry->lexical_entry_derivations, $linker)
-                : [];
-            $lexicalEntry->phonetic_developments = property_exists($lexicalEntry, 'lexical_entry_phonetic_developments')
-                ? $this->adaptPhoneticDevelopments($lexicalEntry->lexical_entry_phonetic_developments)
-                : [];
-            // Only carries rows when the caller opted into $includeDerivatives on
-            // getLexicalEntriesWithDetails() (single/few-entry page loads) — empty for the
-            // general multi-entry search flow, where the descendant tree isn't fetched at all.
-            $lexicalEntry->derivatives = property_exists($lexicalEntry, 'lexical_entry_derivative_rows')
-                ? $this->adaptDerivatives($lexicalEntry->lexical_entry_derivative_rows, $lexicalEntry->id, $linker)
-                : ['children' => [], 'truncated' => false];
+            // Precomputed at import time by RebuildLexicalEntryDerivationData (see
+            // LexicalEntryRepository::getLexicalEntriesWithDetails()) — none of these are computed
+            // live, for any result set size.
+            $precomputed = property_exists($lexicalEntry, 'precomputed_derivation_data')
+                ? $lexicalEntry->precomputed_derivation_data
+                : null;
+            $lexicalEntry->derivations = $precomputed->derivations ?? [];
+            $lexicalEntry->phonetic_developments = $precomputed->phonetic_developments ?? [];
+            $lexicalEntry->derivatives = $precomputed->derivatives ?? ['children' => [], 'truncated' => false];
         }
 
         if (! empty($lexicalEntry->comments)) {
@@ -430,50 +421,56 @@ class BookAdapter
     }
 
     /**
-     * Collects every language ID referenced by the specified lexical entries' derivation rows,
-     * so the caller can widen its language lookup beyond just the entries' own languages — a
-     * derivation's parent is frequently in a different (often older) language than the entry
-     * itself. Handles both the Eloquent and query-builder stdClass row shapes, mirroring the
-     * relationLoaded()/property_exists() pattern used in adaptLexicalEntry().
+     * Collects every language ID referenced by the specified lexical entries' precomputed
+     * derivations/derivatives, so the caller can widen its language lookup beyond just the
+     * entries' own languages — a derivation's parent (or a descendant, in the derivatives tree)
+     * is frequently in a different (often older) language than the entry itself. Reads
+     * `precomputed_derivation_data` directly (set uniformly by LexicalEntryRepository on both
+     * Eloquent and stdClass rows) rather than any live relation — nothing here is computed live.
      */
     private function collectReferencedLanguageIds(array $lexicalEntries): array
     {
         $ids = [];
         foreach ($lexicalEntries as $lexicalEntry) {
-            $derivations = $lexicalEntry instanceof LexicalEntry || $lexicalEntry instanceof LexicalEntryVersion
-                ? ($lexicalEntry->relationLoaded('lexical_entry_derivations') ? $lexicalEntry->lexical_entry_derivations : collect())
-                : ($lexicalEntry->lexical_entry_derivations ?? collect());
-
-            foreach ($derivations as $d) {
-                if ($d->parent_language_id) {
-                    $ids[] = $d->parent_language_id;
-                }
+            $precomputed = $lexicalEntry->precomputed_derivation_data ?? null;
+            if ($precomputed === null) {
+                continue;
             }
 
-            // Derivatives (descendant tree) rows are grouped by derivation_group_uuid — a
-            // Collection of Collections, unlike the flat lexical_entry_derivations above. Each
-            // row can reference a language via its own citation (parent_language_id) or, for
-            // the leaf/resolved end of the chain, via the resolved entry's own language_id —
-            // both need to be in the dictionary, or LexicalEntryDerivatives silently drops the
-            // language badge for descendants in a language the top-level search results never
-            // otherwise reference (e.g. a root's descendants spanning several languages).
-            $descendantRows = $lexicalEntry instanceof LexicalEntry || $lexicalEntry instanceof LexicalEntryVersion
-                ? ($lexicalEntry->relationLoaded('descendant_derivation_rows') ? $lexicalEntry->descendant_derivation_rows : collect())
-                : ($lexicalEntry->lexical_entry_derivative_rows ?? collect());
-
-            foreach ($descendantRows as $chain) {
-                foreach ($chain as $row) {
-                    if ($row->parent_language_id) {
-                        $ids[] = $row->parent_language_id;
-                    }
-                    if ($row->lexical_entry?->language_id) {
-                        $ids[] = $row->lexical_entry->language_id;
+            foreach ($precomputed->derivations ?? [] as $chain) {
+                foreach ($chain as $step) {
+                    if (! empty($step['parent_language_id'])) {
+                        $ids[] = $step['parent_language_id'];
                     }
                 }
             }
+
+            // The derivatives tree can reference languages at any depth (a root's descendants can
+            // span several languages), so this needs a recursive walk — see
+            // collectDerivativeLanguageIds().
+            $ids = array_merge($ids, $this->collectDerivativeLanguageIds($precomputed->derivatives['children'] ?? []));
         }
 
         return array_unique($ids);
+    }
+
+    /**
+     * Recursively walks a precomputed derivatives tree (BookAdapter::adaptDerivatives()'s output
+     * shape) collecting every node's language_id, at every depth.
+     */
+    private function collectDerivativeLanguageIds(array $children): array
+    {
+        $ids = [];
+        foreach ($children as $node) {
+            if (! empty($node['language_id'])) {
+                $ids[] = $node['language_id'];
+            }
+            if (! empty($node['children'])) {
+                $ids = array_merge($ids, $this->collectDerivativeLanguageIds($node['children']));
+            }
+        }
+
+        return $ids;
     }
 
     /**
@@ -555,21 +552,22 @@ class BookAdapter
     }
 
     /**
-     * Attaches already-fetched descendant ("Derivatives") tree data onto each of the given adapted
-     * entries' `derivatives` property. Pure transform: this does not query anything — it's the
-     * caller's job to decide which entries deserve a tree and to fetch $groupedDerivationRows (e.g.
-     * via LexicalEntryDerivationRepository::getDescendantTreesForLexicalEntries()). Deciding *which*
-     * entries qualify is a ranking/orchestration concern, not something an adapter should reach
-     * into a repository to resolve on its own — that lives in the resolver that already coordinates
-     * repositories and this adapter (see GlossSearchIndexResolver::resolve()).
-     *
-     * @param  array<int, \stdClass>  $entriesById  adapted entries keyed by their own lexical entry ID
+     * Builds the full precomputed payload for one lexical entry — own ancestor chain
+     * (derivations), own sound-change chain (phonetic developments), and descendant tree
+     * (derivatives) — from already-fetched raw rows. This is the sole entry point used by
+     * RebuildLexicalEntryDerivationData to populate lexical_entry_derivation_data; nothing in the
+     * live request path calls adaptDerivations()/adaptPhoneticDevelopments()/adaptDerivatives()
+     * directly anymore, since that data is always read back precomputed instead (see
+     * adaptLexicalEntry()).
      */
-    public function attachDerivatives(array $entriesById, Collection $groupedDerivationRows): void
+    public function adaptDerivationData(Collection $ownDerivations, Collection $ownPhoneticDevelopments,
+        Collection $descendantRows, int $lexicalEntryId, LinkHelper $linker): array
     {
-        foreach ($entriesById as $id => $entry) {
-            $entry->derivatives = $this->adaptDerivatives($groupedDerivationRows, $id, $this->_linkHelper);
-        }
+        return [
+            'derivations' => $this->adaptDerivations($ownDerivations, $linker),
+            'phonetic_developments' => $this->adaptPhoneticDevelopments($ownPhoneticDevelopments),
+            'derivatives' => $this->adaptDerivatives($descendantRows, $lexicalEntryId, $linker),
+        ];
     }
 
     /**
