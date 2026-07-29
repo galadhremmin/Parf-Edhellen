@@ -315,7 +315,9 @@ class LexicalEntryRepositoryTest extends TestCase
         $derivationRepository->resolveParentReferences();
 
         // Precomputed by RebuildLexicalEntryDerivationData — nothing is computed live anymore.
-        app()->call([new RebuildLexicalEntryDerivationData, 'handle']);
+        // Scoped to the entries just created — this database carries the real ~20k-row import
+        // dataset, so an unscoped rebuild here takes ~30s per call.
+        app()->call([new RebuildLexicalEntryDerivationData, 'handle'], ['onlyLexicalEntryIds' => [$root->id, $child->id]]);
 
         $rows = $r->getLexicalEntries([$child->id]);
 

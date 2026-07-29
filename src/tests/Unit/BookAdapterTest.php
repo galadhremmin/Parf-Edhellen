@@ -134,7 +134,7 @@ class BookAdapterTest extends TestCase
 
         // Precomputed by RebuildLexicalEntryDerivationData — nothing is computed live anymore, so
         // the test has to populate lexical_entry_derivation_data the same way production does.
-        $this->rebuildDerivationData();
+        $this->rebuildDerivationData([$root->id, $child->id]);
         $child->precomputed_derivation_data = LexicalEntryDerivationData::find($child->id);
 
         $adapted = $this->_adapter->adaptLexicalEntry($child, new Collection([$child->language]));
@@ -202,7 +202,7 @@ class BookAdapterTest extends TestCase
             ]),
         ]));
         $derivationRepository->resolveParentReferences();
-        $this->rebuildDerivationData();
+        $this->rebuildDerivationData([$root->id, $child->id]);
 
         $rows = resolve(LexicalEntryRepository::class)->getLexicalEntries([$child->id]);
         $this->assertEquals(\stdClass::class, get_class($rows[0]));
@@ -249,7 +249,7 @@ class BookAdapterTest extends TestCase
             ]),
         ]), collect([]));
         $derivationRepository->resolveParentReferences();
-        $this->rebuildDerivationData();
+        $this->rebuildDerivationData([$root->id, $child->id]);
 
         $rootEntity = resolve(LexicalEntryRepository::class)->getLexicalEntry($root->id)->first();
         $this->assertNotEquals($root->language_id, $noldorinId);
@@ -568,10 +568,16 @@ class BookAdapterTest extends TestCase
      * dispatchSync() silently no-ops here (its interaction with the Queue::fake() set up in
      * setUp() leaves the job never actually executing), so tests need this to reliably populate
      * lexical_entry_derivation_data the same way production's queued dispatch does.
+     *
+     * Scoped to `$onlyLexicalEntryIds` (the entries the test just created) rather than a full
+     * rebuild — this database carries the real ~20k-row import dataset, so an unscoped rebuild
+     * here takes ~30s per call.
+     *
+     * @param  array<int>  $onlyLexicalEntryIds
      */
-    private function rebuildDerivationData(): void
+    private function rebuildDerivationData(array $onlyLexicalEntryIds): void
     {
-        app()->call([new RebuildLexicalEntryDerivationData, 'handle']);
+        app()->call([new RebuildLexicalEntryDerivationData, 'handle'], ['onlyLexicalEntryIds' => $onlyLexicalEntryIds]);
     }
 
     /**
