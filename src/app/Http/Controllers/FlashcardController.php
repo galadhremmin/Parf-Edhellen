@@ -11,6 +11,7 @@ use App\Models\FlashcardResult;
 use App\Models\Gloss;
 use App\Models\LexicalEntry;
 use App\Models\Speech;
+use DateInterval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -112,6 +113,24 @@ class FlashcardController extends Controller
         ]);
     }
 
+    /**
+     * Identifiers of every part of speech that behaves as a verb.
+     *
+     * Reads the `is_verb` flag rather than looking for a speech literally named "verb": several
+     * rows carry the flag (see the quettaparma_quenyallo_verb_fix migration), and the previous
+     * single-row lookup silently ignored all but one of them.
+     *
+     * @return int[]
+     */
+    private static function getVerbSpeechIds(): array
+    {
+        // Deliberately a new cache key: the previous key held a single integer, and a deployment
+        // that reused it would hand an int to code that now expects an array.
+        return Cache::remember('ed.speech.verb-ids', DateInterval::createFromDateString('1 day'), function () {
+            return Speech::where('is_verb', 1)->pluck('id')->all();
+        });
+    }
+
     public function card(Request $request, int $n = 0)
     {
         $this->validate($request, [
@@ -169,13 +188,28 @@ class FlashcardController extends Controller
 
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
-        $verbSpeechId = Cache::remember('ed.speech.v', 60 * 60 /* seconds */, function () {
-            $speech = Speech::where('name', 'verb')->first();
+        $verbSpeechIds = self::getVerbSpeechIds();
+        $restrictToVerbs = in_array($lexicalEntry->speech_id, $verbSpeechIds, true);
 
-            return $speech ? $speech->id : -1;
-        });
-        if ($lexicalEntry->speech_id !== $verbSpeechId) {
-            $verbSpeechId = -1;
+        $excludedTranslations = config('ed.flashcard_excluded_translations');
+
+        $bindings = ['translation' => $gloss->translation];
+
+        $excludedPlaceholders = [];
+        foreach ($excludedTranslations as $i => $excludedTranslation) {
+            $excludedPlaceholders[] = ':excluded'.$i;
+            $bindings['excluded'.$i] = $excludedTranslation;
+        }
+
+        $speechCondition = '1 = 1';
+        if ($restrictToVerbs) {
+            $speechPlaceholders = [];
+            foreach ($verbSpeechIds as $i => $verbSpeechId) {
+                $speechPlaceholders[] = ':speech'.$i;
+                $bindings['speech'.$i] = $verbSpeechId;
+            }
+
+            $speechCondition = 'g.speech_id IN ('.implode(', ', $speechPlaceholders).')';
         }
 
         // Random selection optimization:
@@ -189,16 +223,11 @@ class FlashcardController extends Controller
             JOIN lexical_entries as g on g.id = t.lexical_entry_id
             WHERE
                 t.translation <> :translation AND
-                t.translation NOT IN(\'?\', \'\', \'[unglossed]\') AND
-                ( :speech0 = -1 OR ( :speech1 > -1 AND :speech2 = g.speech_id) ) AND
+                t.translation NOT IN('.implode(', ', $excludedPlaceholders).') AND
+                '.$speechCondition.' AND
                 t.id >= FLOOR(RAND() * (SELECT MAX(id) FROM glosses))
             ORDER BY t.id 
-            LIMIT 4', [
-            'translation' => $gloss->translation,
-            'speech0' => $verbSpeechId,
-            'speech1' => $verbSpeechId,
-            'speech2' => $verbSpeechId,
-        ]);
+            LIMIT 4', $bindings);
 
         foreach ($fakeOptions as $option) {
             $options[] = $option->translation;

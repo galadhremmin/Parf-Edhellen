@@ -47,6 +47,3 @@
     @endforeach
   </div>
 @endsection
-@section('styles')
-  <link href="@assetpath(/css/app.flashcard.css)" rel="stylesheet">
-@endsection

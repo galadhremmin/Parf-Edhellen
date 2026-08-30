@@ -33,6 +33,7 @@ require 'web-routes/crossword-admin.php';
 require 'web-routes/phrases.php';
 require 'web-routes/word-finder-admin.php';
 require 'web-routes/word-finder.php';
+require 'web-routes/word-lists.php';
 
 require 'web-routes/resources-admin.php';
 require 'web-routes/resources-reviewer.php';

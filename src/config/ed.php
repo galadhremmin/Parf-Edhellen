@@ -108,6 +108,11 @@ return [
     // frontend renders them via RootForm ("√" + uppercase) instead of a plain word.
     'book_root_speech_names' => explode(',', env('ED_BOOK_ROOT_SPEECH_NAMES', 'root')),
 
+    // Placeholder translations that stand in for "we do not know what this means". They must never
+    // be offered as a flashcard answer or distractor. Previously hard coded inside the flashcard
+    // distractor SQL.
+    'flashcard_excluded_translations' => ['?', '', '[unglossed]', '(unglossed)'],
+
     // search index repository configuration
     'search_index_expands_english_infinitives' => true,
 

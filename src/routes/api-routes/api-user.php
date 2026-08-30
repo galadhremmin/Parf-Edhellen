@@ -61,9 +61,6 @@ Route::group([
         ->name('api.word-lists.index');
     Route::post('word-lists', [WordListApiController::class, 'store'])
         ->name('api.word-lists.store');
-    Route::get('word-lists/{id}', [WordListApiController::class, 'show'])
-        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
-        ->name('api.word-lists.show');
     Route::put('word-lists/{id}', [WordListApiController::class, 'update'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.update');
@@ -81,6 +78,12 @@ Route::group([
     Route::delete('word-lists/{id}/entries/{entryId}', [WordListApiController::class, 'removeEntry'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC, 'entryId' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.remove-entry');
+    Route::post('word-lists/{id}/entries/bulk-delete', [WordListApiController::class, 'removeEntries'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.bulk-remove-entries');
+    Route::post('word-lists/{id}/entries/bulk-move', [WordListApiController::class, 'moveEntries'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.bulk-move-entries');
     Route::put('word-lists/{id}/entries/reorder', [WordListApiController::class, 'reorderEntries'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.reorder-entries');

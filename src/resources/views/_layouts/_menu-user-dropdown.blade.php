@@ -18,6 +18,12 @@
       </a>
     </li>
     <li>
+      <a class="dropdown-item {{ active(['word-list.index', 'word-list.show']) }}" href="{{ route('word-list.index') }}">
+        <span class="TextIcon TextIcon--heart" aria-hidden="true"></span>
+        @lang('community.word-lists')
+      </a>
+    </li>
+    <li>
       <a class="dropdown-item {{ active('notifications.index') }}" href="{{ route('notifications.index') }}">
         <span class="TextIcon TextIcon--bell" aria-hidden="true"></span>
         @lang('community.notification-settings')

@@ -346,3 +346,16 @@ Breadcrumbs::for('verification.notice', function (BreadcrumbTrail $breadcrumbs) 
     $breadcrumbs->parent('account.security');
     $breadcrumbs->push('E-mail verification', route('verification.notice'));
 });
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Word lists
+
+Breadcrumbs::for('word-list.index', function (BreadcrumbTrail $breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push(__('word-list.title'), route('word-list.index'));
+});
+
+Breadcrumbs::for('word-list.show', function (BreadcrumbTrail $breadcrumbs, App\Models\WordList $wordList) {
+    $breadcrumbs->parent('word-list.index');
+    $breadcrumbs->push($wordList->name, route('word-list.show', ['id' => $wordList->id]));
+});

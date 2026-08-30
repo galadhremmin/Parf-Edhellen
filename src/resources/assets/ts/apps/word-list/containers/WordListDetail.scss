@@ -1,0 +1,135 @@
+.WordList {
+
+  &--toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  &--filter {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+  }
+
+  &--language-filter,
+  &--sort {
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  &--select-all {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    white-space: nowrap;
+  }
+
+  /* Reserved band above the list. It keeps its height at all times so that selecting the first
+     word does not shift the list downwards; only its visibility changes. */
+  &--bulk-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    min-height: 3rem;
+
+    border-radius: var(--bs-border-radius);
+    background-color: var(--ed-bg-surface);
+
+    &[data-empty="true"] {
+      visibility: hidden;
+    }
+  }
+
+  &--bulk-count {
+    margin-right: 0.25rem;
+  }
+
+  &--list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+
+  &--item {
+    display: flex;
+    // Baseline keeps the checkbox and the remove button aligned with the first line of a word
+    // that wraps onto several lines.
+    align-items: baseline;
+    gap: 0.5rem;
+
+    padding: 0.35rem 0.5rem;
+    border-radius: var(--bs-border-radius);
+
+    &:hover {
+      background-color: var(--ed-bg-surface);
+    }
+  }
+
+  &--item-selected {
+    background-color: var(--ed-bg-surface);
+  }
+
+  &--item[draggable="true"] {
+    cursor: grab;
+  }
+
+  &--select {
+    flex: 0 0 auto;
+  }
+
+  /* The line itself: every part flows inline and wraps naturally, so a long translation never
+     forces the page to scroll sideways. */
+  &--entry {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  &--language {
+    color: var(--ed-text-muted);
+    margin-right: 0.35rem;
+  }
+
+  &--word {
+    font-weight: 600;
+  }
+
+  &--tengwar {
+    margin-left: 0.4rem;
+    color: var(--ed-text-muted);
+  }
+
+  &--type {
+    margin-left: 0.35rem;
+    color: var(--ed-text-muted);
+  }
+
+  &--translation {
+    margin-left: 0.35rem;
+  }
+
+  &--remove {
+    flex: 0 0 auto;
+    padding: 0 0.25rem;
+    /* Kept out of the way until the row is touched, so a long list reads as prose. */
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  &--item:hover &--remove,
+  &--item:focus-within &--remove {
+    opacity: 1;
+  }
+}
+
+/* Pointer-coarse devices have no hover, so the control must always be visible. */
+@media (hover: none) {
+  .WordList--remove {
+    opacity: 1;
+  }
+}

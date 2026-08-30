@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\v3\PasskeyApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SpeechApiController;
 use App\Http\Controllers\Api\v3\UtilityApiController;
+use App\Http\Controllers\Api\v3\WordListApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -54,6 +55,12 @@ Route::group([
     Route::resource('sentence', SentenceApiController::class, ['only' => [
         'show',
     ]]);
+
+    // A word list flagged `is_public` is readable without an account. The controller rejects a
+    // private list belonging to somebody else.
+    Route::get('word-lists/{id}', [WordListApiController::class, 'show'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.show');
 
     Route::get('account/{id}/avatar', [AccountApiController::class, 'getAvatar'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
