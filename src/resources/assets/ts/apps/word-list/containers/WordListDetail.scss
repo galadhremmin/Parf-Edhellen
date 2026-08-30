@@ -1,5 +1,26 @@
 .WordList {
 
+  &--header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  &--visibility {
+    flex: 0 0 auto;
+  }
+
+  &--share {
+    flex: 0 0 auto;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   &--toolbar {
     display: flex;
     flex-wrap: wrap;

@@ -22,6 +22,15 @@ class WordListApiControllerTest extends TestCase
         return $account;
     }
 
+    /**
+     * Drops the acting user. `actingAs` persists for the remainder of the test, so without this a
+     * "guest" request would silently still be authenticated and the assertion would prove nothing.
+     */
+    private function becomeGuest(): void
+    {
+        $this->app->make('auth')->forgetGuards();
+    }
+
     private function makeWordList(Account $account, bool $isPublic = false): WordList
     {
         return WordList::create([
@@ -114,6 +123,62 @@ class WordListApiControllerTest extends TestCase
             ->getJson(route('api.word-lists.show', ['id' => $wordList->id]))
             ->assertOk()
             ->assertJsonCount(1, 'word_list.entries');
+    }
+
+    // -------------------------------------------------------------------------
+    // visibility
+    // -------------------------------------------------------------------------
+
+    public function test_update_makes_a_list_public()
+    {
+        $account = $this->makeAccount();
+        $wordList = $this->makeWordList($account);
+
+        $this->actingAs($account)
+            ->putJson(route('api.word-lists.update', ['id' => $wordList->id]), [
+                'is_public' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('word_list.is_public', true);
+
+        $this->assertTrue((bool) $wordList->fresh()->is_public);
+
+        // ... and is then readable by a guest.
+        $this->becomeGuest();
+        $this->getJson(route('api.word-lists.show', ['id' => $wordList->id]))
+            ->assertOk();
+    }
+
+    public function test_update_makes_a_list_private_again()
+    {
+        $account = $this->makeAccount();
+        $wordList = $this->makeWordList($account, true);
+
+        $this->actingAs($account)
+            ->putJson(route('api.word-lists.update', ['id' => $wordList->id]), [
+                'is_public' => false,
+            ])
+            ->assertOk()
+            ->assertJsonPath('word_list.is_public', false);
+
+        $this->becomeGuest();
+        $this->getJson(route('api.word-lists.show', ['id' => $wordList->id]))
+            ->assertNotFound();
+    }
+
+    public function test_update_refuses_a_list_owned_by_somebody_else()
+    {
+        $owner = $this->makeAccount();
+        $stranger = $this->makeAccount();
+        $wordList = $this->makeWordList($owner);
+
+        $this->actingAs($stranger)
+            ->putJson(route('api.word-lists.update', ['id' => $wordList->id]), [
+                'is_public' => true,
+            ])
+            ->assertNotFound();
+
+        $this->assertFalse((bool) $wordList->fresh()->is_public);
     }
 
     // -------------------------------------------------------------------------

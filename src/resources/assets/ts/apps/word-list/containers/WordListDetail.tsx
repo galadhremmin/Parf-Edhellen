@@ -8,6 +8,7 @@ import { DI } from '@root/di/keys';
 import type { IWordListDetail, IWordListEntry } from '@root/connectors/backend/IWordListApi';
 
 import EntryRow from '../components/EntryRow';
+import ShareWordList from '../components/ShareWordList';
 import type { IProps } from '../index._types';
 import { SortOrder } from './WordListDetail._types';
 
@@ -134,6 +135,10 @@ function WordListDetail(props: IProps) {
         });
     }, []);
 
+    const _onVisibilityChange = useCallback((isPublic: boolean) => {
+        setWordList((previous) => previous === null ? previous : { ...previous, isPublic });
+    }, []);
+
     const _onDeselectAll = useCallback(() => {
         setSelectedIds(new Set());
     }, []);
@@ -231,20 +236,32 @@ function WordListDetail(props: IProps) {
         </div>;
     }
 
-    if (entries.length < 1) {
-        return <div className="alert alert-info">
-            <strong><TextIcon icon="info-sign" /> This list is empty.</strong>
-            <p className="mb-0">
-                Look up a word and press the heart icon to save it here.
-            </p>
-        </div>;
-    }
-
     const numberOfSelected = selectedIds.size;
     const allVisibleSelected = visibleEntries.length > 0
         && visibleEntries.every((entry) => selectedIds.has(entry.lexicalEntryId));
 
+    const isEmpty = entries.length < 1;
+
     return <div className="WordList">
+        <div className="WordList--header">
+            <span className="WordList--visibility text-muted">
+                <TextIcon icon={wordList.isPublic ? 'globe' : 'lock'} />
+                {' '}
+                {wordList.isPublic ? 'Public' : 'Private'}
+            </span>
+            <ShareWordList wordList={wordList}
+                           canEdit={canEdit}
+                           onVisibilityChange={_onVisibilityChange} />
+        </div>
+
+        {isEmpty && <div className="alert alert-info">
+            <strong><TextIcon icon="info-sign" /> This list is empty.</strong>
+            <p className="mb-0">
+                Look up a word and press the heart icon to save it here.
+            </p>
+        </div>}
+
+        {! isEmpty && <>
         <div className="WordList--toolbar">
             <div className="input-group input-group-sm WordList--filter">
                 <span className="input-group-text"><TextIcon icon="search" /></span>
@@ -330,6 +347,7 @@ function WordListDetail(props: IProps) {
         {visibleEntries.length < 1 && <p className="text-muted">
             No words match the current filter.
         </p>}
+        </>}
     </div>;
 }
 

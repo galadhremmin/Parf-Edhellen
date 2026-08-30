@@ -57,7 +57,7 @@
   data-account-roles=""
   @endif
   data-v="{{ config('ed.version') }}">
-<div>
+<div id="ed-site-wrapper">
   <nav class="navbar navbar-expand-lg navbar-dark" id="ed-site-main-menu" data-ad-region="no-ads">
     @include('_layouts._menu-main', [
       'storage' => $storage
