@@ -1,0 +1,75 @@
+@import "../../../_scss/_variables";
+
+// The idle animation types out examples of what the dictionary can look up. The placeholder is
+// deliberately kept quiet — the movement is what draws the eye, not the contrast.
+.SearchQueryInput--field::placeholder {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+
+// A slow, low-contrast breathing on the magnifier while the field is waiting for input.
+@keyframes search-icon-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+.SearchQueryInput--icon.is-idle > .TextIcon {
+  animation: search-icon-breathe 3.4s ease-in-out infinite;
+}
+
+// "Try it" — accepts the example currently being advertised by the placeholder.
+.SearchQueryInput--suggestion {
+  font-family: $font-family-tiny;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  border-left: 1px solid var(--ed-border);
+  background: var(--ed-bg-code);
+  color: var(--ed-link);
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--ed-link);
+    color: #fff; // always white on the primary-colored button
+  }
+
+  // The field is narrow enough on small screens that the placeholder needs all of it.
+  @media (max-width: 575px) {
+    display: none;
+  }
+}
+
+// "Enter ↵" keyboard hint — slides in when results are ready
+@keyframes enter-hint-nudge {
+  0%, 100% { transform: translateX(0); }
+  30%      { transform: translateX(-3px); }
+  60%      { transform: translateX(2px); }
+}
+
+.SearchQueryInput--enter-hint {
+  font-family: $font-family-tiny;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.03em;
+  color: var(--ed-text-faint);
+  white-space: nowrap;
+  border-left: 1px solid var(--ed-border);
+  background: var(--ed-bg-code);
+  padding: 0.25rem 0.6rem;
+  animation: enter-hint-nudge 0.6s ease-out 0.15s 1;
+  cursor: default;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SearchQueryInput--icon.is-idle > .TextIcon {
+    animation: none;
+  }
+
+  .SearchQueryInput--enter-hint {
+    animation: none;
+  }
+}
