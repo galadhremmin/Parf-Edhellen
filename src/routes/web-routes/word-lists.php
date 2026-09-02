@@ -9,9 +9,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/word-lists', [WordListController::class, 'index'])
         ->name('word-list.index');
 
-    // NOTE: the `study` route is added alongside the flashcard deck. It must be registered here,
-    // before the catch-all `{name?}` route below, so that the literal segment is not captured as a
-    // list name.
+    // Registered before the catch-all `{name?}` route below, so that the literal `study` segment
+    // is not captured as a list name.
+    Route::get('/word-lists/{id}/study', [WordListController::class, 'study'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('word-list.study');
 });
 
 // Deliberately outside the auth group: a list flagged `is_public` is readable by anyone. The

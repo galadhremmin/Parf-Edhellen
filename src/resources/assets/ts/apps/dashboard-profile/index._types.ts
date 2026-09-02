@@ -1,5 +1,7 @@
 import type { IAccountEntity } from '@root/connectors/backend/IGlossResourceApi';
 
+import type { IProfileWordList } from './components/ProfileWordLists._types';
+
 export interface IAccountStatistics {
     noOfFlashcards?: number;
     noOfGlosses?: number;
@@ -18,4 +20,5 @@ export interface IProps {
     showProfileLink?: boolean;
     showDiscuss?: boolean;
     statistics?: IAccountStatistics;
+    wordLists?: IProfileWordList[];
 }

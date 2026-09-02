@@ -46,6 +46,7 @@ class WordListAdapter
                 'id' => $wordList->id,
                 'name' => $this->toSeoName($wordList->name),
             ]),
+            'study_url' => route('word-list.study', ['id' => $wordList->id]),
             'created_at' => $wordList->created_at,
             'updated_at' => $wordList->updated_at,
         ];
@@ -73,6 +74,36 @@ class WordListAdapter
             ] : null,
             'entries' => $entries,
         ]);
+    }
+
+    /**
+     * Shapes a word list for somebody browsing the owner's profile: enough to decide whether the
+     * list is worth opening, and nothing that only its owner has any business seeing.
+     *
+     * `preview_words` is populated from whatever entries happen to be loaded, so the caller decides
+     * how many words to fetch. It is a taste of the list, not its contents.
+     */
+    public function adaptPreview(WordList $wordList): array
+    {
+        return [
+            'id' => $wordList->id,
+            'name' => $wordList->name,
+            'description' => $wordList->description,
+            'number_of_entries' => $wordList->lexical_entries_count !== null
+                ? (int) $wordList->lexical_entries_count
+                : null,
+            'preview_words' => $wordList->relationLoaded('lexical_entries')
+                ? $wordList->lexical_entries
+                    ->map(fn (LexicalEntry $lexicalEntry) => $lexicalEntry->word?->word)
+                    ->filter()
+                    ->values()
+                    ->all()
+                : [],
+            'url' => route('word-list.show', [
+                'id' => $wordList->id,
+                'name' => $this->toSeoName($wordList->name),
+            ]),
+        ];
     }
 
     /**

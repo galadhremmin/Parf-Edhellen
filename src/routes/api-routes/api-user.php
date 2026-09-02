@@ -88,6 +88,17 @@ Route::group([
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.reorder-entries');
 
+    // Word list study decks. POST rather than GET on both: the deal is non-deterministic and the
+    // body carries the retry subset, so neither response may be cached.
+    Route::post('word-lists/{id}/deck', [WordListApiController::class, 'deck'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:60,1')
+        ->name('api.word-lists.deck');
+    Route::post('word-lists/{id}/deck/results', [WordListApiController::class, 'deckResults'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:60,1')
+        ->name('api.word-lists.deck-results');
+
     // Passkey management (requires authentication)
     Route::get('passkey', [PasskeyApiController::class, 'getPasskeys'])
         ->middleware('throttle:60,1')

@@ -52,7 +52,7 @@ function Orchestrator({ globalEvents }: IProps) {
         const searchActions = new SearchActions();
         store.dispatch<any>(
             lexicalEntryId //
-                ? searchActions.expandSpecificGloss(lexicalEntryId)
+                ? searchActions.expandSpecificGloss(lexicalEntryId, updateBrowserHistory)
                 : searchActions.loadReference(word, normalizedWord, languageShortName, updateBrowserHistory),
         );
     }, []);

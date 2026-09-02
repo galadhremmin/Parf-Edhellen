@@ -243,16 +243,9 @@ function WordListDetail(props: IProps) {
     const isEmpty = entries.length < 1;
 
     return <div className="WordList">
-        <div className="WordList--header">
-            <span className="WordList--visibility text-muted">
-                <TextIcon icon={wordList.isPublic ? 'globe' : 'lock'} />
-                {' '}
-                {wordList.isPublic ? 'Public' : 'Private'}
-            </span>
-            <ShareWordList wordList={wordList}
-                           canEdit={canEdit}
-                           onVisibilityChange={_onVisibilityChange} />
-        </div>
+        <ShareWordList wordList={wordList}
+                       canEdit={canEdit}
+                       onVisibilityChange={_onVisibilityChange} />
 
         {isEmpty && <div className="alert alert-info">
             <strong><TextIcon icon="info-sign" /> This list is empty.</strong>
@@ -262,6 +255,31 @@ function WordListDetail(props: IProps) {
         </div>}
 
         {! isEmpty && <>
+        {wordList.studyUrl && <div className="alert alert-primary WordList--practise-callout">
+            <div className="WordList--practise-body">
+                <h2 className="WordList--practise-title">
+                    <TextIcon icon="book" />
+                    {' '}
+                    Practise with flashcards
+                </h2>
+                <p className="WordList--practise-text">
+                    Turn {entries.length === 1
+                        ? 'this word'
+                        : `these ${entries.length} words`} into a deck of flashcards and find out
+                    how many you remember. You are shown a word and pick its meaning from a handful
+                    of options. Anything you miss, you can go back over at the end.
+                </p>
+                {canEdit && <p className="WordList--practise-text text-muted">
+                    The list below is yours to tidy up: tick words to remove them, drag them into
+                    the order you want while sorted by <em>My order</em>, and use the filter and
+                    sort controls to find things quickly.
+                </p>}
+            </div>
+            <a className="btn btn-primary WordList--practise" href={wordList.studyUrl}>
+                Practise
+            </a>
+        </div>}
+
         <div className="WordList--toolbar">
             <div className="input-group input-group-sm WordList--filter">
                 <span className="input-group-text"><TextIcon icon="search" /></span>

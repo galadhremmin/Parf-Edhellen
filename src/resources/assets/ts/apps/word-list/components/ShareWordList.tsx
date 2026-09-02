@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import type { FocusEvent, MouseEvent } from 'react';
+import type { FocusEvent } from 'react';
 
 import CopiableTextInput from '@root/components/CopiableTextInput';
-import Dialog from '@root/components/Dialog';
+import Panel from '@root/components/Panel';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import { resolve } from '@root/di';
@@ -17,31 +17,22 @@ const onInputFocus = (ev: FocusEvent<HTMLInputElement>) => {
 };
 
 /**
- * Offers the address of a word list for sharing.
+ * Sharing controls for a word list: whether it is readable by others, and the addresses to hand out.
  *
- * Visibility is a plain public/private flag rather than a secret link: a public list is readable by
- * anybody, whether or not they were given the address. The dialog says so before the owner makes
- * the list public, because "share this with a friend" and "publish this to everyone" are the same
- * action here, and the difference matters to the person deciding.
+ * Presented as a panel on the page rather than behind a link, because the public/private state is
+ * something the owner should be able to see without asking for it — a list they believe is private
+ * and a list that is readable by anybody look otherwise identical.
+ *
+ * Visibility is a plain flag, not a secret link: a public list is readable by everybody, whether or
+ * not they were given the address. The summary says so before the owner makes the list public,
+ * because "share this with a friend" and "publish this to everyone" are the same action here.
  */
 function ShareWordList(props: IProps) {
     const { canEdit, onVisibilityChange, wordList } = props;
 
-    const [ isOpen, setIsOpen ] = useState<boolean>(false);
     const [ isCopied, setIsCopied ] = useState<boolean>(false);
     const [ saving, setSaving ] = useState<boolean>(false);
     const [ failed, setFailed ] = useState<boolean>(false);
-
-    const _onOpen = useCallback((ev: MouseEvent) => {
-        ev.preventDefault();
-        setIsCopied(false);
-        setFailed(false);
-        setIsOpen(true);
-    }, []);
-
-    const _onDismiss = useCallback(() => {
-        setIsOpen(false);
-    }, []);
 
     const _onCopy = useCallback(() => {
         setIsCopied(true);
@@ -70,83 +61,82 @@ function ShareWordList(props: IProps) {
     const markdown = `[${wordList.name}](${url})`;
     const isPublic = wordList.isPublic ?? false;
 
-    return <>
-        <Dialog<void> open={isOpen}
-                      onDismiss={_onDismiss}
-                      actionBar={false}
-                      title={<>Share &ldquo;{wordList.name}&rdquo;</>}>
+    return <Panel className="ShareWordList"
+                  title={<><TextIcon icon="share" /> Sharing</>}
+                  titleButton={<span className={`badge rounded-pill ${isPublic ? 'bg-success' : 'bg-secondary'}`}>
+                      <TextIcon icon={isPublic ? 'globe' : 'lock'} />
+                      {' '}
+                      {isPublic ? 'Public' : 'Private'}
+                  </span>}>
 
-            {failed && <StaticAlert type="danger">
-                We could not change the visibility of this list. Please try again.
-            </StaticAlert>}
+        {failed && <StaticAlert type="danger">
+            We could not change the visibility of this list. Please try again.
+        </StaticAlert>}
 
-            {isCopied && <StaticAlert type="success">
-                <TextIcon icon="info-sign" />{' '}
-                Copied the text! It is now ready to be pasted elsewhere.
-            </StaticAlert>}
+        {isCopied && <StaticAlert type="success">
+            <TextIcon icon="info-sign" />{' '}
+            Copied the text! It is now ready to be pasted elsewhere.
+        </StaticAlert>}
 
-            {! isPublic && <StaticAlert type="warning">
-                <strong><TextIcon icon="lock" /> This list is private.</strong>
-                <p className="mb-0">
-                    Only you can open the address below. Make the list public to let anyone read it.
-                </p>
-            </StaticAlert>}
+        <p className="ShareWordList--summary">
+            {isPublic
+                ? <>Anyone can read this list, including people who were not given the address. It
+                    does not show anything about you beyond your nickname.</>
+                : <>Only you can open the addresses below. Make the list public to let anyone read
+                    it.</>}
+        </p>
 
-            {isPublic && <StaticAlert type="info">
-                <strong><TextIcon icon="globe" /> This list is public.</strong>
-                <p className="mb-0">
-                    Anyone can read it, including people who were not given the address.
-                    It does not show anything about you beyond your nickname.
-                </p>
-            </StaticAlert>}
+        <div className="ShareWordList--links">
+            <div className="ShareWordList--link">
+                <label htmlFor={`ed-share-word-list-url-${wordList.id}`} className="form-label">
+                    Direct link
+                </label>
+                <CopiableTextInput onCopyActionSuccess={_onCopy}
+                                   onCopyActionFail={_onCopyFail}
+                                   type="text"
+                                   className="form-control"
+                                   id={`ed-share-word-list-url-${wordList.id}`}
+                                   value={url}
+                                   readOnly
+                                   onFocus={onInputFocus} />
+            </div>
 
-            <label htmlFor={`ed-share-word-list-url-${wordList.id}`} className="form-label">
-                Direct link
-            </label>
-            <CopiableTextInput formGroupClassName="mb-3"
-                               onCopyActionSuccess={_onCopy}
-                               onCopyActionFail={_onCopyFail}
-                               type="text"
-                               className="form-control"
-                               id={`ed-share-word-list-url-${wordList.id}`}
-                               value={url}
-                               readOnly
-                               onFocus={onInputFocus} />
+            <div className="ShareWordList--link">
+                <label htmlFor={`ed-share-word-list-markdown-${wordList.id}`} className="form-label">
+                    Discuss (markdown link)
+                </label>
+                <CopiableTextInput onCopyActionSuccess={_onCopy}
+                                   onCopyActionFail={_onCopyFail}
+                                   type="text"
+                                   className="form-control"
+                                   id={`ed-share-word-list-markdown-${wordList.id}`}
+                                   value={markdown}
+                                   readOnly
+                                   onFocus={onInputFocus} />
+            </div>
+        </div>
 
-            <label htmlFor={`ed-share-word-list-markdown-${wordList.id}`} className="form-label">
-                Discuss (markdown link)
-            </label>
-            <CopiableTextInput formGroupClassName="mb-3"
-                               onCopyActionSuccess={_onCopy}
-                               onCopyActionFail={_onCopyFail}
-                               type="text"
-                               className="form-control"
-                               id={`ed-share-word-list-markdown-${wordList.id}`}
-                               value={markdown}
-                               readOnly
-                               onFocus={onInputFocus} />
-
-            {canEdit && <div className="ShareWordList--visibility">
+        {canEdit && <div className="ShareWordList--visibility">
+            {isPublic
+                ? <button type="button"
+                          className="btn btn-secondary"
+                          disabled={saving}
+                          onClick={() => void _setVisibility(false)}>
+                    <TextIcon icon="lock" /> Make private
+                  </button>
+                : <button type="button"
+                          className="btn btn-primary"
+                          disabled={saving}
+                          onClick={() => void _setVisibility(true)}>
+                    <TextIcon icon="globe" /> Make public
+                  </button>}
+            <span className="ShareWordList--visibility-hint text-muted">
                 {isPublic
-                    ? <button type="button"
-                              className="btn btn-secondary"
-                              disabled={saving}
-                              onClick={() => void _setVisibility(false)}>
-                        <TextIcon icon="lock" /> Make private
-                      </button>
-                    : <button type="button"
-                              className="btn btn-primary"
-                              disabled={saving}
-                              onClick={() => void _setVisibility(true)}>
-                        <TextIcon icon="globe" /> Make public
-                      </button>}
-            </div>}
-        </Dialog>
-
-        <a href={url} onClick={_onOpen} title={`Share "${wordList.name}"`} className="WordList--share">
-            <TextIcon icon="share" /> Share
-        </a>
-    </>;
+                    ? 'Making it private again hides it from everybody but you.'
+                    : 'You can make it private again at any time.'}
+            </span>
+        </div>}
+    </Panel>;
 }
 
 export default ShareWordList;

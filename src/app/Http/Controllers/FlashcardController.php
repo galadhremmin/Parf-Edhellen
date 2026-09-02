@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\DB;
 
 class FlashcardController extends Controller
 {
+    /**
+     * The language a result is attributed to: the entry's own language, falling back to the deck it
+     * was drawn from, and finally to a catch-all.
+     */
+    private const LANGUAGE_NAME_EXPRESSION = "COALESCE(l.name, fl.name, 'Other')";
+
     private BookAdapter $_bookAdapter;
 
     public function __construct(BookAdapter $bookAdapter)
@@ -47,12 +53,27 @@ class FlashcardController extends Controller
 
         $accountId = $user->id;
 
-        // Traverse flashcard results and count failures versus successes.
-        $statistics = FlashcardResult::where('account_id', $accountId)
-            ->join('flashcards', 'flashcard_results.flashcard_id', 'flashcards.id')
-            ->join('languages', 'flashcards.language_id', 'languages.id')
-            ->groupBy(['languages.name', 'correct'])
-            ->select('languages.name', 'correct', DB::raw('count(*) as numberOfResults'))
+        // Language is sourced from the entry rather than from the flashcard, and joined LEFT.
+        // A word list study session has no flashcard at all, so the previous INNER JOIN dropped
+        // every one of those rows -- out of the per-language breakdown, and out of the total the
+        // "you have reviewed N cards" line reports, which reads to the user as lost history.
+        // Qualified: lexical_entries carries an account_id of its own (the contributor), so the
+        // bare column became ambiguous the moment that table was joined in.
+        $statistics = FlashcardResult::where('flashcard_results.account_id', $accountId)
+            ->leftJoin('lexical_entries as e', 'e.id', 'flashcard_results.lexical_entry_id')
+            ->leftJoin('languages as l', 'l.id', 'e.language_id')
+            ->leftJoin('flashcards as f', 'f.id', 'flashcard_results.flashcard_id')
+            ->leftJoin('languages as fl', 'fl.id', 'f.language_id')
+            // The flashcard's language is kept as a fallback rather than dropped: lexical_entry_id
+            // is nullable and thousands of historical rows have none, and those rows did report a
+            // real language before. Without the fallback they would all slide into "Other", which
+            // looks to the user like their history was reassigned.
+            ->groupBy([DB::raw(self::LANGUAGE_NAME_EXPRESSION), 'correct'])
+            ->select(
+                DB::raw(self::LANGUAGE_NAME_EXPRESSION.' as name'),
+                'correct',
+                DB::raw('count(*) as numberOfResults')
+            )
             ->get();
 
         // Group the results by language, creating an associative array with the keys _correct_ and _wrong_,

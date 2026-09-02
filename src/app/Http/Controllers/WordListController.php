@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Adapters\WordListAdapter;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\WordList;
+use App\Services\Flashcards\FlashcardDirection;
 use Illuminate\Http\Request;
 
 class WordListController extends Controller
@@ -53,6 +54,21 @@ class WordListController extends Controller
         return view('word-list.show', [
             'wordList' => $wordList,
             'canEdit' => $this->canEdit($request, $wordList),
+        ]);
+    }
+
+    /**
+     * Turns a word list into a deck of flashcards.
+     *
+     * The deck itself is dealt by the API; this only renders the shell the study app mounts into.
+     */
+    public function study(Request $request, int $id)
+    {
+        $wordList = $this->findViewableOrFail($request, $id);
+
+        return view('word-list.study', [
+            'wordList' => $wordList,
+            'direction' => FlashcardDirection::parse($request->query('direction'))->value,
         ]);
     }
 

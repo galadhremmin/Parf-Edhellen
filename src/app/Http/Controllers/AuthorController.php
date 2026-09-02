@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Adapters\BookAdapter;
 use App\Adapters\DiscussAdapter;
+use App\Adapters\WordListAdapter;
 use App\Helpers\StorageHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Interfaces\IMarkdownParser;
@@ -11,12 +12,24 @@ use App\Models\Account;
 use App\Models\ForumPost;
 use App\Models\LexicalEntry;
 use App\Models\Sentence;
+use App\Models\WordList;
 use App\Repositories\StatisticsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
+    /**
+     * Word lists shown on a profile. A person with a great many of them gets the most recently
+     * changed ones; the rest are a click away on the list itself.
+     */
+    private const NUMBER_OF_WORD_LISTS = 8;
+
+    /**
+     * Words previewed under each list, enough to convey what the list is about.
+     */
+    private const NUMBER_OF_PREVIEW_WORDS = 6;
+
     protected BookAdapter $_bookAdapter;
 
     protected DiscussAdapter $_discussAdapter;
@@ -27,15 +40,18 @@ class AuthorController extends Controller
 
     protected IMarkdownParser $_markdownParser;
 
+    protected WordListAdapter $_wordListAdapter;
+
     public function __construct(BookAdapter $bookAdapter, DiscussAdapter $discussAdapter,
         StatisticsRepository $statisticsRepository, StorageHelper $storageHelper,
-        IMarkdownParser $markdownParser)
+        IMarkdownParser $markdownParser, WordListAdapter $wordListAdapter)
     {
         $this->_bookAdapter = $bookAdapter;
         $this->_discussAdapter = $discussAdapter;
         $this->_statisticsRepository = $statisticsRepository;
         $this->_storageHelper = $storageHelper;
         $this->_markdownParser = $markdownParser;
+        $this->_wordListAdapter = $wordListAdapter;
     }
 
     public function index(Request $request, ?int $id = null, $nickname = '')
@@ -43,17 +59,46 @@ class AuthorController extends Controller
         $author = $this->getAccount($request, $id);
         $profile = '';
         $stats = null;
+        $wordLists = [];
 
         if ($author) {
             $profile = $this->_markdownParser->parseMarkdown($author->profile ?? '');
             $stats = $this->_statisticsRepository->getStatisticsForAccount($author);
+            $wordLists = $this->getPublicWordLists($author);
         }
 
         return view('author.profile', [
             'author' => $author,
             'profile' => $profile,
             'stats' => $stats,
+            'wordLists' => $wordLists,
         ]);
+    }
+
+    /**
+     * The word lists this person has chosen to publish, each with a handful of its words.
+     *
+     * Private lists are excluded regardless of who is looking, including the owner: the profile is a
+     * public page, and a list shown there reads as published whether or not it is.
+     */
+    private function getPublicWordLists(Account $author): array
+    {
+        $wordLists = WordList::where('account_id', $author->id)
+            ->where('is_public', 1)
+            ->withCount('lexical_entries')
+            ->with(['lexical_entries' => fn ($query) => $query
+                ->select('lexical_entries.id', 'lexical_entries.word_id')
+                ->orderBy('word_list_entries.order')
+                ->limit(self::NUMBER_OF_PREVIEW_WORDS),
+                'lexical_entries.word',
+            ])
+            ->orderBy('updated_at', 'desc')
+            ->limit(self::NUMBER_OF_WORD_LISTS)
+            ->get();
+
+        return $wordLists->map(
+            fn (WordList $wordList) => $this->_wordListAdapter->adaptPreview($wordList)
+        )->all();
     }
 
     public function glosses(Request $request, ?int $id = null)

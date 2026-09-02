@@ -359,3 +359,8 @@ Breadcrumbs::for('word-list.show', function (BreadcrumbTrail $breadcrumbs, App\M
     $breadcrumbs->parent('word-list.index');
     $breadcrumbs->push($wordList->name, route('word-list.show', ['id' => $wordList->id]));
 });
+
+Breadcrumbs::for('word-list.study', function (BreadcrumbTrail $breadcrumbs, App\Models\WordList $wordList) {
+    $breadcrumbs->parent('word-list.show', $wordList);
+    $breadcrumbs->push(__('word-list.study'), route('word-list.study', ['id' => $wordList->id]));
+});

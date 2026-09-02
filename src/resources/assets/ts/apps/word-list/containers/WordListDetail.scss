@@ -1,23 +1,41 @@
 .WordList {
 
-  &--header {
+  &--practise-callout {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
   }
 
-  &--visibility {
-    flex: 0 0 auto;
+  &--practise-body {
+    flex: 1 1 18rem;
   }
 
-  &--share {
-    flex: 0 0 auto;
-    text-decoration: none;
+  &--practise-title {
+    font-size: 1.15rem;
+    margin: 0 0 0.35rem;
+  }
 
-    &:hover {
-      text-decoration: underline;
+  &--practise-text {
+    margin-bottom: 0;
+  }
+
+  &--practise-text + &--practise-text {
+    margin-top: 0.5rem;
+  }
+
+  &--practise {
+    flex: 0 0 auto;
+    white-space: nowrap;
+
+    /* Below Bootstrap's `sm` breakpoint the callout stacks, and the primary
+       action deserves the full width rather than a small target in the corner.
+       Written as a plain query: this file imports no variables, and pulling in
+       the Bootstrap partial for one breakpoint would re-emit its output. */
+    @media (max-width: 575.98px) {
+      display: block;
+      width: 100%;
     }
   }
 

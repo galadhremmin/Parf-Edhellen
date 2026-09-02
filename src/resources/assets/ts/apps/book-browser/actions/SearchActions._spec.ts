@@ -7,9 +7,10 @@ import {
 } from '@jest/globals';
 import * as sinon from 'sinon';
 
+import { SearchResultGlossaryGroupId } from '@root/config';
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 
-import SearchActions from '../actions/SearchActions';
+import SearchActions, { hasGlossaryChangedAddress } from '../actions/SearchActions';
 import type { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
@@ -47,6 +48,67 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
 
     afterEach(() => {
         sandbox.restore();
+    });
+
+    describe('expandSpecificGloss', () => {
+        const TestEntity = {
+            entities: {
+                sections: [
+                    {
+                        entities: [
+                            {
+                                id: 4711,
+                                language: { shortName: 'q' },
+                                normalizedWord: 'aha',
+                                word: 'aha',
+                            },
+                        ],
+                        language: { shortName: 'q' },
+                    },
+                ],
+            },
+            groupId: 0,
+            single: true,
+            word: 'aha',
+        };
+
+        let pushState: sinon.SinonStub;
+
+        beforeEach(() => {
+            const api = sinon.createStubInstance(BookApiConnector);
+            api.entity.callsFake(() => Promise.resolve(TestEntity as any));
+            actions = new SearchActions(api as any, null /* LanguageConnector */, null /* global events */);
+            pushState = sandbox.stub(window.history, 'pushState');
+        });
+
+        test('pushes the entry address so the URL reflects what is on screen', async () => {
+            expect(hasGlossaryChangedAddress()).toBe(false);
+
+            await actions.expandSpecificGloss(4711)(sandbox.spy() as any);
+
+            // The glossary now owns the address, so a back navigation onto the server-rendered page
+            // it started from has to be answered with a real page load.
+            expect(hasGlossaryChangedAddress()).toBe(true);
+
+            expect(pushState.callCount).toEqual(1);
+            expect(pushState.firstCall.args[2]).toEqual('/wt/4711');
+            expect(pushState.firstCall.args[0]).toEqual({
+                glossary: true,
+                groupId: SearchResultGlossaryGroupId,
+                languageShortName: 'q',
+                lexicalEntryId: 4711,
+                normalizedWord: 'aha',
+                word: 'aha',
+            });
+            expect(document.title).toEqual('Aha - Parf Edhellen');
+        });
+
+        test('does not push when the load came from the back or forward button', async () => {
+            await actions.expandSpecificGloss(4711, false)(sandbox.spy() as any);
+
+            expect(pushState.callCount).toEqual(0);
+            expect(document.title).toEqual('Aha - Parf Edhellen');
+        });
     });
 
     test('searches for word', async () => {

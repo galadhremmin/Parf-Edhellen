@@ -1,0 +1,13 @@
+.ProfileWordLists {
+
+  /* One line, whatever the words are: entries can be whole phrases, and a preview that wraps over
+     three lines stops being a preview. */
+  &--preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-style: italic;
+    color: var(--ed-text-muted);
+  }
+}
