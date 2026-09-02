@@ -5,11 +5,11 @@ namespace App\Providers;
 use App\Exceptions\DBHandler;
 use App\Exceptions\Handler;
 use App\Factories\DefaultSystemLanguageFactory;
-use App\ThirdParty\Gemini\GeminiWordOfTheDayFacade;
 use App\Helpers\ExternalGlossGroupToInternalUrlResolver;
 use App\Helpers\MarkdownParserWrapper;
 use App\Interfaces\IComposesWordOfTheDayTweet;
 use App\Interfaces\IExternalToInternalUrlResolver;
+use App\Interfaces\IFlashcardCandidateProvider;
 use App\Interfaces\IMarkdownParser;
 use App\Interfaces\IPostsTweet;
 use App\Interfaces\ISystemLanguageFactory;
@@ -18,6 +18,8 @@ use App\Models\LexicalEntryGroup;
 use App\Repositories\AuditTrailRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\Noop\NoopAuditTrailRepository;
+use App\Services\Flashcards\LexicalEntryCandidateProvider;
+use App\ThirdParty\Gemini\GeminiWordOfTheDayFacade;
 use App\ThirdParty\X\XApiClient;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
@@ -131,6 +133,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             IPostsTweet::class,
             XApiClient::class,
+        );
+
+        $this->app->singleton(
+            IFlashcardCandidateProvider::class,
+            LexicalEntryCandidateProvider::class,
         );
     }
 }

@@ -1,75 +1,7 @@
 @import "../../../_scss/_variables";
 
-#ed-flashcard-component {
-  min-height: 100vh;
-}
-
-/* entire container, keeps perspective */
-.flip-container {
-  perspective: 1000px;
-}
-  /* flip the pane when hovered */
-  .flip-container.flipped .flipper {
-    transform: rotateY(180deg);
-  }
-
-.flip-container, .front, .back {
-  width: 320px;
-  min-height: 420px;
-  margin: 0 auto;
-}
-
-/* flip speed goes here */
-.flipper {
-  transition: 0.6s;
-  transform-style: preserve-3d;
-
-  position: relative;
-}
-
-/* hide back of pane during swap */
-.front, .back {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-}
-
-/* front pane, placed above back */
-.front {
-  z-index: 2000;
-  /* for firefox 31 */
-  transform: rotateY(0deg);
-}
-
-/* back, initially hidden pane */
-.back {
-  transform: rotateY(180deg);
-}
 
 .flip-container {
-
-  .front, .back {
-    border: 2px solid var(--ed-bg-elevated);
-    background: var(--ed-bg-elevated);
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: var(--bs-box-shadow-lg);
-    border: var(--bs-border-width) solid var(--bs-border-color);
-  }
-
-  header h1 {
-    text-align: center;
-    margin-top: 0;
-  }
-
-  p {
-    text-align: center;
-  }
 
   .list-group li:hover {
     background-color: var(--ed-bg-surface);
@@ -113,36 +45,7 @@
 .alert {
     margin-top: 2em;
 }
-.flashcard-container {
-  > aside {
-    max-width: 50rem;
-    margin: 0 auto 2rem auto;
-  }
+.flashcard-container + aside {
+  max-width: 50rem;
+  margin: 2rem auto;
 }
-/*
-@media (min-width: $screen-sm-min) {
-  .flashcard-container {
-    display: flex;
-
-    #ed-flashcard-component {
-      flex: 2;
-
-      .list-group-item > a {
-        display: block;
-      }
-    }
-
-    > aside {
-      &:empty {
-        display: none;
-      }
-      
-      > .alert {
-        margin-top: 0;
-      }
-
-      flex: 1;
-    }
-  }
-}
-*/

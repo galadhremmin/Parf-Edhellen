@@ -23,6 +23,7 @@
     'container'     => 'Profile',
     'account'       => $author,
     'statistics'    => $stats,
+    'wordLists'     => $wordLists,
     'showJumbotron' => 'true',
     'showDiscuss'   => 'true',
     'showProfile'   => 'true'

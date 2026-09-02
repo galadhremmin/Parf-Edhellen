@@ -61,9 +61,6 @@ Route::group([
         ->name('api.word-lists.index');
     Route::post('word-lists', [WordListApiController::class, 'store'])
         ->name('api.word-lists.store');
-    Route::get('word-lists/{id}', [WordListApiController::class, 'show'])
-        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
-        ->name('api.word-lists.show');
     Route::put('word-lists/{id}', [WordListApiController::class, 'update'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.update');
@@ -81,9 +78,26 @@ Route::group([
     Route::delete('word-lists/{id}/entries/{entryId}', [WordListApiController::class, 'removeEntry'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC, 'entryId' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.remove-entry');
+    Route::post('word-lists/{id}/entries/bulk-delete', [WordListApiController::class, 'removeEntries'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.bulk-remove-entries');
+    Route::post('word-lists/{id}/entries/bulk-move', [WordListApiController::class, 'moveEntries'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.bulk-move-entries');
     Route::put('word-lists/{id}/entries/reorder', [WordListApiController::class, 'reorderEntries'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.reorder-entries');
+
+    // Word list study decks. POST rather than GET on both: the deal is non-deterministic and the
+    // body carries the retry subset, so neither response may be cached.
+    Route::post('word-lists/{id}/deck', [WordListApiController::class, 'deck'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:60,1')
+        ->name('api.word-lists.deck');
+    Route::post('word-lists/{id}/deck/results', [WordListApiController::class, 'deckResults'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:60,1')
+        ->name('api.word-lists.deck-results');
 
     // Passkey management (requires authentication)
     Route::get('passkey', [PasskeyApiController::class, 'getPasskeys'])

@@ -8,6 +8,7 @@ import { DI } from '@root/di/keys';
 
 import AccountFeed from '../components/AccountFeed';
 import JumbotronOrHeader from '../components/JumbotronOrHeader';
+import ProfileWordLists from '../components/ProfileWordLists';
 import type { IProps } from './Profile._types';
 
 import './Profile.scss';
@@ -31,10 +32,11 @@ function Profile(props: IProps) {
         showJumbotron = false,
         showProfileLink = false,
         statistics,
+        wordLists,
     } = props;
 
-    const canModify = roleManager.accountId === id || //
-        roleManager.isAdministrator;
+    const canModify = roleManager?.accountId === id || //
+        roleManager?.isAdministrator;
 
     return <div className="Profile--container">
         <JumbotronOrHeader className={showJumbotron ? 'with-background' : ''}
@@ -78,6 +80,7 @@ function Profile(props: IProps) {
                     </p>
                 </div>}
             </div>
+            <ProfileWordLists nickname={nickname} wordLists={wordLists || []} />
             {showDiscuss && <div className="row">
                 <div className="col-12">
                     <h2>Messages</h2>

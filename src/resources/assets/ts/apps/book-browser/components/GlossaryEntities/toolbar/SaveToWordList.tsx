@@ -75,7 +75,7 @@ function SaveToWordList(props: IProps) {
         if (addedToIds.has(list.id)) {
             return true;
         }
-        return (list.containsEntry ?? 0) > 0;
+        return list.containsEntry ?? false;
     }, [addedToIds, removedFromIds]);
 
     const _onAddToList = useCallback(async (wordListId: number) => {
@@ -187,9 +187,9 @@ function SaveToWordList(props: IProps) {
                         <div className="flex-grow-1 d-flex align-items-center">
                             {inList && <TextIcon icon="heart" className="filled SaveToWordList--heart-indicator" />}
                             <span className="fw-medium">{list.name}</span>
-                            {list.lexicalEntriesCount != null &&
+                            {list.numberOfEntries != null &&
                                 <span className="text-muted ms-1 small">
-                                    ({list.lexicalEntriesCount} {list.lexicalEntriesCount === 1 ? 'word' : 'words'})
+                                    ({list.numberOfEntries} {list.numberOfEntries === 1 ? 'word' : 'words'})
                                 </span>
                             }
                         </div>

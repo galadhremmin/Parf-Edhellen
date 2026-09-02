@@ -1,0 +1,95 @@
+/* Structural styles for the flip-card used by the flashcard games.
+   Content styling lives with the consuming app. */
+$flashcard-max-width: min(26rem, 90vw);
+$flashcard-min-height: 20rem;
+
+/* entire container, keeps perspective, and centres the card in its column */
+.flip-container {
+  perspective: 1200px;
+  width: $flashcard-max-width;
+  margin: 0 auto;
+}
+
+/* flip the pane when hovered */
+.flip-container.flipped .flipper {
+  transform: rotateY(180deg);
+}
+
+/* Both faces share a single grid cell, so the flipper is as tall as the
+   tallest face instead of collapsing the way absolute positioning would. */
+.flipper {
+  display: grid;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+  grid-area: 1 / 1;
+  min-height: $flashcard-min-height;
+  width: $flashcard-max-width;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+}
+
+/* front pane, placed above back */
+.front {
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+  transform: rotateY(180deg);
+}
+
+.flip-container {
+
+  .front, .back {
+    /* poker-card proportions; the grid cell still grows if content needs it */
+    aspect-ratio: 5 / 7;
+    position: relative;
+
+    /* centre the content within the card face */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background: var(--ed-bg-elevated);
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+
+    /* layered shadow: tight contact shadow + soft ambient lift */
+    box-shadow:
+      0 1px 2px var(--ed-shadow-heavy),
+      0 6px 12px var(--ed-shadow),
+      0 16px 32px var(--ed-shadow);
+  }
+
+  /* inner "printed frame", like the margin of a playing card */
+  .front::before, .back::before {
+    content: "";
+    position: absolute;
+    inset: 0.65rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 10px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  header h1 {
+    text-align: center;
+    margin-top: 0;
+    > span {
+      display: block;
+      font-size: 1.2rem;
+    }
+  }
+
+  p {
+    text-align: center;
+  }
+}

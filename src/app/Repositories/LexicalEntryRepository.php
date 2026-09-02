@@ -19,6 +19,7 @@ use App\Models\Versioning\LexicalEntryDetailVersion;
 use App\Models\Versioning\LexicalEntryVersion;
 use App\Models\Word;
 use App\Repositories\Enumerations\LexicalEntryChange;
+use App\Repositories\ValueObjects\LexicalEntrySamplingValue;
 use App\Repositories\ValueObjects\LexicalEntryVersionsValue;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Query\Builder;
@@ -62,6 +63,80 @@ class LexicalEntryRepository
             ->with(['word', 'language', 'speech', 'glosses'])
             ->inRandomOrder()
             ->first();
+    }
+
+    /**
+     * Draws a random sample of lexical entries together with their glosses.
+     *
+     * Returns one row per (entry, gloss) pair — an entry with three glosses yields three rows — so
+     * that callers can pick a specific gloss without a second query. Rows are plain objects rather
+     * than models: samples are drawn in the hundreds and Eloquent hydration is pure overhead when
+     * the caller only reads a handful of columns.
+     *
+     * Deleted and rejected entries are always excluded. Everything else is up to the criteria.
+     *
+     * @return Collection<int,\stdClass>
+     */
+    public function getRandomEntriesWithGlosses(LexicalEntrySamplingValue $criteria): Collection
+    {
+        $query = DB::table('lexical_entries as e')
+            ->join('words as w', 'w.id', 'e.word_id')
+            ->join('glosses as g', 'g.lexical_entry_id', 'e.id')
+            ->where('e.is_deleted', 0)
+            ->where('e.is_rejected', 0)
+            ->select([
+                'e.id as lexical_entry_id',
+                'g.id as gloss_id',
+                'w.word',
+                'w.normalized_word',
+                'g.translation',
+                'e.language_id',
+                'e.speech_id',
+                'e.sense_id',
+                'e.tengwar',
+            ]);
+
+        $languageIds = $criteria->getLanguageIds();
+        if (! empty($languageIds)) {
+            $query->whereIn('e.language_id', $languageIds);
+        }
+
+        $lexicalEntryGroupIds = $criteria->getLexicalEntryGroupIds();
+        if (! empty($lexicalEntryGroupIds)) {
+            $query->whereIn('e.lexical_entry_group_id', $lexicalEntryGroupIds);
+        }
+
+        $speechIds = $criteria->getSpeechIds();
+        if (! empty($speechIds)) {
+            $query->whereIn('e.speech_id', $speechIds);
+        }
+
+        $excludeSpeechIds = $criteria->getExcludeSpeechIds();
+        if (! empty($excludeSpeechIds)) {
+            // NULL speech_id survives the exclusion: an entry with no recorded part of speech is
+            // not a verb, and NOT IN would silently discard every one of them.
+            $query->where(function ($q) use ($excludeSpeechIds) {
+                $q->whereNotIn('e.speech_id', $excludeSpeechIds)
+                    ->orWhereNull('e.speech_id');
+            });
+        }
+
+        $excludeLexicalEntryIds = $criteria->getExcludeLexicalEntryIds();
+        if (! empty($excludeLexicalEntryIds)) {
+            $query->whereNotIn('e.id', $excludeLexicalEntryIds);
+        }
+
+        $excludeTranslations = $criteria->getExcludeTranslations();
+        if (! empty($excludeTranslations)) {
+            $query->whereNotIn('g.translation', $excludeTranslations);
+        }
+
+        // inRandomOrder(), not the offset trick used elsewhere in the code base: that trick computes
+        // its window over the whole table while ignoring the WHERE clause, so it lands in regions
+        // with no matching rows precisely when narrow filters are applied.
+        return collect($query->inRandomOrder()
+            ->limit($criteria->getLimit())
+            ->get());
     }
 
     /**

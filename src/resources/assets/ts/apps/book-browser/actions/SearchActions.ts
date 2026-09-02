@@ -6,6 +6,7 @@ import type {
     IEntitiesRequest,
     IEntitiesResponse,
     IFindEntity,
+    IGlossaryResponse,
     ILanguageEntity,
     ISearchGroups,
 } from '@root/connectors/backend/IBookApi';
@@ -29,6 +30,20 @@ import type {
     IBrowserHistoryState,
     IExpandSearchResultAction,
 } from './SearchActions._types';
+
+/**
+ * Whether the glossary has taken over the address bar at least once in this document.
+ *
+ * Back navigation onto a state the glossary did not create — typically the very first entry, which the
+ * server rendered and which therefore carries no history state at all — can then be answered with a real
+ * page load. Without it the address would change back while the glossary kept showing the entry the
+ * customer had just navigated away from.
+ */
+let addressOwnedByGlossary = false;
+
+export function hasGlossaryChangedAddress() {
+    return addressOwnedByGlossary;
+}
 
 export default class SearchActions {
     constructor(private _api = resolve(DI.BookApi),
@@ -251,6 +266,7 @@ export default class SearchActions {
                     word,
                 };
                 window.history.pushState(nextState, title, address);
+                addressOwnedByGlossary = true;
             }
 
             // because most browsers doesn't change the document title when pushing state
@@ -274,7 +290,15 @@ export default class SearchActions {
         }
     }
 
-    public expandSpecificGloss(entityId: number) {
+    /**
+     * Loads one specific lexical entry into the glossary, in place. This is where every reference
+     * link on the site ends up — the book browser, the word list, the flashcard deck, discussions.
+     *
+     * @param entityId lexical entry ID
+     * @param updateBrowserHistory (optional) whether to invoke pushState. False when the navigation
+     *                             came from the browser's own back and forward buttons.
+     */
+    public expandSpecificGloss(entityId: number, updateBrowserHistory = true) {
         return async (dispatch: ThunkDispatch<any, any, any>) => {
             try {
                 const groupId = SearchResultGlossaryGroupId;
@@ -287,12 +311,48 @@ export default class SearchActions {
                     entityId,
                     groupId,
                 });
+                this._changeAddressForSpecificGloss(entityId, entities, updateBrowserHistory);
                 dispatch(this.setEntities(entities));
             } catch (e) {
                 // Ignore errors for now... the gloss probably doesn't exist (invalid reference)
                 console.error(e);
             }
         };
+    }
+
+    /**
+     * Reflects an in-place reference load in the address bar, so the customer can bookmark, share or
+     * reload what they are actually looking at.
+     *
+     * The address is `/wt/{id}` rather than the word-based `/w/{word}` used by search: the glossary is
+     * showing exactly one entry, whereas the word address resolves to every entry sharing that word,
+     * so reloading it would quietly show something else.
+     */
+    private _changeAddressForSpecificGloss(lexicalEntryId: number,
+        response: IEntitiesResponse<IGlossaryResponse>, updateBrowserHistory: boolean) {
+        const entity = response?.entities?.sections?.[0]?.entities?.[0];
+        if (! entity) {
+            return;
+        }
+
+        const word = response.word || entity.word;
+        const title = `${capitalize(word)} - Parf Edhellen`;
+
+        if (updateBrowserHistory && window.history.pushState) {
+            const nextState: IBrowserHistoryState = {
+                glossary: true,
+                groupId: SearchResultGlossaryGroupId,
+                languageShortName: entity.language?.shortName || null,
+                lexicalEntryId,
+                normalizedWord: entity.normalizedWord,
+                word,
+            };
+            window.history.pushState(nextState, title, `/wt/${lexicalEntryId}`);
+            addressOwnedByGlossary = true;
+        }
+
+        // because most browsers doesn't change the document title when pushing state
+        document.title = title;
     }
 
     /**

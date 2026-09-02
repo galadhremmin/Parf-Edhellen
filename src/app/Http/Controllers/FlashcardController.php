@@ -11,12 +11,19 @@ use App\Models\FlashcardResult;
 use App\Models\Gloss;
 use App\Models\LexicalEntry;
 use App\Models\Speech;
+use DateInterval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class FlashcardController extends Controller
 {
+    /**
+     * The language a result is attributed to: the entry's own language, falling back to the deck it
+     * was drawn from, and finally to a catch-all.
+     */
+    private const LANGUAGE_NAME_EXPRESSION = "COALESCE(l.name, fl.name, 'Other')";
+
     private BookAdapter $_bookAdapter;
 
     public function __construct(BookAdapter $bookAdapter)
@@ -46,12 +53,27 @@ class FlashcardController extends Controller
 
         $accountId = $user->id;
 
-        // Traverse flashcard results and count failures versus successes.
-        $statistics = FlashcardResult::where('account_id', $accountId)
-            ->join('flashcards', 'flashcard_results.flashcard_id', 'flashcards.id')
-            ->join('languages', 'flashcards.language_id', 'languages.id')
-            ->groupBy(['languages.name', 'correct'])
-            ->select('languages.name', 'correct', DB::raw('count(*) as numberOfResults'))
+        // Language is sourced from the entry rather than from the flashcard, and joined LEFT.
+        // A word list study session has no flashcard at all, so the previous INNER JOIN dropped
+        // every one of those rows -- out of the per-language breakdown, and out of the total the
+        // "you have reviewed N cards" line reports, which reads to the user as lost history.
+        // Qualified: lexical_entries carries an account_id of its own (the contributor), so the
+        // bare column became ambiguous the moment that table was joined in.
+        $statistics = FlashcardResult::where('flashcard_results.account_id', $accountId)
+            ->leftJoin('lexical_entries as e', 'e.id', 'flashcard_results.lexical_entry_id')
+            ->leftJoin('languages as l', 'l.id', 'e.language_id')
+            ->leftJoin('flashcards as f', 'f.id', 'flashcard_results.flashcard_id')
+            ->leftJoin('languages as fl', 'fl.id', 'f.language_id')
+            // The flashcard's language is kept as a fallback rather than dropped: lexical_entry_id
+            // is nullable and thousands of historical rows have none, and those rows did report a
+            // real language before. Without the fallback they would all slide into "Other", which
+            // looks to the user like their history was reassigned.
+            ->groupBy([DB::raw(self::LANGUAGE_NAME_EXPRESSION), 'correct'])
+            ->select(
+                DB::raw(self::LANGUAGE_NAME_EXPRESSION.' as name'),
+                'correct',
+                DB::raw('count(*) as numberOfResults')
+            )
             ->get();
 
         // Group the results by language, creating an associative array with the keys _correct_ and _wrong_,
@@ -112,6 +134,24 @@ class FlashcardController extends Controller
         ]);
     }
 
+    /**
+     * Identifiers of every part of speech that behaves as a verb.
+     *
+     * Reads the `is_verb` flag rather than looking for a speech literally named "verb": several
+     * rows carry the flag (see the quettaparma_quenyallo_verb_fix migration), and the previous
+     * single-row lookup silently ignored all but one of them.
+     *
+     * @return int[]
+     */
+    private static function getVerbSpeechIds(): array
+    {
+        // Deliberately a new cache key: the previous key held a single integer, and a deployment
+        // that reused it would hand an int to code that now expects an array.
+        return Cache::remember('ed.speech.verb-ids', DateInterval::createFromDateString('1 day'), function () {
+            return Speech::where('is_verb', 1)->pluck('id')->all();
+        });
+    }
+
     public function card(Request $request, int $n = 0)
     {
         $this->validate($request, [
@@ -169,13 +209,28 @@ class FlashcardController extends Controller
 
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
-        $verbSpeechId = Cache::remember('ed.speech.v', 60 * 60 /* seconds */, function () {
-            $speech = Speech::where('name', 'verb')->first();
+        $verbSpeechIds = self::getVerbSpeechIds();
+        $restrictToVerbs = in_array($lexicalEntry->speech_id, $verbSpeechIds, true);
 
-            return $speech ? $speech->id : -1;
-        });
-        if ($lexicalEntry->speech_id !== $verbSpeechId) {
-            $verbSpeechId = -1;
+        $excludedTranslations = config('ed.flashcard_excluded_translations');
+
+        $bindings = ['translation' => $gloss->translation];
+
+        $excludedPlaceholders = [];
+        foreach ($excludedTranslations as $i => $excludedTranslation) {
+            $excludedPlaceholders[] = ':excluded'.$i;
+            $bindings['excluded'.$i] = $excludedTranslation;
+        }
+
+        $speechCondition = '1 = 1';
+        if ($restrictToVerbs) {
+            $speechPlaceholders = [];
+            foreach ($verbSpeechIds as $i => $verbSpeechId) {
+                $speechPlaceholders[] = ':speech'.$i;
+                $bindings['speech'.$i] = $verbSpeechId;
+            }
+
+            $speechCondition = 'g.speech_id IN ('.implode(', ', $speechPlaceholders).')';
         }
 
         // Random selection optimization:
@@ -189,16 +244,11 @@ class FlashcardController extends Controller
             JOIN lexical_entries as g on g.id = t.lexical_entry_id
             WHERE
                 t.translation <> :translation AND
-                t.translation NOT IN(\'?\', \'\', \'[unglossed]\') AND
-                ( :speech0 = -1 OR ( :speech1 > -1 AND :speech2 = g.speech_id) ) AND
+                t.translation NOT IN('.implode(', ', $excludedPlaceholders).') AND
+                '.$speechCondition.' AND
                 t.id >= FLOOR(RAND() * (SELECT MAX(id) FROM glosses))
             ORDER BY t.id 
-            LIMIT 4', [
-            'translation' => $gloss->translation,
-            'speech0' => $verbSpeechId,
-            'speech1' => $verbSpeechId,
-            'speech2' => $verbSpeechId,
-        ]);
+            LIMIT 4', $bindings);
 
         foreach ($fakeOptions as $option) {
             $options[] = $option->translation;

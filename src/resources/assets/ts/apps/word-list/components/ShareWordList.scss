@@ -1,0 +1,50 @@
+.ShareWordList {
+
+  .panel-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* `Panel` floats its title button to the right, which leaves it on a line of its own inside a
+     flex title. The badge belongs beside the heading, so the float is undone here. */
+  .panel-title .float-end {
+    float: none !important;
+    margin-left: auto;
+  }
+
+  &--summary {
+    margin-bottom: 1rem;
+  }
+
+  /* Side by side while there is room; the fields are short and stacking them makes the panel
+     taller than the list it sits above. */
+  &--links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+  }
+
+  &--link {
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+
+  &--visibility {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: var(--bs-border-width) solid var(--bs-border-color);
+  }
+
+  &--visibility-hint {
+    flex: 1 1 14rem;
+  }
+}

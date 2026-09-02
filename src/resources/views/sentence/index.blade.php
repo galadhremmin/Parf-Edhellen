@@ -27,5 +27,5 @@
 @endsection
 
 @section('styles')
-  <link href="@assetpath(/css/app.sentences.css)" rel="stylesheet">
+  <link href="@assetpath(style-sentence.css)" rel="stylesheet">
 @endsection

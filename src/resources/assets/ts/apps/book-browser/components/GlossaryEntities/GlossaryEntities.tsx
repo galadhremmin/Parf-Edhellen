@@ -9,6 +9,7 @@ import { DI } from '@root/di/keys';
 import Cache from '@root/utilities/Cache';
 
 import { SearchActions } from '../../actions';
+import { hasGlossaryChangedAddress } from '../../actions/SearchActions';
 import type { IBrowserHistoryState } from '../../actions/SearchActions._types';
 import type { IEntitiesComponentProps } from '../../containers/Entities._types';
 import CurrentLanguagesDivider from './CurrentLanguagesDivider';
@@ -174,6 +175,12 @@ function createLanguageConfig(): Cache<boolean> {
 function onPopState(actions: SearchActions, dispatch: ReduxThunkDispatch, ev: PopStateEvent) {
     const state = ev.state as IBrowserHistoryState;
     if (! state || ! state.glossary) {
+        // An address the glossary never created, which means the server rendered it — so only the
+        // server can bring it back. Reloading is the honest answer; leaving the page as it is would
+        // show the previous entry under an address that has nothing to do with it.
+        if (hasGlossaryChangedAddress()) {
+            window.location.reload();
+        }
         return;
     }
 

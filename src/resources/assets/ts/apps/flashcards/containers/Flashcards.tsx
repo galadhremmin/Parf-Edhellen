@@ -1,13 +1,13 @@
 import { Component, Fragment } from 'react';
 import type { MouseEvent } from 'react';
+import Card from '@root/components/FlipCard/Card';
+import { SideOfTheCard } from '@root/components/FlipCard/Card._types';
+import Table from '@root/components/FlipCard/Table';
 import HtmlInject from '@root/components/HtmlInject';
 import Spinner from '@root/components/Spinner';
 import Tengwar from '@root/components/Tengwar';
 import TextIcon from '@root/components/TextIcon';
 import FlashcardApiConnector from '@root/connectors/backend/FlashcardApiConnector';
-import Card from '../components/Card';
-import { SideOfTheCard } from '../components/Card._types';
-import Table from '../components/Table';
 import type {
     IProps,
     IState,

@@ -15,6 +15,8 @@ export interface IBrowserHistoryState {
     /** See `IEntitiesRequestData.inflection` — the literal inflected form searched for, if any. */
     inflection?: string;
     languageShortName: string;
+    /** Set when the entry was loaded by reference rather than by search, e.g. from a word list. */
+    lexicalEntryId?: number;
     normalizedWord: string;
     word: string;
 }
