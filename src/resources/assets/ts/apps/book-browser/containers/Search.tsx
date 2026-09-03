@@ -89,6 +89,7 @@ export class SearchQuery extends Component<IProps, IState> {
                         loading={loading}
                         onChange={this._onQueryChange}
                         onSearchResultNavigate={this._onSearchResultNavigate}
+                        onSuggestionSelect={this._onSuggestionSelect}
                         showEnterHint={word?.length > 0 && !loading}
                         tabIndex={1}
                         value={word}
@@ -141,6 +142,16 @@ export class SearchQuery extends Component<IProps, IState> {
         });
 
         this._beginSearch(/* queryChanged: */ true);
+    }
+
+    /**
+     * Looks up the example the search field is currently advertising, so that visitors who do not
+     * know where to begin can enter the dictionary with a single click.
+     */
+    private _onSuggestionSelect = (ev: IComponentEvent<string>) => {
+        this.setState({
+            word: ev.value,
+        }, () => this._search(/* queryChanged: */ true));
     }
 
     private _onShowMoreClick = (ev: MouseEvent<HTMLAnchorElement>) => {
