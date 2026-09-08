@@ -151,7 +151,11 @@ export class SearchQuery extends Component<IProps, IState> {
     private _onSuggestionSelect = (ev: IComponentEvent<string>) => {
         this.setState({
             word: ev.value,
-        }, () => this._search(/* queryChanged: */ true));
+        }, () => {
+            void this.props.dispatch(
+                this._actions.searchAndExpand(this._searchArgs()),
+            );
+        });
     }
 
     private _onShowMoreClick = (ev: MouseEvent<HTMLAnchorElement>) => {
@@ -238,15 +242,8 @@ export class SearchQuery extends Component<IProps, IState> {
      * changed.
      */
     private _search = (queryChanged: boolean) => {
-        const state = this.state;
         void this.props.dispatch(
-            this._actions.search({
-                ...state,
-                // These hacks only accommodates for the fact that the UI does not currently support
-                // multiple selections.
-                lexicalEntryGroupIds: state.lexicalEntryGroupIds[0] === 0 ? [] : state.lexicalEntryGroupIds,
-                speechIds: state.speechIds[0] === 0 ? [] : state.speechIds,
-            }),
+            this._actions.search(this._searchArgs()),
         );
 
         // If the user has only made changes to the filtering functions (such as language selection),
@@ -257,6 +254,20 @@ export class SearchQuery extends Component<IProps, IState> {
                 this._actions.reloadGlossary(),
             );
         }
+    }
+
+    /**
+     * Converts the component's transient state into search arguments.
+     */
+    private _searchArgs() {
+        const state = this.state;
+        return {
+            ...state,
+            // These hacks only accommodates for the fact that the UI does not currently support
+            // multiple selections.
+            lexicalEntryGroupIds: state.lexicalEntryGroupIds[0] === 0 ? [] : state.lexicalEntryGroupIds,
+            speechIds: state.speechIds[0] === 0 ? [] : state.speechIds,
+        };
     }
 
     private async _persistState<T extends keyof IState>(keyOrState: T | IState, value?: IState[T]) {

@@ -39,7 +39,7 @@ describe('apps/book-browser/reducers/SearchResultsReducer', () => {
             resultIds: [],
             resultsByGroupIndex: [],
             resultsById: {},
-            selectedId: 0,
+            selectedId: null,
             groupIdMap: {},
         }, {
             searchResults: {
@@ -57,6 +57,41 @@ describe('apps/book-browser/reducers/SearchResultsReducer', () => {
             carry[v.id] = v;
             return carry;
         }, {} as any));
-        expect(actual.selectedId).toEqual(0);
+        expect(actual.selectedId).toBeNull();
+    });
+
+    test('does not select a search result until one is picked', () => {
+        const values: ISearchResult[] = [
+            {
+                id: 0,
+                normalizedWord: 'elf',
+                originalWord: null,
+                word: 'elf',
+            },
+        ];
+
+        const state = SearchResultsReducer({
+            groups: [],
+            resultIds: [],
+            resultsByGroupIndex: [],
+            resultsById: {},
+            selectedId: null,
+            groupIdMap: {},
+        }, {
+            searchResults: {
+                keywords: { 'unit test': values },
+                searchGroups: {},
+            },
+            type: Actions.ReceiveSearchResults,
+        });
+
+        // The first result carries the ID 0, which must not be mistaken for a selection.
+        expect(state.selectedId).toBeNull();
+
+        const selected = SearchResultsReducer(state, {
+            id: 0,
+            type: Actions.SelectSearchResult,
+        });
+        expect(selected.selectedId).toEqual(0);
     });
 });

@@ -96,6 +96,37 @@ export default class SearchActions {
     }
 
     /**
+     * Searches for the specified query and immediately opens the dictionary on the result that best
+     * matches it. This is what a visitor accepting one of the search field's own suggestions expects:
+     * they asked for a specific word, not for a list of words to choose from.
+     * @param args
+     */
+    public searchAndExpand(args: ISearchAction) {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
+            await this.search(args)(dispatch);
+
+            const {
+                resultIds,
+                resultsById,
+            } = getState().searchResults;
+            if (resultIds.length < 1) {
+                return;
+            }
+
+            const word = (args.word || '').toLocaleLowerCase();
+            const results = resultIds.map((id) => resultsById[id]);
+            const searchResult = results.find((r) => r.word?.toLocaleLowerCase() === word) ||
+                results.find((r) => r.normalizedWord?.toLocaleLowerCase() === word) ||
+                results[0];
+
+            await this.expandSearchResult({
+                searchResult,
+                updateBrowserHistory: true,
+            })(dispatch, getState);
+        };
+    }
+
+    /**
      * Applies the specified array of search results.
      * @param searchResults
      */
