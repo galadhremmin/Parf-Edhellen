@@ -287,15 +287,18 @@ class MarkdownParser extends \Parsedown
     {
         if (! is_array($link) || //
             ! isset($link['element']) || //
-            ! isset($link['element']['attributes']) || // 
-            ! isset($link['element']['attributes']['href']) || // 
-            ! isset($link['element']['text'])) {
+            ! isset($link['element']['attributes']) || //
+            ! isset($link['element']['attributes']['href'])) {
+            return $link;
+        }
+
+        $text = self::getElementText($link['element']);
+        if ($text === null) {
             return $link;
         }
 
         $attrs = &$link['element']['attributes'];
         $uri = $attrs['href'];
-        $text = $link['element']['text'];
         if (! filter_var($uri, FILTER_VALIDATE_URL) ||
             ! filter_var($text, FILTER_VALIDATE_URL)) {
             return $link;
@@ -306,9 +309,30 @@ class MarkdownParser extends \Parsedown
             return $link;
         }
 
+        // The handler parses the label as markdown, which is undesirable for a host name, so it is
+        // discarded in favour of literal text.
+        unset($link['element']['handler']);
         $link['element']['text'] = $parts['host'];
         $attrs['title'] = 'Goes to: '.$uri;
 
         return $link;
+    }
+
+    /**
+     * Retrieves the label of the specified element. Parsedown stores it as literal text for
+     * implicit links, but as an argument to the handler which parses it as markdown for explicit
+     * [label](uri) links.
+     */
+    private static function getElementText(array $element): ?string
+    {
+        if (isset($element['text']) && is_string($element['text'])) {
+            return $element['text'];
+        }
+
+        if (isset($element['handler']['argument']) && is_string($element['handler']['argument'])) {
+            return $element['handler']['argument'];
+        }
+
+        return null;
     }
 }

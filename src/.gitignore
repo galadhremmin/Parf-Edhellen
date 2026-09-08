@@ -12,7 +12,7 @@ Homestead.yaml
 .env
 .aws
 ads.txt
-*.lock
+/.claude/*.lock
 package-lock.json
 BingSiteAuth.xml
 *.bak
