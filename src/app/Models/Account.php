@@ -271,9 +271,9 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         return $this->id;
     }
 
-    public function getAuthPassword()
+    public function getAuthPassword(): string
     {
-        return null;
+        return (string) $this->password;
     }
 
     public function getRememberTokenName()
