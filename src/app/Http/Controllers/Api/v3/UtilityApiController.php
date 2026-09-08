@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\v3;
 
+use App\Helpers\AgGridFilterHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Interfaces\IMarkdownParser;
 use App\Models\FailedJob;
 use App\Models\SystemError;
+use App\Repositories\AccountIpHistoryRepository;
 use App\Repositories\SystemErrorRepository;
 use Illuminate\Http\Request;
 
@@ -13,14 +15,44 @@ class UtilityApiController extends Controller
 {
     const DEFAULT_SYSTEM_ERROR_CATEGORY = 'frontend';
 
+    const DEFAULT_PAGE_SIZE = 100;
+
+    const MAX_PAGE_SIZE = 1000;
+
+    /**
+     * The columns the exception log grid is allowed to filter on, as a map of the grid's field
+     * names to the SQL expressions they correspond to.
+     */
+    const SYSTEM_ERROR_FILTER_EXPRESSIONS = [
+        'createdAt' => 'created_at',
+        'message' => 'message',
+        'error' => 'error',
+        'url' => 'url',
+        'accountId' => 'account_id',
+        'duration' => 'duration',
+        'sessionId' => 'session_id',
+        'ip' => 'CAST(ip AS CHAR)',
+        'file' => 'file',
+        'line' => 'line',
+        'userAgent' => 'user_agent',
+        'category' => 'category',
+    ];
+
     private IMarkdownParser $_markdownParser;
 
     private SystemErrorRepository $_systemErrorRepository;
 
-    public function __construct(IMarkdownParser $markdownParser, SystemErrorRepository $systemErrorRepository)
+    private AccountIpHistoryRepository $_accountIpHistoryRepository;
+
+    private AgGridFilterHelper $_agGridFilterHelper;
+
+    public function __construct(IMarkdownParser $markdownParser, SystemErrorRepository $systemErrorRepository,
+        AccountIpHistoryRepository $accountIpHistoryRepository, AgGridFilterHelper $agGridFilterHelper)
     {
         $this->_markdownParser = $markdownParser;
         $this->_systemErrorRepository = $systemErrorRepository;
+        $this->_accountIpHistoryRepository = $accountIpHistoryRepository;
+        $this->_agGridFilterHelper = $agGridFilterHelper;
     }
 
     public function parseMarkdown(Request $request)
@@ -54,9 +86,9 @@ class UtilityApiController extends Controller
 
         SystemError::firstOrCreate([
             'category' => 'missing-word',
-            'message'  => $request->input('word'),
+            'message' => $request->input('word'),
         ], [
-            'url'   => $request->header('Referer', ''),
+            'url' => $request->header('Referer', ''),
             'error' => '',
         ]);
 
@@ -90,9 +122,20 @@ class UtilityApiController extends Controller
 
     public function getErrors(Request $request)
     {
-        $from = intval($request->query('from', 0));
-        $to = intval($request->query('to', 100));
+        $this->validate($request, [
+            'offset' => 'sometimes|integer|min:0',
+            'limit' => 'sometimes|integer|min:1|max:'.self::MAX_PAGE_SIZE,
+            'account_id' => 'sometimes|integer|min:1',
+            'ip' => 'sometimes|string|max:45',
+            'filters' => 'sometimes|string|max:4096',
+        ]);
+
+        $offset = intval($request->query('offset', 0));
+        $limit = intval($request->query('limit', self::DEFAULT_PAGE_SIZE));
         $category = $request->query('category');
+        $accountId = $request->query('account_id');
+        $ip = $request->query('ip');
+        $filterModel = $this->_agGridFilterHelper->parse($request->query('filters'));
 
         $query = SystemError::orderBy('id', 'desc')
             ->whereNotIn('category', ['http-401', 'http-404']);
@@ -101,15 +144,41 @@ class UtilityApiController extends Controller
             $query->where('category', $category);
         }
 
+        if ($ip !== null) {
+            // A specific IP address takes precedence over the account's entire IP history.
+            $query->where('ip', $ip);
+        } elseif ($accountId !== null) {
+            $accountId = intval($accountId);
+            $ipAddresses = $this->_accountIpHistoryRepository->getIpAddresses($accountId);
+
+            $query->where(function ($query) use ($accountId, $ipAddresses) {
+                $query->where('account_id', $accountId);
+
+                if (! empty($ipAddresses)) {
+                    $query->orWhereIn('ip', $ipAddresses);
+                }
+            });
+        }
+
+        $this->_agGridFilterHelper->apply($query, $filterModel, self::SYSTEM_ERROR_FILTER_EXPRESSIONS);
+
         $length = $query->count();
         $errors = $query
-            ->skip($from)
-            ->take($to)
+            ->skip($offset)
+            ->take($limit)
             ->get();
 
         return [
             'errors' => $errors,
             'length' => $length,
+        ];
+    }
+
+    public function getAccountIpHistory(Request $request, int $id)
+    {
+        return [
+            'accountId' => $id,
+            'ipAddresses' => $this->_accountIpHistoryRepository->getIpHistory($id),
         ];
     }
 
@@ -151,7 +220,7 @@ class UtilityApiController extends Controller
 
         if ($year !== null && $week !== null) {
             $query->whereRaw('YEAR(created_at) = ?', [$year])
-                  ->whereRaw('WEEK(created_at) = ?', [$week]);
+                ->whereRaw('WEEK(created_at) = ?', [$week]);
         }
 
         $deleted = $query->delete();
@@ -163,15 +232,20 @@ class UtilityApiController extends Controller
 
     public function getFailedJobs(Request $request)
     {
-        $from = intval($request->query('from', 0));
-        $to = intval($request->query('to', 100));
+        $this->validate($request, [
+            'offset' => 'sometimes|integer|min:0',
+            'limit' => 'sometimes|integer|min:1|max:'.self::MAX_PAGE_SIZE,
+        ]);
+
+        $offset = intval($request->query('offset', 0));
+        $limit = intval($request->query('limit', self::DEFAULT_PAGE_SIZE));
 
         $query = FailedJob::orderBy('id', 'desc');
 
         $length = $query->count();
         $errors = $query
-            ->skip($from)
-            ->take($to)
+            ->skip($offset)
+            ->take($limit)
             ->get();
 
         return [

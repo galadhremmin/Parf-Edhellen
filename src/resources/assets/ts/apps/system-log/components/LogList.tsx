@@ -23,7 +23,7 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useAgGridThemeClass } from '@root/utilities/useAgGridThemeClass';
 
-import type { IErrorEntity } from '@root/connectors/backend/ILogApi';
+import type { IErrorEntity, IGridFilterModel } from '@root/connectors/backend/ILogApi';
 import type { IProps } from './LogList._types';
 
 import '@root/components/AgGrid.scss';
@@ -123,7 +123,10 @@ const createColumnDefinitions = (isRoot: boolean, onDelete: (id: number) => void
             filter: true,
             resizable: true,
         },
-        { field: 'line' },
+        {
+            field: 'line',
+            filter: 'agNumberColumnFilter',
+        },
         { 
             field: 'userAgent',
             filter: true,
@@ -158,7 +161,7 @@ const GridStyle = {
     height: '500px',
 };
 
-function LogList({ logApi, category, week, year, weekNumber, roleManager, onCategoryDeleted }: IProps) {
+function LogList({ logApi, category, accountId, ip, week, year, weekNumber, roleManager, onCategoryDeleted }: IProps) {
     const agGridThemeClass = useAgGridThemeClass();
     const gridRef = useRef<AgGridReact>(null);
     const [deleteErrorId, setDeleteErrorId] = useState<number | null>(null);
@@ -214,7 +217,14 @@ function LogList({ logApi, category, week, year, weekNumber, roleManager, onCate
         return {
             rowCount: undefined,
             getRows: (params) => {
-                logApi.getErrors(params.startRow, params.endRow, currentCategory)
+                logApi.getErrors({
+                    accountId,
+                    category: currentCategory,
+                    filters: params.filterModel as IGridFilterModel,
+                    ip,
+                    limit: params.endRow - params.startRow,
+                    offset: params.startRow,
+                })
                     .then((data) => {
                         let lastRow = -1;
                         if (data.errors.length < params.endRow - params.startRow) {
@@ -228,7 +238,7 @@ function LogList({ logApi, category, week, year, weekNumber, roleManager, onCate
                     });
             },
         };
-    }, [logApi]);
+    }, [logApi, accountId, ip]);
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
         params.api.setGridOption('datasource', createDataSource(category));

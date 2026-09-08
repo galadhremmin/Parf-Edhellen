@@ -1,0 +1,40 @@
+.LogFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+
+  &__group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    color: var(--ed-text-faint);
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  &__hint {
+    color: var(--ed-text-faint);
+    font-size: 0.9rem;
+  }
+
+  &__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  &__count {
+    opacity: 0.7;
+    margin-left: 0.35rem;
+  }
+
+  &__clear {
+    margin-left: auto;
+  }
+}

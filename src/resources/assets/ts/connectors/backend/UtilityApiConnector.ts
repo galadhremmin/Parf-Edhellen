@@ -2,7 +2,11 @@ import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import type {
+    IGetAccountIpHistoryResponse,
+    IGetErrorsRequest,
     IGetErrorsResponse,
+    IGetFailedJobsRequest,
+    IGridFilterModel,
     IGetFailedJobsResponse,
     ILogApi,
 } from './ILogApi';
@@ -16,16 +20,38 @@ export default class UtilityApiConnector implements IUtilityApi, ILogApi {
     constructor(private _api = resolve(DI.BackendApi)) {
     }
 
-    public getErrors(from: number = 0, to: number = 100, category?: string) {
-        const params: { from: number; to: number; category?: string } = { from, to };
+    public getErrors(args: IGetErrorsRequest = {}) {
+        const { offset = 0, limit = 100, category, accountId, ip, filters } = args;
+        const params: {
+            offset: number;
+            limit: number;
+            category?: string;
+            accountId?: number;
+            ip?: string;
+            filters?: IGridFilterModel;
+        } = { offset, limit };
         if (category !== undefined) {
             params.category = category;
+        }
+        if (accountId !== undefined) {
+            params.accountId = accountId;
+        }
+        if (ip !== undefined) {
+            params.ip = ip;
+        }
+        if (filters !== undefined && Object.keys(filters).length > 0) {
+            params.filters = filters;
         }
         return this._api.get<IGetErrorsResponse>('utility/errors', params);
     }
 
-    public getFailedJobs(from: number = 0, to: number = 100) {
-        return this._api.get<IGetFailedJobsResponse>('utility/failed-jobs', { from, to });
+    public getAccountIpHistory(accountId: number) {
+        return this._api.get<IGetAccountIpHistoryResponse>(`utility/account/${accountId}/ip-history`);
+    }
+
+    public getFailedJobs(args: IGetFailedJobsRequest = {}) {
+        const { offset = 0, limit = 100 } = args;
+        return this._api.get<IGetFailedJobsResponse>('utility/failed-jobs', { offset, limit });
     }
 
     public deleteError(id: number) {
