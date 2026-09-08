@@ -14,7 +14,7 @@ export interface ISearchResultState {
     resultIds: number[];
     resultsByGroupIndex: ISearchResult[][];
     resultsById: { [ id: number ]: ISearchResult };
-    selectedId: number;
+    selectedId: number | null;
     groupIdMap: ISearchGroups;
 }
 

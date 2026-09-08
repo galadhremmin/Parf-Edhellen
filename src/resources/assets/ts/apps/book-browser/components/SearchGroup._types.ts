@@ -5,5 +5,5 @@ export interface IProps {
     groupName: string;
     onClick: ComponentEventHandler<ISearchResult>;
     searchResults: ISearchResult[];
-    selectedResultId?: number;
+    selectedResultId?: number | null;
 }

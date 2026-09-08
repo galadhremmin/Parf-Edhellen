@@ -10,7 +10,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
     resultIds: [],
     resultsByGroupIndex: [],
     resultsById: {},
-    selectedId: 0,
+    selectedId: null,
     groupIdMap: {},
 },
     action: ISearchResultReducerAction) => {
@@ -39,8 +39,10 @@ const SearchResultsReducer = (state: ISearchResultState = {
                 });
             }
 
+            // `null` rather than the first result: a result is only selected when the customer
+            // actually picks one, so that a fresh set of search results highlights nothing.
             if (! resultIds.includes(selectedId)) {
-                selectedId = 0;
+                selectedId = null;
             }
 
             return {
@@ -61,7 +63,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
 
             let selectedId = action.id;
             if (! resultIds.includes(selectedId)) {
-                selectedId = 0;
+                selectedId = null;
             }
 
             return {

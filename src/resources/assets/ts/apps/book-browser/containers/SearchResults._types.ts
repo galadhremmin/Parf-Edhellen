@@ -6,6 +6,6 @@ export interface IProps {
     loading?: boolean;
     searchGroups: string[];
     searchResults: ISearchResult[][];
-    selectedResultId?: number;
+    selectedResultId?: number | null;
     word: string;
 }
