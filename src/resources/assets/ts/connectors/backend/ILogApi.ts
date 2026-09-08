@@ -25,9 +25,45 @@ export interface IFailedJob {
     failedAt: string;
 }
 
+export interface IAccountIpAddress {
+    ip: string;
+    lastSeen: string | null;
+    numberOfOccurrences: number;
+    sources: string[];
+}
+
+export interface IGetAccountIpHistoryResponse {
+    accountId: number;
+    ipAddresses: IAccountIpAddress[];
+}
+
+/**
+ * An ag-Grid filter model, keyed by column field name. It is applied by the backend rather than
+ * by the grid, so that it filters every record rather than just the loaded ones.
+ */
+export type IGridFilterModel = Record<string, unknown>;
+
+export interface IGetErrorsRequest {
+    /** Number of records to skip. */
+    offset?: number;
+    /** Maximum number of records to return. */
+    limit?: number;
+    category?: string;
+    accountId?: number;
+    ip?: string;
+    filters?: IGridFilterModel;
+}
+
 export interface IGetErrorsResponse {
     errors: IErrorEntity[];
     length: number;
+}
+
+export interface IGetFailedJobsRequest {
+    /** Number of records to skip. */
+    offset?: number;
+    /** Maximum number of records to return. */
+    limit?: number;
 }
 
 export interface IGetFailedJobsResponse {
@@ -36,8 +72,9 @@ export interface IGetFailedJobsResponse {
 }
 
 export interface ILogApi {
-    getErrors(from?: number, to?: number, category?: string): Promise<IGetErrorsResponse>;
-    getFailedJobs(from?: number, to?: number): Promise<IGetFailedJobsResponse>;
+    getErrors(args?: IGetErrorsRequest): Promise<IGetErrorsResponse>;
+    getAccountIpHistory(accountId: number): Promise<IGetAccountIpHistoryResponse>;
+    getFailedJobs(args?: IGetFailedJobsRequest): Promise<IGetFailedJobsResponse>;
     deleteError(id: number): Promise<void>;
     deleteErrorsByCategory(category: string, year?: number, week?: number): Promise<{ deleted: number }>;
 }

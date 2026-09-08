@@ -4,10 +4,17 @@ import { DI } from '@root/di/keys';
 
 import Panel from '@root/components/Panel';
 import ErrorsByWeekBarGraph from '../components/Graph';
+import LogFilters from '../components/LogFilters';
 import LogList from '../components/LogList';
 import ViewsGraph from '../components/ViewsGraph';
 import type { IProps } from '../index._types';
+import type { ILogFilter } from '../components/LogFilters._types';
 import type { IComponentEvent } from '@root/components/Component._types';
+
+const NoAccountFilter: ILogFilter = {
+    account: null,
+    ip: null,
+};
 
 function Log(props: IProps) {
     const {
@@ -21,6 +28,7 @@ function Log(props: IProps) {
     const [selectedWeek, setSelectedWeek] = useState<string | undefined>(undefined);
     const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
     const [selectedWeekNumber, setSelectedWeekNumber] = useState<number | undefined>(undefined);
+    const [accountFilter, setAccountFilter] = useState<ILogFilter>(NoAccountFilter);
 
     const handleCategoryClick = useCallback((ev: IComponentEvent<{ category: string, week: string, year?: number, weekNumber?: number }>) => {
         setSelectedCategory(ev.value.category);
@@ -72,9 +80,18 @@ function Log(props: IProps) {
                 )}
             </section>}
             <section>
+                <LogFilters
+                    logApi={logApi}
+                    filter={accountFilter}
+                    onChange={setAccountFilter}
+                />
+            </section>
+            <section>
                 <LogList 
                     logApi={logApi} 
                     category={selectedCategory}
+                    accountId={accountFilter.account?.id ?? undefined}
+                    ip={accountFilter.ip ?? undefined}
                     week={selectedWeek}
                     year={selectedYear}
                     weekNumber={selectedWeekNumber}

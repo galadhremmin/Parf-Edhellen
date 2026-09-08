@@ -23,5 +23,8 @@ Route::group([
         ->name('api.account.verify-email');
 
     Route::get('utility/errors', [UtilityApiController::class, 'getErrors']);
+    Route::get('utility/account/{id}/ip-history', [UtilityApiController::class, 'getAccountIpHistory'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.utility.account-ip-history');
     Route::get('utility/failed-jobs', [UtilityApiController::class, 'getFailedJobs']);
 });

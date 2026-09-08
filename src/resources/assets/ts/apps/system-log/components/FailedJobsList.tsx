@@ -58,7 +58,10 @@ function FailedJobsList({ logApi }: IProps) {
         const dataSource: IDatasource = {
             rowCount: undefined,
             getRows: (params) => {
-                logApi.getFailedJobs(params.startRow, params.endRow)
+                logApi.getFailedJobs({
+                    limit: params.endRow - params.startRow,
+                    offset: params.startRow,
+                })
                     .then((data) => {
                         let lastRow = -1;
                         if (data.length <= params.endRow) {
