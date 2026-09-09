@@ -13,6 +13,7 @@ import type {
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { mapArrayGroupBy } from '@root/utilities/func/mapper';
+import withMinimumDuration from '@root/utilities/func/minimum-duration';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
 import { capitalize } from '@root/utilities/func/string-manipulation';
 
@@ -315,8 +316,12 @@ export default class SearchActions {
             dispatch({
                 groupId: args.searchResult.groupId,
                 type: Actions.RequestEntities,
+                word,
             });
-            const entities = await this._api.entities(request);
+
+            // Held for a beat even when the response is immediate, so expanding a
+            // word feels the same on every connection. See minimum-duration.ts.
+            const entities = await withMinimumDuration(this._api.entities(request));
             dispatch(this.setEntities(entities));
         }
     }
@@ -338,10 +343,10 @@ export default class SearchActions {
                     type: Actions.RequestEntities,
                 });
 
-                const entities = await this._api.entity({
+                const entities = await withMinimumDuration(this._api.entity({
                     entityId,
                     groupId,
-                });
+                }));
                 this._changeAddressForSpecificGloss(entityId, entities, updateBrowserHistory);
                 dispatch(this.setEntities(entities));
             } catch (e) {

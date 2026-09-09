@@ -7,6 +7,7 @@ import type { IReferenceLinkClickDetails } from '@root/components/HtmlInject._ty
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import Cache from '@root/utilities/Cache';
+import classNames from '@root/utilities/ClassNames';
 
 import { SearchActions } from '../../actions';
 import { hasGlossaryChangedAddress } from '../../actions/SearchActions';
@@ -15,6 +16,7 @@ import type { IEntitiesComponentProps } from '../../containers/Entities._types';
 import CurrentLanguagesDivider from './CurrentLanguagesDivider';
 import GlossaryEntitiesEmpty from '../GlossaryEntitiesEmpty';
 import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
+import GlossaryEntitiesFetching from './GlossaryEntitiesFetching';
 import GlossaryLanguages from './GlossaryLanguages';
 import GlossaryMinimap from './GlossaryMinimap';
 import UnusualLanguagesWarning from './UnusualLanguagesWarning';
@@ -43,6 +45,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         leadWithUnusual,
         loading,
         isEmpty,
+        pendingWord,
         sections,
         single,
         unusualLanguages,
@@ -107,15 +110,29 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
 
     const showMinimap = ! loading && ! isEmpty && ! single && minimapLanguages.length >= 2;
 
+    // What is on screen right now, which during a fetch is still the previous
+    // word's glossary. Keeping it mounted and dimming it is the whole trick:
+    // the shape of the answer is not knowable until it arrives, so anything we
+    // put in its place is a guess, and a wrong guess is a jump. Nothing moves
+    // until there is something true to move to.
+    const hasOutgoingGlossary = ! isEmpty && Object.keys(sections ?? {}).length > 0;
+    const dimOutgoing = loading && hasOutgoingGlossary;
+
     return <div className="ed-glossary-container" ref={glossaryContainerRef}>
         {notifyLoaded && <FixedBouncingArrow onClick={_onScrollToContent} />}
         {showMinimap && <GlossaryMinimap languages={minimapLanguages} sections={sections} />}
-        {loading && <GlossaryEntitiesLoading minHeight={glossaryContainerRef.current?.offsetHeight || 500} />}
+        {dimOutgoing && <GlossaryEntitiesFetching word={pendingWord} />}
+        {loading && ! hasOutgoingGlossary && <GlossaryEntitiesLoading
+            minHeight={glossaryContainerRef.current?.offsetHeight || 500}
+            word={pendingWord}
+        />}
         {! loading && isEmpty && <GlossaryEntitiesEmpty word={word} />}
-        {! loading && ! isEmpty && <LanguageLookupProvider languages={languageDictionary || []}>
+        {(! loading || dimOutgoing) && ! isEmpty && <LanguageLookupProvider languages={languageDictionary || []}>
             <WordListMembershipProvider sections={sections}>
                 <Waypoint onPositionChange={_onPositionChange} bottomOffset="50%">
-                    <div className="ed-glossary-waypoint" ref={waypointRef}>
+                    <div className={classNames('ed-glossary-waypoint', {
+                        'ed-glossary-waypoint--fetching': dimOutgoing,
+                    })} ref={waypointRef} aria-busy={dimOutgoing}>
                         {/* The single best-rated entry overall is a genuine direct match and lives in an
                             "unusual" (older/rejected conceptual period) language — lead with it, fully shown
                             (no opt-in gate — it's the right word, not just the least-bad fuzzy hit), instead

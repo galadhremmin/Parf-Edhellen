@@ -86,24 +86,7 @@
     </main>
   </div>
 </div>
-<footer class="bg-dark text-secondary p-4 d-flex" data-ad-region="no-ads">
-  <section class="flex-fill w-100">
-    <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
-    <nav>
-      <ul>
-        <li><a href="{{ route('login') }}" class="link-secondary text-decoration-underline">Sign in</a></li>
-        <li><a href="{{ route('about') }}" class="link-secondary text-decoration-underline">About the website</a></li>
-        <li><a href="{{ route('about.cookies') }}" class="link-secondary text-decoration-underline">Cookie policy</a></li>
-        <li><a href="{{ route('about.privacy') }}" class="link-secondary text-decoration-underline">Privacy policy</a></li>
-      </ul>
-    </nav>
-  </section>
-  <section class="flex-fill w-100">
-    Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
-    we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank" class="link-secondary text-decoration-underline">Middle-earth Enterprises</a> nor 
-    <a href="http://www.tolkienestate.com/" target="_blank" class="link-secondary text-decoration-underline">Tolkien Estate</a>.
-  </section>
-</footer>
+@include('_layouts._footer')
 
 <script type="text/javascript" src="@assetpath(runtime.js)"></script>
 <script type="text/javascript" src="@assetpath(index.js)"></script>

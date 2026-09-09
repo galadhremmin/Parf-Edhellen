@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Abstracts\Controller;
 
-class GamesController extends Controller
+class PracticeController extends Controller
 {
     public function index()
     {
-        $games = [
+        $activities = [
             (object) [
                 'route' => route('flashcard'),
                 'title' => __('flashcard.title'),
@@ -26,6 +26,6 @@ class GamesController extends Controller
             ],
         ];
 
-        return view('games.index', ['games' => $games]);
+        return view('practice.index', ['activities' => $activities]);
     }
 }
