@@ -1,8 +1,8 @@
 import type {
     ReduxThunkDispatch,
 } from '@root/_types';
-import type { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
-import convertTransformationToTextComponents from '@root/apps/sentence-inspector/utilities/TextConverter';
+import type { ParagraphState } from '../utilities/TextComponents._types';
+import convertTransformationToTextComponents from '../utilities/TextComponentsConverter';
 import { setValidationErrors } from '@root/components/Form/Validation';
 import type { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import { SentenceFragmentType } from '@root/connectors/backend/IBookApi';

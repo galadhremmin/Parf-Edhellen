@@ -207,8 +207,7 @@
     <div class="home-community">
       <article class="home-panel">
         <div class="home-panel__banner">
-          <h3 class="home-panel__title">The book is being written right now</h3>
-          <a class="ed-ui" href="{{ route('discuss.index') }}">All activity</a>
+          <h3 class="home-panel__title">Most recent community activity</h3>
         </div>
         @include('_shared._audit-trail', [
           'auditTrail' => $auditTrails

@@ -1,0 +1,99 @@
+// ============================================================
+// The study bar
+// ============================================================
+
+@import "../../../_scss/variables";
+
+.phrase-studybar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  margin: 0 auto;
+  padding: 0.65rem 1.25rem;
+  max-width: 62rem;
+  border-top: 1px solid var(--ed-border);
+  border-bottom: 1px solid var(--ed-border);
+  // The text scrolls under it, so it needs a ground of its own.
+  background: var(--ed-bg);
+}
+
+.phrase-studybar__group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.phrase-studybar__legend {
+  font-family: $font-family-tiny;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ed-text-faint);
+}
+
+// Shared by the study bar and the apparatus' own buttons.
+.phrase-toggle {
+  font-family: $font-family-tiny;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--ed-border);
+  background: transparent;
+  color: var(--ed-text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not([disabled]) {
+    background: var(--ed-bg-surface-hover);
+  }
+
+  &[aria-pressed="true"] {
+    background: rgba(201, 164, 76, 0.16);
+    border-color: var(--ed-gild);
+    color: var(--ed-text);
+  }
+
+  &[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ed-gild);
+    outline-offset: 2px;
+  }
+}
+
+.phrase-trail {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.phrase-trail__bar {
+  width: 88px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ed-border);
+  overflow: hidden;
+}
+
+.phrase-trail__fill {
+  display: block;
+  height: 100%;
+  background: var(--ed-gild);
+  transition: width 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phrase-toggle,
+  .phrase-trail__fill {
+    transition: none;
+  }
+}

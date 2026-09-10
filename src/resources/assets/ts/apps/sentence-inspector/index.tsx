@@ -8,7 +8,7 @@ import { SentenceActions } from './actions';
 import type { IProps } from './index._types';
 import rootReducer from './reducers';
 
-import SentenceInspector from './containers/SentenceInspector';
+import PhraseReader from './containers/PhraseReader';
 import registerApp from '../app';
 
 const store = configureStore({
@@ -22,20 +22,21 @@ const Inject = (props: IProps) => {
         if (props.sentence) {
             const actions = new SentenceActions();
             store.dispatch(actions.setSentence(props.sentence));
+            store.dispatch(actions.restoreTrail(props.sentence.sentence?.id));
 
             const matches = /^#!([0-9]+)\/([0-9]+)$/.exec(window.location.hash);
             if (matches) {
                 const fragmentId = parseInt(matches[2], 10);
                 const fragment = store.getState().fragments.find((f) => f.id === fragmentId);
                 if (fragment) {
-                    store.dispatch(actions.selectFragment(fragment));
+                    store.dispatch(actions.selectFragment(fragment, props.sentence.sentence?.id));
                 }
             }
         }
     }, []);
 
     return <Provider store={store}>
-        <SentenceInspector />
+        <PhraseReader />
     </Provider>;
 };
 

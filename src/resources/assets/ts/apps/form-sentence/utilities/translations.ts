@@ -1,4 +1,4 @@
-import type { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import type { ParagraphState } from './TextComponents._types';
 import { deepClone } from '@root/utilities/func/clone';
 import type{ ITranslationRow } from '../components/TranslationForm/TranslationForm._types';
 import {

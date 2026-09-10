@@ -22,16 +22,6 @@
   </p>
   <p>{{$sentence['sentence']->description}}</p>
   @include('sentence._annotations', ['sentence' => $sentence, 'limit' => $annotationLimit ?? null])
-  <footer>
-    {{$sentence['sentence']->language->name}}
-    [{{$sentence['sentence']->source}}]
-    @if ($sentence['sentence']->account)
-    by
-    <a href="{{ $link->author($sentence['sentence']->account->id, $sentence['sentence']->account->nickname) }}">
-      {{ $sentence['sentence']->account->nickname }}
-    </a>
-    @endif
-  </footer>
   @include('sentence._readmore', [ 
     'languageId'   => $sentence['sentence']->language->id,
     'languageName' => $sentence['sentence']->language->name,

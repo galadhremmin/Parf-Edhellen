@@ -1,11 +1,143 @@
-div.abstract {
-    margin-top: 1rem;
-    font-weight: bold;
-    font-style: italic;
+// ============================================================
+// The phrase pages
+// ============================================================
+//
+// This is the `style-sentence.css` entry, linked from the phrase
+// index, the per-language list and a single phrase.
+//
+// It used to be nine lines, one of which was a bare `h3 { text-align:
+// center }` that reached every heading on every phrase page. That rule
+// is kept below, scoped to the link blocks that actually relied on it.
+
+@import "../_scss/variables";
+
+// The list pages centre their block headings; nothing else should.
+.link-blocks h3 {
+  text-align: center;
 }
-.sentence-footer {
-    text-align: right;
+
+// ============================================================
+// A single phrase
+// ============================================================
+//
+// The vocabulary is the front page's: an `ed-label` eyebrow over a
+// display-face title, a gilded rule, and a lead. A phrase is a leaf of
+// the same book, so it is set like one.
+
+.phrase-masthead {
+  text-align: center;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2.25rem 0 0;
+
+  .phrase-masthead__title {
+    font-family: $font-family-display;
+    font-weight: 300;
+    font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    margin: 0.6rem 0 0;
+    text-wrap: balance;
+  }
+
+  .phrase-masthead__rule {
+    width: min(360px, 70%);
+    margin: 1.25rem auto 0;
+    font-size: 0.9rem;
+  }
+
+  .phrase-masthead__lead {
+    font-size: 1.15rem;
+    color: var(--ed-text-muted);
+    margin: 1.1rem 0 0;
+    text-wrap: pretty;
+  }
 }
-h3 {
-    text-align: center;
+
+.phrase-aftermatter {
+  max-width: 46rem;
+  margin: 4rem auto 0;
+}
+
+.phrase-essay {
+  color: var(--ed-text-muted);
+
+  .phrase-essay__title {
+    font-family: $font-family-display;
+    font-weight: 300;
+    font-size: 1.9rem;
+    color: var(--ed-text);
+    margin: 0 0 0.75rem;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+.phrase-colophon {
+  margin: 2.5rem 0 0;
+  padding: 1.25rem 1.4rem;
+  background: var(--ed-bg-surface);
+  border: 1px solid var(--ed-border);
+  border-radius: $border-radius-lg;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem 1.5rem;
+
+  dt {
+    margin: 0 0 0.15rem;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+.phrase-actions {
+  margin: 1.5rem 0 0;
+  text-align: right;
+
+  .btn + .btn {
+    margin-left: 0.5rem;
+  }
+}
+
+// A leaf of the book rather than a card -- the same panel the front page
+// uses, lifted here rather than depended upon, since that one is scoped
+// to `.home-page`.
+.phrase-onward {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin-top: 2.5rem;
+
+  .phrase-onward__card {
+    padding: 1.1rem 1.2rem;
+    background: var(--ed-bg-elevated);
+    border: 1px solid var(--ed-border);
+    border-radius: $border-radius-lg;
+    box-shadow: 0 2px 10px var(--ed-shadow);
+  }
+
+  .phrase-onward__title {
+    font-family: $font-family-display;
+    font-weight: 400;
+    font-size: 1.3rem;
+    line-height: 1.25;
+    margin: 0.3rem 0 0.4rem;
+    text-align: left;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ed-text-muted);
+    text-wrap: pretty;
+  }
 }

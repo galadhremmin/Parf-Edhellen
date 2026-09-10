@@ -54,7 +54,13 @@ export default class DiscussActions {
             } = threadData;
 
             if (currentPage !== undefined) {
-                browserHistory.push('?' + updateQueryString({offset: currentPage}));
+                // Keep the fragment. Discuss is embedded at the foot of pages that use the
+                // hash themselves -- a phrase deep-links to a word as `#!<sentence>/<word>`
+                // -- and this rewrite lands after they have set it, so dropping it here
+                // would leave the reader with an address that no longer points at what
+                // they are looking at.
+                const fragment = typeof window === 'object' ? window.location.hash : '';
+                browserHistory?.push('?' + updateQueryString({offset: currentPage}) + fragment);
             }
         }
 
