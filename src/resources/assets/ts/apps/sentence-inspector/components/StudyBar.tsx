@@ -1,4 +1,6 @@
+import { isLastScript } from '../reducers/DisplayReducer';
 import type { DisplayMode } from '../reducers/DisplayReducer._types';
+import MissingEnglishNotice from './MissingEnglishNotice';
 import type { IProps } from './StudyBar._types';
 
 import './StudyBar.scss';
@@ -6,7 +8,7 @@ import './StudyBar.scss';
 const Modes: { label: string; mode: DisplayMode }[] = [
     { label: 'Tengwar', mode: 'tengwar' },
     { label: 'Latin', mode: 'latin' },
-    { label: 'Translation', mode: 'translation' },
+    { label: 'English', mode: 'translation' },
     { label: 'Changed forms', mode: 'changedForms' },
 ];
 
@@ -22,8 +24,10 @@ export default function StudyBar(props: IProps) {
         action,
         display,
         hasTranslations,
+        isSignedIn,
         onToggle,
         openedCount,
+        sentenceId,
         totalCount,
     } = props;
 
@@ -33,14 +37,26 @@ export default function StudyBar(props: IProps) {
         <div className="phrase-studybar__group">
             <span className="phrase-studybar__legend">Show</span>
             {Modes.map(({ label, mode }) => {
-                const isTranslation = mode === 'translation';
-                const disabled = isTranslation && ! hasTranslations;
+                // A phrase with no translation explains itself rather than greying out in
+                // silence, so that case is a control of its own.
+                if (mode === 'translation' && ! hasTranslations) {
+                    return <MissingEnglishNotice key={mode}
+                        isSignedIn={isSignedIn}
+                        sentenceId={sentenceId}
+                    />;
+                }
+
+                // The last script standing stays on: with both off there is no text to read.
+                const lastScript = display[mode] && isLastScript(display, mode);
+
                 return <button key={mode}
                     type="button"
                     className="phrase-toggle"
-                    aria-pressed={! disabled && display[mode]}
-                    disabled={disabled}
-                    title={disabled ? 'This phrase has no translation recorded' : undefined}
+                    aria-pressed={display[mode]}
+                    disabled={lastScript}
+                    title={lastScript
+                        ? `Turn ${mode === 'latin' ? 'the tengwar' : 'the latin'} back on first — the phrase has to be written one way or the other`
+                        : undefined}
                     onClick={() => onToggle(mode)}>
                     {label}
                 </button>;

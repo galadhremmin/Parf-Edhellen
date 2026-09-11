@@ -195,8 +195,10 @@ export function PhraseReader(props: IProps) {
                     : null}
                 display={display}
                 hasTranslations={lines.hasTranslations}
+                isSignedIn={isSignedIn}
                 onToggle={onToggleDisplay}
                 openedCount={trailSet.size}
+                sentenceId={sentence?.id || 0}
                 totalCount={words.length}
             />
 

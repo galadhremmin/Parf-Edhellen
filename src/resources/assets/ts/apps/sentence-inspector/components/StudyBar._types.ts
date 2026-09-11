@@ -6,9 +6,11 @@ export interface IProps {
     /** The phrase-level "keep these words" action, when the reader is signed in. */
     action?: ReactNode;
     display: IDisplayReducerState;
-    /** Disabled with a reason rather than silently dead when the phrase has no English. */
+    /** When false the English toggle is replaced by a notice explaining the gap. */
     hasTranslations: boolean;
+    isSignedIn: boolean;
     onToggle: (mode: DisplayMode) => void;
     openedCount: number;
+    sentenceId: number;
     totalCount: number;
 }

@@ -136,9 +136,11 @@
 
   </div>
 
+  <div class="mt-3">
   @include('_shared._ad', [
     'ad' => 'phrases'
   ])
+  </div>
 
   @include('discuss._standalone', [
     'entity_id'   => $sentence['sentence']->id,

@@ -14,7 +14,7 @@ return [
     // and nobody answers a footer notice.
     'colophon' => [
         'label' => 'The colophon',
-        'heading' => ':periodSinceInception years, kept by one pair of hands',
+        'heading' => ':periodSinceInception years in Tolkien\'s epic',
         'lead' => 'I have kept this book since 2011. Every gloss, every phrase and every line of the thing behind imported, transformed and organized by myself from various linguistic sources over the years.',
         'body' => 'The servers are the one thing evenings cannot pay for. If the book has been useful to you, a cup of tea is a kind way of saying so.',
         'signature' => 'Leonard',
