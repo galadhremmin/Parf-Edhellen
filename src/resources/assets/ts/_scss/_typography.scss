@@ -1,0 +1,113 @@
+// ============================================================
+// Two voices
+// ============================================================
+//
+// The site mixes a serif and a sans, and each has a job:
+//
+//   SERIF -- the book speaks. Headings, body, elvish, glosses,
+//   quotations, section labels, citations and sources, and calls to
+//   action. An invitation is the book's voice, not the machine's.
+//
+//   SANS  -- the machine speaks. Only what the interface reports
+//   about itself or what you operate: counts, timestamps, badges,
+//   breadcrumbs, form-control internals, system notices. Never above
+//   14px, never larger than the body text beside it.
+//
+// The test: if deleting it would not change what the book says, it
+// is sans.
+// ============================================================
+
+@import "variables";
+
+// --- Display: headings and anything set large ---
+.ed-display {
+  font-family: $font-family-display;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+// --- Label: a section head or eyebrow, in gilding ---
+.ed-label {
+  font-family: $font-family-sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.2em;
+  line-height: 1.4;
+  color: var(--ed-gild-text);
+
+  // Faces without a real `smcp` table synthesise small caps badly.
+  // Where the browser tells us it cannot do it, fall back to uppercase
+  // at a smaller size, which is the same shape by other means.
+  @supports not (font-variant-caps: all-small-caps) {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-variant-caps: normal;
+  }
+}
+
+// --- Citation: the noise floor ---
+//
+// [PE17/060] appears dozens of times on a dense entry. Set uniformly
+// and muted, it stops competing with the words -- and becomes more
+// scannable for it, because uniformity is what makes a pattern skim.
+.ed-cite {
+  font-family: $font-family-sans-serif;
+  font-size: 0.9375rem;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.07em;
+  color: var(--ed-text-faint);
+
+  @supports not (font-variant-caps: all-small-caps) {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    font-variant-caps: normal;
+  }
+}
+
+// --- The machine's voice ---
+.ed-ui {
+  font-family: $font-family-tiny;
+  font-size: 0.8125rem;
+  font-variant-numeric: normal;
+  line-height: 1.5;
+  color: var(--ed-text-faint);
+}
+
+// --- Ornament: a gilded hairline with a centred lozenge ---
+.ed-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  color: var(--ed-border-strong);
+
+  &::before,
+  &::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(201, 164, 76, 0) 0%,
+      rgba(201, 164, 76, 0.55) 50%,
+      rgba(201, 164, 76, 0) 100%
+    );
+  }
+}
+
+// --- Oldstyle figures in running prose ---
+//
+// Numerals that sit on the baseline like lowercase letters, as a book
+// sets them. Deliberately NOT applied to .ed-ui: a count or a
+// timestamp is data, and data wants lining figures.
+body {
+  font-variant-numeric: oldstyle-nums;
+}
+
+.ed-ui,
+input,
+select,
+textarea,
+table {
+  font-variant-numeric: normal;
+}

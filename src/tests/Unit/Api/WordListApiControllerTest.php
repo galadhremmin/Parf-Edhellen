@@ -185,6 +185,60 @@ class WordListApiControllerTest extends TestCase
     // bulk operations
     // -------------------------------------------------------------------------
 
+    public function test_add_entries_attaches_in_bulk()
+    {
+        $account = $this->makeAccount();
+        $wordList = $this->makeWordList($account);
+
+        $entries = $this->someLexicalEntries(3);
+
+        $this->actingAs($account)
+            ->postJson(route('api.word-lists.bulk-add-entries', ['id' => $wordList->id]), [
+                'lexical_entry_ids' => array_map(fn ($e) => $e->id, $entries),
+            ])
+            ->assertCreated()
+            ->assertJsonPath('number_of_entries', 3);
+
+        $this->assertSame(3, $wordList->lexical_entries()->count());
+    }
+
+    public function test_add_entries_counts_only_what_was_new()
+    {
+        $account = $this->makeAccount();
+        $wordList = $this->makeWordList($account);
+
+        $entries = $this->someLexicalEntries(2);
+        $wordList->lexical_entries()->attach($entries[0]->id);
+
+        // Saving a phrase twice is an ordinary thing to do, so the second save is not an
+        // error -- it simply adds nothing.
+        $this->actingAs($account)
+            ->postJson(route('api.word-lists.bulk-add-entries', ['id' => $wordList->id]), [
+                'lexical_entry_ids' => array_map(fn ($e) => $e->id, $entries),
+            ])
+            ->assertCreated()
+            ->assertJsonPath('number_of_entries', 1);
+
+        $this->assertSame(2, $wordList->lexical_entries()->count());
+    }
+
+    public function test_add_entries_refuses_a_list_owned_by_somebody_else()
+    {
+        $owner = $this->makeAccount();
+        $stranger = $this->makeAccount();
+        $wordList = $this->makeWordList($owner);
+
+        $entries = $this->someLexicalEntries(1);
+
+        $this->actingAs($stranger)
+            ->postJson(route('api.word-lists.bulk-add-entries', ['id' => $wordList->id]), [
+                'lexical_entry_ids' => [$entries[0]->id],
+            ])
+            ->assertNotFound();
+
+        $this->assertSame(0, $wordList->lexical_entries()->count());
+    }
+
     public function test_remove_entries_detaches_in_bulk()
     {
         $account = $this->makeAccount();

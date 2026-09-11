@@ -191,7 +191,7 @@ class CrosswordPuzzleGenerator
     }
 
     /**
-     * Generate daily puzzles for all enabled languages (target date = today).
+     * Generate this week's puzzles for all enabled languages (target date = today).
      *
      * @return array<int, CrosswordPuzzle|null> language_id => puzzle or null
      */

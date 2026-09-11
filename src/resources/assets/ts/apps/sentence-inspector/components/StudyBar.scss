@@ -1,0 +1,195 @@
+// ============================================================
+// The study bar
+// ============================================================
+
+@import "../../../_scss/variables";
+
+.phrase-studybar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  margin: 0 auto;
+  padding: 0.65rem 1.25rem;
+  max-width: 62rem;
+  border-top: 1px solid var(--ed-border);
+  border-bottom: 1px solid var(--ed-border);
+  // The text scrolls under it, so it needs a ground of its own.
+  background: var(--ed-bg);
+}
+
+.phrase-studybar__group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.phrase-studybar__legend {
+  font-family: $font-family-tiny;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ed-text-faint);
+}
+
+// Shared by the study bar and the apparatus' own buttons.
+.phrase-toggle {
+  font-family: $font-family-tiny;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--ed-border);
+  background: transparent;
+  color: var(--ed-text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover:not([disabled]) {
+    background: var(--ed-bg-surface-hover);
+  }
+
+  &[aria-pressed="true"] {
+    background: rgba(201, 164, 76, 0.16);
+    border-color: var(--ed-gild);
+    color: var(--ed-text);
+  }
+
+  // Unavailable, and able to say why: aria-disabled rather than disabled, because a
+  // disabled control fires no mouse events and so could not be hovered or focused.
+  &[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: help;
+  }
+
+  // A control that is on and cannot be turned off is not the same as one that is
+  // unavailable: fading it would read as "off". The last script standing keeps its
+  // pressed look and simply stops responding.
+  &[disabled] {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ed-gild);
+    outline-offset: 2px;
+  }
+}
+
+.phrase-trail {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.phrase-trail__bar {
+  width: 88px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ed-border);
+  overflow: hidden;
+}
+
+.phrase-trail__fill {
+  display: block;
+  height: 100%;
+  background: var(--ed-gild);
+  transition: width 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phrase-toggle,
+  .phrase-trail__fill {
+    transition: none;
+  }
+}
+
+// ============================================================
+// The missing-English notice
+// ============================================================
+
+.phrase-notice {
+  position: relative;
+  display: inline-flex;
+}
+
+$notice-gap: 0.5rem;
+
+.phrase-notice__body {
+  position: absolute;
+  top: calc(100% + #{$notice-gap});
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 2rem));
+  padding: 0.85rem 1rem;
+  text-align: left;
+  background: var(--ed-bg-elevated);
+  border: 1px solid var(--ed-border);
+  border-top: 2px solid var(--ed-gild);
+  border-radius: $border-radius-lg;
+  box-shadow: 0 4px 16px var(--ed-shadow);
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The arrow, pointing back at the control it explains.
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: var(--ed-gild);
+    z-index: 1;
+  }
+
+  // A transparent bridge across the gap between the control and this panel. Without it
+  // the pointer leaves both boxes on its way down, the notice closes, and the call to
+  // action cannot be reached with the mouse at all.
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: $notice-gap;
+  }
+}
+
+.phrase-notice__title {
+  display: block;
+}
+
+.phrase-notice__text {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ed-text-muted);
+  text-wrap: pretty;
+}
+
+.phrase-notice__cta {
+  font-size: 0.9375rem;
+  align-self: flex-start;
+}
+
+@media (max-width: map-get($grid-breakpoints, "sm")) {
+  // Near the edge of a narrow screen the centred popover would hang off it.
+  .phrase-notice__body {
+    left: 0;
+    transform: none;
+
+    &::before {
+      left: 2rem;
+    }
+  }
+}

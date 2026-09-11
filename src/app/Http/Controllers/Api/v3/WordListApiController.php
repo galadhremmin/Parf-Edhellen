@@ -221,6 +221,39 @@ class WordListApiController extends Controller
     }
 
     /**
+     * Adds several lexical entries to a word list at once.
+     *
+     * A phrase can carry eighty glossed words, and a reader who has just worked through one
+     * wants to keep the vocabulary in a single gesture rather than eighty. Entries the list
+     * already holds are left alone, so this is safe to repeat.
+     */
+    public function addEntries(Request $request, int $wordListId): JsonResponse
+    {
+        $wordList = WordList::forAccount($request->user())
+            ->findOrFail($wordListId);
+
+        $data = $request->validate([
+            'lexical_entry_ids' => 'required|array|max:1000',
+            'lexical_entry_ids.*' => 'integer|exists:lexical_entries,id',
+        ]);
+
+        $lexicalEntryIds = array_values(array_unique($data['lexical_entry_ids']));
+
+        $existingIds = $wordList->lexical_entries()
+            ->whereIn('lexical_entries.id', $lexicalEntryIds)
+            ->pluck('lexical_entries.id')
+            ->all();
+
+        // syncWithoutDetaching leaves what the list already holds untouched; the count
+        // reports what was genuinely new, which is what the caller wants to report back.
+        $wordList->lexical_entries()->syncWithoutDetaching($lexicalEntryIds);
+
+        return response()->json([
+            'number_of_entries' => count($lexicalEntryIds) - count($existingIds),
+        ], 201);
+    }
+
+    /**
      * Moves or copies several lexical entries from one word list to another.
      *
      * Both lists are resolved through the account scope, so a caller cannot move entries out of, or

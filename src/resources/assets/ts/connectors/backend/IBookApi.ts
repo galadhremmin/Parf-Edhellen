@@ -247,6 +247,7 @@ export interface ISentenceEntity {
 export interface ISentenceFragmentEntity {
     comments?: string;
     fragment?: string;
+    lexicalEntry?: ISentenceFragmentLexicalEntry;
     lexicalEntryId?: number;
     id?: number;
     inflectionGroupUuid?: string;
@@ -257,6 +258,22 @@ export interface ISentenceFragmentEntity {
     speechId?: number;
     tengwar?: string;
     type?: SentenceFragmentType;
+}
+
+/**
+ * The slice of the linked entry that travels with a sentence fragment.
+ *
+ * `word` is the headword -- the form the dictionary lists the entry under -- which is
+ * frequently *not* the form written in the phrase: `chaered` is listed under `haered`.
+ * `sense.word` is the gloss. Both arrive with the phrase so that the whole text can be
+ * annotated without a request per word; the full entry is still fetched on demand.
+ */
+export interface ISentenceFragmentLexicalEntry {
+    id: number;
+    lexicalEntryGroup?: { id: number; name: string };
+    sense?: { id: number; word?: { id: number; word: string } };
+    source?: string;
+    word?: { id: number; word: string };
 }
 
 export interface ILexicalEntryInflection {

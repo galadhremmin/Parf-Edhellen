@@ -1,0 +1,447 @@
+// ============================================================
+// The apparatus
+// ============================================================
+
+@import "../../../_scss/variables";
+
+$apparatus-breakpoint: 1080px;
+
+.phrase-apparatus {
+  position: sticky;
+  top: 4.25rem;
+  background: var(--ed-bg-elevated);
+  border: 1px solid var(--ed-border);
+  border-radius: $border-radius-lg;
+  box-shadow: 0 2px 10px var(--ed-shadow);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 5.5rem);
+  overflow: hidden;
+}
+
+// The handle belongs to the sheet, and the sheet only exists on a narrow screen.
+.phrase-apparatus__handle {
+  display: none;
+}
+
+.phrase-apparatus__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--ed-border);
+  flex: none;
+}
+
+.phrase-tab {
+  flex: 1;
+  font-family: $font-family-tiny;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.7rem 0.4rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--ed-text-faint);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ed-bg-surface-hover);
+    color: var(--ed-text);
+  }
+
+  &[aria-selected="true"] {
+    color: var(--ed-text);
+    border-bottom-color: var(--ed-gild);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ed-gild);
+    outline-offset: -2px;
+  }
+}
+
+.phrase-apparatus__panel {
+  padding: 1.25rem;
+  overflow-y: auto;
+
+  // A sticky filter bar cannot sit under the panel's own top padding.
+  &:has(> .phrase-index--long) {
+    padding-top: 0;
+  }
+
+  > .phrase-index--long {
+    padding-top: 1.25rem;
+  }
+
+  &[hidden] {
+    display: none !important;
+  }
+}
+
+.phrase-apparatus__empty {
+  color: var(--ed-text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+// ============================================================
+// Word by word
+// ============================================================
+
+.phrase-index__lead {
+  margin: 0 0 0.5rem;
+}
+
+// Rendered only when it has something to say.
+.phrase-inthis {
+  margin: 0 0 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--ed-border-light);
+}
+
+.phrase-inthis__row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.95rem;
+  padding: 0.2rem 0;
+
+  > span:last-child {
+    color: var(--ed-text-muted);
+  }
+}
+
+.phrase-inthis__n {
+  font-family: $font-family-tiny;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  color: var(--ed-gild-text);
+  min-width: 1.5rem;
+}
+
+// Filters and grouping, which only a long phrase needs.
+.phrase-index__filters {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0 0 0.6rem;
+  margin: 0 0 0.25rem;
+  background: var(--ed-bg-elevated);
+  border-bottom: 1px solid var(--ed-border-light);
+
+  > .phrase-toggle {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.55rem;
+  }
+}
+
+.phrase-index__group {
+  position: sticky;
+  top: 2.7rem;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.55rem 0.6rem 0.3rem;
+  margin-top: 0.4rem;
+  background: var(--ed-bg-elevated);
+}
+
+.phrase-index__empty {
+  color: var(--ed-text-muted);
+  font-size: 0.95rem;
+  padding: 1rem 0.6rem 0;
+  margin: 0;
+}
+
+.phrase-indexrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.25rem 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border: 0;
+  border-bottom: 1px solid var(--ed-border-light);
+  border-radius: $border-radius;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover {
+    background: var(--ed-bg-surface-hover);
+  }
+
+  &.is-selected {
+    background: rgba(201, 164, 76, 0.16);
+  }
+
+  &.is-opened .phrase-indexrow__form {
+    color: var(--ed-text-muted);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ed-gild);
+    outline-offset: -2px;
+  }
+}
+
+.phrase-indexrow__form {
+  font-size: 1.1rem;
+}
+
+.phrase-indexrow__line {
+  font-family: $font-family-tiny;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ed-text-faint);
+  align-self: center;
+}
+
+.phrase-indexrow__meta {
+  grid-column: 1 / -1;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--ed-text-faint);
+}
+
+.phrase-indexrow__speech {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.1em;
+  color: var(--ed-link);
+}
+
+.phrase-marks {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-left: 0.3rem;
+  vertical-align: 0.08em;
+}
+
+.phrase-mark {
+  font-family: $font-family-tiny;
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--ed-border);
+  color: var(--ed-text-faint);
+  white-space: nowrap;
+}
+
+.phrase-mark--gild {
+  border-color: var(--ed-gild);
+  color: var(--ed-gild-text);
+}
+
+// ============================================================
+// The selected word
+// ============================================================
+
+.phrase-entry__tengwar {
+  font-size: 2.6rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.phrase-entry__form {
+  font-family: $font-family-display;
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.phrase-entry__gloss {
+  font-size: 1.15rem;
+  margin: 0.35rem 0 0;
+  color: var(--ed-text-muted);
+}
+
+.phrase-entry__speech {
+  margin-top: 0.5rem;
+}
+
+.phrase-entry__where {
+  margin-top: 0.3rem;
+}
+
+// Three tiers, kept visibly apart: gild for what the link itself proves,
+// rust for what a person wrote. Blurring them would make the page claim
+// more about the grammar than the corpus can support.
+.phrase-tier {
+  margin: 1.1rem 0 0;
+  padding: 0.85rem 0.95rem;
+  border-radius: 0 $border-radius $border-radius 0;
+  background: var(--ed-bg-surface);
+  border-left: 2px solid var(--ed-border-strong);
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ed-text-muted);
+  }
+}
+
+.phrase-tier--derived {
+  border-left-color: var(--ed-gild);
+}
+
+.phrase-tier--editor {
+  border-left-color: var(--ed-link);
+}
+
+.phrase-tier__title {
+  margin: 0 0 0.35rem;
+}
+
+.phrase-tier__pair {
+  font-size: 1.05rem;
+  color: var(--ed-text) !important;
+  margin: 0 0 0.3rem;
+}
+
+.phrase-tier__provenance {
+  margin-top: 0.4rem;
+}
+
+.phrase-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.phrase-chip {
+  font-family: $font-family-tiny;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--ed-gild);
+  color: var(--ed-gild-text);
+}
+
+.phrase-chip--mutation {
+  background: rgba(201, 164, 76, 0.16);
+}
+
+.phrase-entry__gloss-body {
+  margin-top: 1.25rem;
+
+  blockquote {
+    padding: 0;
+    border: none;
+    margin: 0;
+  }
+}
+
+.phrase-entry__foot {
+  margin-top: 1.25rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--ed-border-light);
+
+  p {
+    margin: 0;
+  }
+}
+
+.phrase-entry__nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  > .phrase-toggle {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.phrase-entry__unopened {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.phrase-entry__hint {
+  margin-top: 0.6rem;
+  text-align: center;
+}
+
+.phrase-kbd {
+  font-family: $font-family-tiny;
+  font-size: 0.6875rem;
+  border: 1px solid var(--ed-border);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 0 0.3rem;
+  color: var(--ed-text-faint);
+}
+
+// ============================================================
+// Narrow: a sheet at the foot of the page
+// ============================================================
+//
+// Collapsed by height rather than translated down by its own size. A
+// translate leaves the handle in the bottom few rem of the viewport,
+// which is exactly where a browser's own toolbar sits -- and then
+// nothing tappable is left. Everything visible while collapsed opens it.
+
+@media (max-width: $apparatus-breakpoint) {
+  .phrase-apparatus {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    max-height: 6rem;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    border-bottom: 0;
+    box-shadow: 0 -6px 24px var(--ed-shadow-heavy);
+    z-index: 40;
+    transition: max-height 0.28s ease;
+
+    &.is-open {
+      max-height: 62dvh;
+    }
+  }
+
+  .phrase-apparatus__handle {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex: none;
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--ed-border);
+    background: var(--ed-bg-elevated);
+    color: var(--ed-text-muted);
+    font-family: $font-family-tiny;
+    font-size: 0.8125rem;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    text-align: left;
+
+    > span:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .phrase-apparatus__handle-state {
+    color: var(--ed-gild-text);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phrase-apparatus {
+    transition: none;
+  }
+}

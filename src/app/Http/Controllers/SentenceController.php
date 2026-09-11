@@ -59,10 +59,13 @@ class SentenceController extends Controller
         }
 
         $language = Language::findOrFail($langId);
+        $adjacent = $this->_sentenceRepository->getAdjacentSentences($sentence['sentence']);
 
         return view('sentence.sentence', [
             'sentence' => $sentence,
             'language' => $language,
+            'previousSentence' => $adjacent['previous'],
+            'nextSentence' => $adjacent['next'],
         ]);
     }
 }
