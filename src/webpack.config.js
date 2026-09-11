@@ -48,7 +48,7 @@ const clientConfig = {
       chunks: 'async',
       cacheGroups: {
         vendors: {
-          test: /[\\/]node_modules[\\/](html-to-react|redux|spinkit)[\\/]/,
+          test: /[\\/]node_modules[\\/](html-to-react|redux)[\\/]/,
           name: 'vendors',
           priority: 30,
           reuseExistingChunk: true,

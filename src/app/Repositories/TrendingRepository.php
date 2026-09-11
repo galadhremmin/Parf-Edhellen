@@ -45,6 +45,27 @@ class TrendingRepository
             ->toArray();
     }
 
+    /**
+     * Average number of searches performed per day over a trailing window.
+     *
+     * Deliberately an average rather than "today": a figure for today reads
+     * as near zero every morning, which is both misleading and unflattering.
+     * Returns 0 when there is nothing recorded yet, and callers are expected
+     * to omit the figure entirely in that case rather than print a zero.
+     */
+    public function getAverageSearchesPerDay(int $days = 30): int
+    {
+        if ($days < 1) {
+            return 0;
+        }
+
+        $searches = SearchViewEvent::query()
+            ->where('viewed_at', '>=', Carbon::now()->subDays($days))
+            ->count();
+
+        return (int) round($searches / $days);
+    }
+
     public function getViewsPerHour(Carbon $from, Carbon $to): array
     {
         return SearchViewHourlyStat::query()

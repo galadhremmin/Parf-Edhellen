@@ -44,6 +44,10 @@ export default class WordListApiConnector implements IWordListApi {
         return this._api.post(`word-lists/${wordListId}/entries`, { lexicalEntryId });
     }
 
+    public addEntries(wordListId: number, lexicalEntryIds: number[]): Promise<IBulkEntriesResponse> {
+        return this._api.post(`word-lists/${wordListId}/entries/bulk-add`, { lexicalEntryIds });
+    }
+
     public removeEntry(wordListId: number, lexicalEntryId: number): Promise<void> {
         return this._api.delete(`word-lists/${wordListId}/entries/${lexicalEntryId}`);
     }

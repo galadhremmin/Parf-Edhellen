@@ -62,10 +62,26 @@ class AccountFeedApiController extends Controller
         //       we need to figure out a way to handle this complicated case.
         $changed = false;
         $feed = collect([]);
+
+        // The generator can record the same piece of content more than once --
+        // there are rows in the wild whose happened_at differs by whole hours for
+        // one post -- and the reader should not be shown it twice while that is
+        // being sorted out at the source.
+        $seen = [];
+
         foreach ($records->getCollection() as $record) {
             $pass = true;
             if ($record->content === null) {
                 $pass = false;
+            }
+
+            if ($pass) {
+                $key = $record->content_type.':'.$record->content_id;
+                if (isset($seen[$key])) {
+                    $pass = false;
+                } else {
+                    $seen[$key] = true;
+                }
             }
 
             if ($pass) {
@@ -92,15 +108,21 @@ class AccountFeedApiController extends Controller
             }
 
             $c = $record->content;
+
+            // Parse from the value as it was loaded, not from the property we are
+            // about to overwrite. Eloquent hands the same model instance to every
+            // feed record that points at it, so where a post appears twice this
+            // loop would otherwise parse its own output: markup escaping turns the
+            // <p> from the first pass into &lt;p&gt; on the second.
             if ($c instanceof ForumPost) {
                 $c->load('forum_thread');
-                $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->content);
+                $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->getRawOriginal('content') ?: '');
             } elseif ($c instanceof LexicalEntryVersion) {
                 // noop, relying on `useGloss` hook on client.
             } elseif ($c instanceof Sentence) {
                 $c->load('language');
                 $c->load('sentence_fragments');
-                $c->description = $this->_markdownParser->parseMarkdownNoBlocks($c->description ?: '');
+                $c->description = $this->_markdownParser->parseMarkdownNoBlocks($c->getRawOriginal('description') ?: '');
                 $c->sentence_url = $this->_linkHelper->sentence($c->language->id, $c->language->name, $c->id, $c->name);
                 $c->sentence_transformations = $this->_sentenceHelper->buildSentences($c->sentence_fragments);
             }

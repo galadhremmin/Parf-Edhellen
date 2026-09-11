@@ -195,6 +195,12 @@ export interface IWordListApi {
     addEntry(wordListId: number, lexicalEntryId: number): Promise<void>;
 
     /**
+     * Add several lexical entries to a word list in one request. Entries the list already
+     * holds are left alone; the response counts only what was genuinely new.
+     */
+    addEntries(wordListId: number, lexicalEntryIds: number[]): Promise<IBulkEntriesResponse>;
+
+    /**
      * Remove a lexical entry from a word list.
      */
     removeEntry(wordListId: number, lexicalEntryId: number): Promise<void>;

@@ -1,155 +1,98 @@
 @extends('_layouts.default')
 
-@section('title', __('crossword.title.calendar', ['language' => $gameLanguage->getFriendlyName(), 'month' => $startOfMonth->format('F'), 'year' => $year]))
+@section('title', __('crossword.title.calendar', ['language' => $gameLanguage->getFriendlyName(), 'year' => $year]))
 @section('description', __('crossword.description'))
 @section('body')
 
-<h1>@lang('crossword.title.calendar', ['language' => $gameLanguage->getFriendlyName(), 'month' => $startOfMonth->format('F'), 'year' => $year])</h1>
+<h1>@lang('crossword.title.calendar', ['language' => $gameLanguage->getFriendlyName(), 'year' => $year])</h1>
 
-{!! Breadcrumbs::render('crossword.calendar', $gameLanguage->language_id, $year, $month) !!}
+{!! Breadcrumbs::render('crossword.calendar', $gameLanguage->language_id, $year) !!}
 
 @auth
 <div class="cw-streak-banner">
   @if ($streak > 0)
-    <span>🔥</span>
-    <span><span class="cw-streak-banner__count">{{ $streak }}-day</span> streak — keep it going!</span>
+    <span aria-hidden="true">🔥</span>
+    <span><span class="cw-streak-banner__count">{{ $streak }}-week</span> streak — keep it going!</span>
   @else
-    <span>⭐</span>
-    <span>Complete today's puzzle to start your streak!</span>
+    <span aria-hidden="true">⭐</span>
+    <span>@lang('crossword.calendar.start_streak')</span>
   @endif
 </div>
 @endauth
 
-<nav class="cw-cal-nav" aria-label="Calendar month navigation">
-  <a href="{{ route('crossword.calendar', ['languageId' => $gameLanguage->language_id, 'year' => $prevYear, 'month' => $prevMonth]) }}"
-     class="cw-cal-nav__arrow" aria-label="@lang('crossword.calendar.prev')">←</a>
+<nav class="cw-cal-nav" aria-label="@lang('crossword.calendar.nav')">
+  @if ($canShowPrev)
+    <a href="{{ route('crossword.calendar', ['languageId' => $gameLanguage->language_id, 'year' => $prevYear]) }}"
+       class="cw-cal-nav__arrow" aria-label="@lang('crossword.calendar.prev')">←</a>
+  @else
+    <span class="cw-cal-nav__arrow cw-cal-nav__arrow--placeholder" aria-hidden="true"></span>
+  @endif
 
   <div class="cw-cal-nav__label">
-    <span class="cw-cal-nav__month">{{ $startOfMonth->format('F Y') }}</span>
+    <span class="cw-cal-nav__year">{{ $year }}</span>
     @auth
-      @if ($puzzles->count() > 0)
-        <span class="cw-cal-nav__progress">{{ $monthCompletedCount }}/{{ $puzzles->count() }} solved</span>
+      @if ($availableCount > 0)
+        <span class="cw-cal-nav__progress">{{ $completedCount }}/{{ $availableCount }} solved</span>
       @endif
     @endauth
   </div>
 
   @if ($canShowNext)
-    <a href="{{ route('crossword.calendar', ['languageId' => $gameLanguage->language_id, 'year' => $nextYear, 'month' => $nextMonth]) }}"
+    <a href="{{ route('crossword.calendar', ['languageId' => $gameLanguage->language_id, 'year' => $nextYear]) }}"
        class="cw-cal-nav__arrow" aria-label="@lang('crossword.calendar.next')">→</a>
   @else
     <span class="cw-cal-nav__arrow cw-cal-nav__arrow--placeholder" aria-hidden="true"></span>
   @endif
 </nav>
 
-<div class="cw-cal-grid" role="grid" aria-label="{{ $startOfMonth->format('F Y') }} crossword calendar">
-  {{-- Day-of-week headers --}}
-  <div class="cw-day-header" role="columnheader">Mon</div>
-  <div class="cw-day-header" role="columnheader">Tue</div>
-  <div class="cw-day-header" role="columnheader">Wed</div>
-  <div class="cw-day-header" role="columnheader">Thu</div>
-  <div class="cw-day-header" role="columnheader">Fri</div>
-  <div class="cw-day-header" role="columnheader">Sat</div>
-  <div class="cw-day-header" role="columnheader">Sun</div>
-
-  @php
-    $todayStr    = $today->format('Y-m-d');
-    $day         = $startOfMonth->copy();
-    $daysFromMon = $day->dayOfWeekIso - 1;
-    if ($daysFromMon > 0) {
-        $day->subDays($daysFromMon);
-    }
-    $weeks = [];
-    for ($w = 0; $w < 6; $w++) {
-        $row = [];
-        for ($d = 0; $d < 7; $d++) {
-            $row[] = $day->copy();
-            $day->addDay();
-        }
-        $weeks[] = $row;
-    }
-  @endphp
-
+{{-- One cell per ISO week. A year has 52 of them, or 53 when the calendar
+     drifts far enough; $weeksInYear settles which. --}}
+<div class="cw-year-grid" role="list" aria-label="{{ $year }} @lang('crossword.calendar.grid_label')">
   @foreach ($weeks as $week)
-    @foreach ($week as $cellDate)
-      @php
-        $dateStr     = $cellDate->format('Y-m-d');
-        $isThisMonth = $cellDate->month === (int) $month;
-        $hasPuzzle   = $puzzles->has($dateStr);
-        $isCompleted = in_array($dateStr, $completedDates, true);
-        $isToday     = $dateStr === $todayStr;
-        $isTomorrow  = $dateStr === $tomorrowStr && $hasTomorrowPuzzle;
-      @endphp
+    @php
+      $range = $week['start']->format('j M') . ' – ' . $week['end']->format('j M');
+      $playUrl = $week['has_puzzle']
+        ? route('crossword.play', ['languageId' => $gameLanguage->language_id, 'date' => $week['date']])
+        : null;
+    @endphp
 
-      @if (!$isThisMonth)
-        {{-- Off-month: near-invisible filler --}}
-        <div class="cw-day cw-day--off-month" role="gridcell" aria-hidden="true">
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-        </div>
+    @if ($week['has_puzzle'] && $week['is_completed'])
+      <a href="{{ $playUrl }}"
+         class="cw-week cw-week--completed{{ $week['is_current'] ? ' cw-week--current' : '' }}"
+         role="listitem"
+         title="{{ $range }} — {{ __('crossword.calendar.completed') }}">
+        <span class="cw-week__num">{{ $week['number'] }}</span>
+        <span class="cw-week__check" aria-hidden="true">✓</span>
+      </a>
 
-      @elseif ($isToday && $isCompleted)
-        {{-- Today + solved --}}
-        <a href="{{ route('crossword.play', ['languageId' => $gameLanguage->language_id, 'date' => $dateStr]) }}"
-           class="cw-day cw-day--today cw-day--completed"
-           role="gridcell"
-           title="{{ __('crossword.calendar.completed') }}">
-          <span class="cw-day__check" aria-hidden="true">✓</span>
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-          <span class="cw-day__today-badge">Today</span>
-        </a>
+    @elseif ($week['has_puzzle'])
+      <a href="{{ $playUrl }}"
+         class="cw-week cw-week--available{{ $week['is_current'] ? ' cw-week--current' : '' }}"
+         role="listitem"
+         title="{{ $range }} — {{ __('crossword.calendar.has_puzzle') }}">
+        <span class="cw-week__num">{{ $week['number'] }}</span>
+      </a>
 
-      @elseif ($isToday && $hasPuzzle)
-        {{-- Today — unsolved, primary CTA --}}
-        <a href="{{ route('crossword.play', ['languageId' => $gameLanguage->language_id, 'date' => $dateStr]) }}"
-           class="cw-day cw-day--today"
-           role="gridcell"
-           title="{{ __('crossword.calendar.has_puzzle') }}">
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-          <span class="cw-day__cta">Play →</span>
-        </a>
+    @elseif ($week['is_current'])
+      <div class="cw-week cw-week--current cw-week--empty" role="listitem"
+           title="{{ $range }} — @lang('crossword.calendar.not_yet')">
+        <span class="cw-week__num">{{ $week['number'] }}</span>
+      </div>
 
-      @elseif ($isToday)
-        {{-- Today — no puzzle generated yet --}}
-        <div class="cw-day cw-day--today cw-day--empty" role="gridcell" aria-label="{{ $cellDate->day }}, today, no puzzle yet">
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-          <span class="cw-day__today-badge">Today</span>
-        </div>
-
-      @elseif ($isCompleted)
-        {{-- Past puzzle, solved --}}
-        <a href="{{ route('crossword.play', ['languageId' => $gameLanguage->language_id, 'date' => $dateStr]) }}"
-           class="cw-day cw-day--completed"
-           role="gridcell"
-           title="{{ __('crossword.calendar.completed') }}">
-          <span class="cw-day__check" aria-hidden="true">✓</span>
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-        </a>
-
-      @elseif ($hasPuzzle)
-        {{-- Past puzzle, not yet solved --}}
-        <a href="{{ route('crossword.play', ['languageId' => $gameLanguage->language_id, 'date' => $dateStr]) }}"
-           class="cw-day cw-day--available"
-           role="gridcell"
-           title="{{ __('crossword.calendar.has_puzzle') }}">
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-        </a>
-
-      @elseif ($isTomorrow)
-        {{-- Tomorrow's puzzle exists in DB but is not yet playable --}}
-        <div class="cw-day cw-day--tomorrow" role="gridcell" aria-label="Puzzle coming tomorrow">
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-          <span class="cw-day__lock" aria-hidden="true">🔒</span>
-          <span class="cw-day__tomorrow-label">Tomorrow</span>
-        </div>
-
-      @else
-        {{-- No puzzle this month, or future date without a puzzle --}}
-        <div class="cw-day cw-day--empty" role="gridcell" aria-label="{{ $cellDate->day }}, no puzzle">
-          <span class="cw-day__num">{{ $cellDate->day }}</span>
-        </div>
-
-      @endif
-    @endforeach
+    @else
+      <div class="cw-week cw-week--empty{{ $week['is_future'] ? ' cw-week--future' : '' }}"
+           role="listitem" title="{{ $range }}" aria-hidden="{{ $week['is_future'] ? 'true' : 'false' }}">
+        <span class="cw-week__num">{{ $week['number'] }}</span>
+      </div>
+    @endif
   @endforeach
 </div>
+
+<p class="cw-cal-legend ed-ui">
+  @lang('crossword.calendar.legend')
+  @if ($nextPuzzleDate)
+    — @lang('crossword.calendar.next_on', ['date' => $nextPuzzleDate->format('j F')])
+  @endif
+</p>
 
 @endsection

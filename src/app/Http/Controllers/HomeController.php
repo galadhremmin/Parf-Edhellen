@@ -7,14 +7,17 @@ use App\Adapters\BookAdapter;
 use App\Helpers\LinkHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\AuditTrail;
+use App\Models\GameWordFinderLanguage;
 use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use App\Repositories\ContributionRepository;
+use App\Repositories\CrosswordRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\SentenceRepository;
 use App\Repositories\StatisticsRepository;
 use App\Repositories\TrendingRepository;
 use DateInterval;
+use NumberFormatter;
 use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
@@ -33,11 +36,13 @@ class HomeController extends Controller
 
     protected TrendingRepository $_trendingRepository;
 
+    protected CrosswordRepository $_crosswordRepository;
+
     protected LinkHelper $_linkHelper;
 
     public function __construct(IAuditTrailRepository $auditTrail, AuditTrailAdapter $auditTrailAdapter, StatisticsRepository $statisticsRepository,
         BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository,
-        TrendingRepository $trendingRepository, LinkHelper $linkHelper)
+        TrendingRepository $trendingRepository, CrosswordRepository $crosswordRepository, LinkHelper $linkHelper)
     {
         $this->_auditTrail = $auditTrail;
         $this->_auditTrailAdapter = $auditTrailAdapter;
@@ -46,19 +51,12 @@ class HomeController extends Controller
         $this->_reviewRepository = $contributionRepository;
         $this->_statisticsRepository = $statisticsRepository;
         $this->_trendingRepository = $trendingRepository;
+        $this->_crosswordRepository = $crosswordRepository;
         $this->_linkHelper = $linkHelper;
     }
 
     public function index()
     {
-        // Retrieve a random jumbotron background image from configuration. The background is
-        // positioned upon the jumbotron.
-        $jumbotronFiles = config('ed.jumbotron_files');
-        $noOfJumbotronFiles = count($jumbotronFiles);
-        $background = $noOfJumbotronFiles > 0 //
-            ? $jumbotronFiles[mt_rand(0, $noOfJumbotronFiles - 1)] //
-            : null;
-
         // Retrieve a random sentence to be featured.
         $randomSentence = Cache::remember('ed.home.sentence', DateInterval::createFromDateString('1 day'), function () {
             $sentence = Sentence::approved()->inRandomOrder()
@@ -119,10 +117,30 @@ class HomeController extends Controller
             ], $items);
         });
 
+        // The weekly crossword is the page's reason to come back, but the
+        // generator can fall behind, so this is allowed to be empty and the view
+        // hides the section rather than linking to a puzzle that isn't there.
+        $crosswords = Cache::remember('ed.home.crosswords', DateInterval::createFromDateString('1 hour'), function () {
+            return $this->_crosswordRepository->getCurrentPuzzles();
+        });
+
+        $wordFinderLanguages = Cache::remember('ed.home.word-finder', DateInterval::createFromDateString('1 day'), function () {
+            return GameWordFinderLanguage::orderBy('title')->get();
+        });
+
+        // The one figure in the colophon. An average over a trailing month, not a
+        // count for today, which would read as near zero every morning.
+        $searchesPerDay = Cache::remember('ed.home.searches-per-day', DateInterval::createFromDateString('1 hour'), function () {
+            return $this->_trendingRepository->getAverageSearchesPerDay(30);
+        });
+
         $data = $randomSentence + $randomGloss + $statistics + [
             'auditTrails' => $auditTrails,
             'trendingSearches' => $trendingSearches,
-            'background' => $background,
+            'crosswords' => $crosswords,
+            'wordFinderLanguages' => $wordFinderLanguages,
+            'searchesPerDay' => $searchesPerDay,
+            'periodSinceInception' => ucfirst((new NumberFormatter('en', NumberFormatter::SPELLOUT))->format(date('Y') - 2011))
         ];
 
         return view('home.index', $data);

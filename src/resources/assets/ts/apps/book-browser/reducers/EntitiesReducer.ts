@@ -9,6 +9,7 @@ const EntitiesReducer = (state: IEntitiesState = {
     groupIntlName: null,
     languages: [],
     loading: false,
+    pendingWord: null,
     single: false,
     word: '',
 }, action: IEntitiesAction): IEntitiesState => {
@@ -18,11 +19,13 @@ const EntitiesReducer = (state: IEntitiesState = {
                 ...state,
                 groupId: action.groupId || 0,
                 loading: true,
+                pendingWord: action.word || null,
             };
         case Actions.ReceiveEntities:
             return {
                 ...state,
                 loading: false,
+                pendingWord: null,
 
                 entityMorph: action.entityMorph || null,
                 groupId: action.groupId,

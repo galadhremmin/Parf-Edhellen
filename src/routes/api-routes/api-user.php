@@ -78,6 +78,9 @@ Route::group([
     Route::delete('word-lists/{id}/entries/{entryId}', [WordListApiController::class, 'removeEntry'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC, 'entryId' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.remove-entry');
+    Route::post('word-lists/{id}/entries/bulk-add', [WordListApiController::class, 'addEntries'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.bulk-add-entries');
     Route::post('word-lists/{id}/entries/bulk-delete', [WordListApiController::class, 'removeEntries'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.bulk-remove-entries');

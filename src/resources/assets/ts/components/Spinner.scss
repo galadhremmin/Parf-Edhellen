@@ -1,0 +1,157 @@
+// ============================================================
+// The book spinner
+// ============================================================
+//
+// An open book, lying at an angle, turning its pages. Everything is
+// drawn in currentColor against a translucent fill, so it inherits the
+// colour of whatever it sits in and needs no theme-specific rules.
+//
+// Sized in em: at 1rem it is roughly 38px across, and it grows with the
+// type around it.
+
+$book-page-width: 1.15em;
+$book-page-height: 1.35em;
+$book-cycle: 1.8s;
+
+// Tilted back and turned slightly, so we look down on the book rather than
+// at it. Standing upright, the turning page is a rectangle changing width;
+// lying down, it arcs, which is what makes it read as paper.
+//
+// The angle is a compromise, not a preference: past about 40 degrees a page
+// standing at the spine projects as a thin spike -- which is what a raised
+// page really looks like from overhead, but it reads as a shard rather than
+// as paper. This is as far back as it can lie and still turn legibly.
+$book-tilt: 34deg;
+$book-turn: -12deg;
+
+.ed-book-spinner {
+  display: inline-block;
+  position: relative;
+  width: $book-page-width * 2;
+  // Foreshortened by the tilt, so the box it occupies is shorter than the
+  // book is long.
+  height: $book-page-height * 0.9;
+  vertical-align: middle;
+  color: inherit;
+
+  // The 3D stage. Shallow enough that a turning page arcs rather than
+  // lurching towards the viewer.
+  // Generous: at shorter distances the raised page flares into a spike as its
+  // far corner runs away from the viewer.
+  perspective: 16em;
+  perspective-origin: 50% 45%;
+
+  &__book {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateX($book-tilt) rotateZ($book-turn);
+  }
+
+  // The two halves lying open. Static: only the leaves move.
+  &__side {
+    position: absolute;
+    top: 0;
+    width: $book-page-width;
+    height: $book-page-height;
+    border: 1px solid currentColor;
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    opacity: 0.72;
+
+    &--left {
+      left: 0;
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+    }
+
+    &--right {
+      right: 0;
+      border-left: none;
+      border-radius: 0 2px 2px 0;
+    }
+  }
+
+  // The pages in flight. Hinged at the spine, so they sweep from the right
+  // half onto the left the way a page actually turns.
+  &__leaf {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: $book-page-width;
+    height: $book-page-height;
+    border: 1px solid currentColor;
+    background: color-mix(in srgb, currentColor 18%, transparent);
+    border-radius: 0 2px 2px 0;
+    transform-origin: left center;
+    // Both faces are drawn, because we see the underside of a page for the
+    // second half of every turn.
+    backface-visibility: visible;
+    animation: ed-book-leaf-turn $book-cycle ease-in-out infinite;
+
+    // Three leaves, evenly spread through the cycle, so there is always one
+    // in flight and the book never appears to pause.
+    &:nth-child(3) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(4) {
+      animation-delay: $book-cycle * -0.66;
+    }
+
+    &:nth-child(5) {
+      animation-delay: $book-cycle * -0.33;
+    }
+  }
+}
+
+@keyframes ed-book-leaf-turn {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  // Lifted off the right-hand stack. The page leans towards the viewer as it
+  // rises rather than standing square to the spine: a page held perpendicular
+  // projects as a thin shard from this angle, where a bowed one keeps its
+  // face turned to us and still reads as paper.
+  28% {
+    transform: rotateY(-62deg) rotateX(-26deg) translateZ(0.05em);
+  }
+
+  45% {
+    transform: rotateY(-118deg) rotateX(-26deg) translateZ(0.05em);
+  }
+
+  55% {
+    transform: rotateY(-180deg) rotateX(0deg);
+    opacity: 1;
+  }
+
+  // Settled onto the left half, then quietly retired so the next page has a
+  // clean stack to lift from.
+  70%,
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+}
+
+// A turning page is decoration; the text beside it carries the meaning. Anyone
+// who has asked for less motion gets the book standing still, one page raised
+// so it still reads as a book rather than a rectangle.
+@media (prefers-reduced-motion: reduce) {
+  .ed-book-spinner__leaf {
+    animation: none;
+    opacity: 0.6;
+    transform: rotateY(-58deg);
+
+    &:nth-child(4),
+    &:nth-child(5) {
+      display: none;
+    }
+  }
+}

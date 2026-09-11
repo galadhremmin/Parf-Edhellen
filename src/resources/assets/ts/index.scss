@@ -1,6 +1,7 @@
 // Custom variables to ElfDict
 @import "./_scss/_variables";
 @import "./_scss/_theme";
+@import "./_scss/_fonts";
 
 // Layout & components
 @import "~bootstrap/scss/root";
@@ -43,6 +44,7 @@
 
 // Custom capabilities to ElfDict
 @import "./_scss/_fx";
+@import "./_scss/_typography";
 
 // Custom components that are used throughout Parf Edhellen
 @import './_scss/autosuggest';
@@ -63,11 +65,17 @@ body {
 
   // background-attachment: fixed is broken on iOS Safari.
   // A position:fixed pseudo-element achieves the same visual result everywhere.
+  //
+  // The painting behind every page is Tolkien's own watercolour. Graded
+  // here rather than in the file, so the strength is one number to tune:
+  // it should read as weather behind the words, never as an illustration
+  // competing with them.
   &::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: -1;
+    filter: sepia(0.18) saturate(0.62) brightness(1.02);
     background-image: url(../img/backgrounds/bilbo_mobile.webp);
     background-size: cover;
     background-repeat: no-repeat;
@@ -93,6 +101,7 @@ body > ins.adsbygoogle, body > .google-auto-placed, #ed-site-main-menu + .google
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-bs-theme="light"]) body::before {
+    filter: sepia(0.32) saturate(0.5) brightness(0.6);
     background-image: url(../img/backgrounds/taniquetil_mobile.webp);
     background-size: 100%;
     background-position-y: 0%;
@@ -113,6 +122,7 @@ body > ins.adsbygoogle, body > .google-auto-placed, #ed-site-main-menu + .google
 }
 
 :root[data-bs-theme="dark"] body::before {
+  filter: sepia(0.32) saturate(0.5) brightness(0.6);
   background-image: url(../img/backgrounds/taniquetil_mobile.webp);
   background-size: 100%;
   background-position-y: 0%;
@@ -150,14 +160,19 @@ hr.next-overlaps {
 #ed-site-main-menu {
   text-transform: none;
   font-family: $font-family-sans-serif;
-  background-size: cover;
   font-size: 1.3rem;
   padding: 0;
-  
+
+  // Flat ink with a gilded hairline. The bar used to be transparent so the
+  // page's background painting showed through it, which is why everything
+  // inside it wore a heavy black text-shadow; both are gone together.
+  background: var(--ed-bg-surface);
+  border-bottom: 1px solid var(--ed-border);
+
   > .container {
     padding-bottom: 0;
     min-height: 3.5rem;
-    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
+    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
       align-items: center;
       min-height: $size-desktop-menu-height;
     }
@@ -169,6 +184,17 @@ hr.next-overlaps {
     background: url(../img/logotype.png) no-repeat center center;
     background-size: 140px 45px;
     align-self: center;
+
+    // The logotype is white glyphs on transparency, so on vellum it would
+    // vanish. Until a dark variant of the asset exists, knock it back to ink.
+    :root[data-bs-theme="light"] & {
+      filter: brightness(0) opacity(0.84);
+    }
+    @media (prefers-color-scheme: light) {
+      :root:not([data-bs-theme="dark"]) & {
+        filter: brightness(0) opacity(0.84);
+      }
+    }
   }
   .navbar-toggler {
     > .icon-bar {
@@ -176,29 +202,30 @@ hr.next-overlaps {
         width: 22px;
         height: 2px;
         border-radius: 1px;
-        background: white; // always white on the dark navbar
+        background: var(--ed-text);
     }
-  
+
     >.icon-bar + .icon-bar {
         margin-top: 4px;
     }
   }
   .navbar-nav {
-    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
+    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
       align-items: center;
     }
   }
   .navbar-nav > .nav-item > .nav-link {
-    color: white;
-    font-weight: 900;
+    color: var(--ed-text);
+    font-weight: 400;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+    &:hover {
+      color: var(--ed-link);
+    }
     &.active {
       background: transparent;
-      color: white;
-      font-weight: bold;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(255, 255, 255, 0.3);
+      color: var(--ed-gild-text);
+      font-weight: 500;
     }
   }
   @media (max-width: map-get($grid-breakpoints, 'lg')) {
@@ -255,13 +282,14 @@ hr.next-overlaps {
     padding: 0.25rem 0.5rem;
     background: none;
     border: none;
-    color: white;
+    color: var(--ed-text-muted);
     cursor: pointer;
     --ed-text-icon: currentColor;
-    // filter on icon wrapper works around mask-image + filter Safari bug
+    &:hover {
+      color: var(--ed-gild-text);
+    }
     .ed-theme-toggle__icon {
       display: flex;
-      filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.9));
     }
     .ed-theme-toggle__moon {
       display: none;
@@ -271,7 +299,6 @@ hr.next-overlaps {
     }
     .ed-theme-toggle__label {
       display: none;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
     }
 
     @media (max-width: map-get($grid-breakpoints, 'lg')) {
@@ -290,20 +317,19 @@ hr.next-overlaps {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: white;
+    color: var(--ed-text);
     text-decoration: none;
     text-transform: none;
     padding: 0.25rem 0.5rem;
 
     &:hover,
     &:focus {
-      color: white;
+      color: var(--ed-link);
       text-decoration: none;
     }
 
     &.active {
-      font-weight: bold;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(255, 255, 255, 0.3);
+      color: var(--ed-gild-text);
     }
   }
 
@@ -315,7 +341,7 @@ hr.next-overlaps {
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 8px 4px black;
+    box-shadow: 0 0 0 1px var(--ed-border-strong);
   }
 
   .ed-user-menu-label {
@@ -323,7 +349,6 @@ hr.next-overlaps {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 8rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
   }
 
   // Admin dropdown: same styling as user menu
@@ -415,6 +440,64 @@ hr.next-overlaps {
   flex-direction: column;
 }
 
+// ============================================================
+// Site footer
+// ============================================================
+//
+// Previously Bootstrap's bg-dark, which is a fixed colour and so stayed
+// black when the light theme arrived. Tokens instead.
+
+.ed-site-footer {
+  background: var(--ed-bg-surface);
+  border-top: 1px solid var(--ed-border);
+  color: var(--ed-text-muted);
+  padding: 2.5rem 0 3rem;
+
+  .ed-site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem 3rem;
+  }
+
+  .ed-site-footer__section {
+    flex: 1 1 18rem;
+  }
+
+  .ed-site-footer__title {
+    font-family: $font-family-display;
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ed-text);
+    margin-bottom: 0.75rem;
+  }
+
+  .ed-site-footer__nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li + li {
+      margin-top: 0.25rem;
+    }
+  }
+
+  .ed-site-footer__disclaimer {
+    font-size: 0.9375rem;
+    max-width: 46rem;
+  }
+
+  a {
+    color: var(--ed-link);
+    &:hover {
+      color: var(--ed-link-hover);
+      text-decoration: underline;
+    }
+  }
+}
+
+
+
 #ed-site-main {
   flex: 1 0 auto;
   background: color-mix(in srgb, var(--bs-body-bg) 95%, transparent);
@@ -485,6 +568,12 @@ hr.next-overlaps {
 // ============================================================
 // Homepage: hero, prominent search, progressive disclosure
 // ============================================================
+//
+// The search bar is the hinge of this page. Everything above it is
+// welcome and is disposable; everything below it is the dictionary.
+// The progressive-disclosure rules at the foot of this block throw the
+// welcome away the moment results appear, which is what lets the page
+// carry an argument without costing a regular visitor anything.
 
 // Gentle breathing glow that draws attention to the search bar
 @keyframes home-search-glow {
@@ -492,57 +581,77 @@ hr.next-overlaps {
     box-shadow: 0 0 0 0 rgba($primary, 0);
   }
   50% {
-    box-shadow: 0 0 14px 3px rgba($primary, 0.2);
+    box-shadow: 0 0 16px 3px rgba(201, 164, 76, 0.28);
   }
 }
 
 .home-page {
-  // Hero section — centered welcome above the search bar
+
+  // --- Hero: the title page ---
   .home-hero {
     text-align: center;
-    padding: 2.5rem 1rem 0.75rem;
-    max-height: 280px;
+    padding: 3rem 1rem 0.5rem;
+    // Generous, because this only exists so the collapse has something to
+    // animate to zero -- too low and it crops the subtitle mid-sentence.
+    max-height: 40rem;
     overflow: hidden;
     transition: opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease;
 
-    h1 {
-      font-size: 2.4rem;
-      margin-bottom: 0.25rem;
+    .home-hero__greeting {
+      margin-bottom: 1.25rem;
+    }
+
+    .home-hero__title {
+      font-family: $font-family-display;
+      font-weight: 300;
+      font-size: clamp(2.4rem, 5.4vw, 4.25rem);
+      line-height: 1.08;
+      letter-spacing: -0.005em;
+      max-width: 22ch;
+      margin: 0 auto;
+      text-wrap: balance;
+    }
+
+    .home-hero__rule {
+      width: min(380px, 60%);
+      margin: 1.5rem auto 0;
+      font-size: 0.9rem;
     }
 
     .home-hero__subtitle {
-      font-size: 1.05rem;
+      font-size: 1.2rem;
       color: var(--ed-text-muted);
-      max-width: 560px;
-      margin: 0 auto;
-    }
-
-    .home-hero__hint {
-      font-style: italic; 
-      color: var(--ed-text-faint);
-      margin-top: 0.75rem;
-      margin-bottom: 0;
+      max-width: 46rem;
+      margin: 1.25rem auto 0;
+      text-wrap: pretty;
     }
   }
 
-  // Make the search bar more prominent on the homepage
+  .home-assurances {
+    text-align: center;
+    color: var(--ed-text-faint);
+    margin-bottom: 3.5rem;
+  }
+
+  // --- Search: the one primary action ---
   #ed-search-component {
     .Search {
       text-align: center; // override the default right-alignment
 
-      // --- Search input: full width, crisp border, animated glow ---
       .input-group {
-        border: 1.5px solid var(--ed-border-strong);
-        border-radius: 0.5rem;
+        border: 1px solid var(--ed-border-strong);
+        border-radius: $border-radius-lg;
         overflow: hidden;
-        animation: home-search-glow 3s ease-in-out infinite;
+        animation: home-search-glow 3.5s ease-in-out infinite;
 
         .input-group-text {
-          border-right: 1px solid var(--ed-border-light);
+          border-right: 1px solid var(--ed-border);
         }
 
         .form-control {
-          font-size: 1.15rem;
+          font-size: 1.2rem;
+          padding-top: 0.7rem;
+          padding-bottom: 0.7rem;
           border: none; // outer border handles it
 
           &:focus {
@@ -553,26 +662,26 @@ hr.next-overlaps {
         // On focus, stop the glow and show a steady focus ring instead
         &:has(input:focus) {
           animation: none;
-          border-color: $primary;
-          box-shadow: 0 0 0 3px rgba($primary, 0.15);
+          border-color: var(--ed-gild);
+          box-shadow: 0 0 0 3px rgba(201, 164, 76, 0.18);
         }
       }
 
-      // --- Config toolbar: hidden until interaction, clean flex layout ---
+      // --- Config toolbar: hidden until interaction ---
       .Search--config {
         opacity: 0;
         max-height: 0;
         overflow: hidden;
         transition: opacity 0.35s ease, max-height 0.35s ease, margin 0.35s ease;
 
-        // Re-layout the inner col as a centered flex row
         .col {
           display: flex;
           align-items: center;
           justify-content: center;
           flex-wrap: wrap;
           gap: 0.25rem 1.25rem;
-          font-size: 0.85rem;
+          font-family: $font-family-tiny;
+          font-size: 0.8125rem;
           color: var(--ed-text-muted);
 
           // Strip Bootstrap ms-2 margins — gap handles spacing
@@ -581,7 +690,6 @@ hr.next-overlaps {
             margin-left: 0 !important;
           }
 
-          // Let the language select sit inline without forcing a new block
           > div.d-inline-block {
             display: inline-flex !important;
             align-items: center;
@@ -590,7 +698,6 @@ hr.next-overlaps {
         }
       }
 
-      // --- Additional parameters row: same treatment ---
       > .row:last-child:not(:first-child) {
         opacity: 0;
         max-height: 0;
@@ -603,10 +710,6 @@ hr.next-overlaps {
           gap: 0.75rem;
           margin-top: 0.25rem;
           text-align: center;
-
-          > div {
-            margin: 0 !important;
-          }
         }
       }
 
@@ -627,36 +730,254 @@ hr.next-overlaps {
     }
   }
 
-  // Welcome content (About, Gloss, Community) — collapses when searching
+  // --- The argument, and everything under it ---
   .home-welcome {
     transition: opacity 0.4s ease, max-height 0.6s ease;
-    max-height: 3000px; // generous max for transition
+    max-height: 8000px; // generous max for transition
     overflow: visible;
   }
 
-  // Buy Me a Coffee / support CTA — theme-aware card under About the website
-  .ed-support-cta {
-    background: var(--ed-bg-surface);
-    border: 1px solid var(--ed-border);
-    border-radius: 0.5rem;
+  .home-section {
+    margin-bottom: 4.5rem;
+  }
 
-    .ed-support-cta__heading {
-      font-size: 1.05rem;
-      margin-bottom: 0.35rem;
-    }
+  .home-section__header {
+    margin-bottom: 2rem;
 
-    .ed-support-cta__text {
-      color: var(--ed-text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .ed-support-cta__link:hover {
-      opacity: 0.92;
+    &--centred {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
     }
   }
 
-  // Progressive disclosure:
+  .home-section__title {
+    font-family: $font-family-display;
+    font-weight: 300;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    line-height: 1.15;
+    margin: 0.35rem 0 0;
+    text-wrap: balance;
+  }
+
+  .home-section__lead {
+    color: var(--ed-text-muted);
+    max-width: 46rem;
+    margin-top: 0.75rem;
+    text-wrap: pretty;
+  }
+
+  .home-section__header--centred .home-section__lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-section__rule {
+    width: min(320px, 70%);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  // --- A leaf of the book, rather than a card ---
+  .home-panel,
+  .home-proof {
+    background: var(--ed-bg-elevated);
+    border: 1px solid var(--ed-border);
+    border-radius: $border-radius-lg;
+    box-shadow: 0 2px 10px var(--ed-shadow);
+    padding: 1.75rem 1.75rem;
+
+    p {
+      color: var(--ed-text-muted);
+      text-wrap: pretty;
+    }
+  }
+
+  .home-panel__title,
+  .home-proof__title {
+    font-family: $font-family-display;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin: 0.35rem 0 0.65rem;
+  }
+
+  .home-proof__mark {
+    display: block;
+    color: var(--ed-gild-text);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .home-proofs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+    gap: 1.75rem;
+  }
+
+  .home-proof__evidence {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    background: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border-light);
+    border-radius: $border-radius;
+
+    blockquote {
+      margin-bottom: 0;
+    }
+  }
+
+  .home-proof__aside {
+    margin-top: 1rem;
+  }
+
+  // Statistics: the display face, so numbers read as ornament not data
+  .home-figures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 1rem 0 0;
+
+    dt {
+      font-family: $font-family-display;
+      font-weight: 400;
+      font-size: 1.75rem;
+      line-height: 1.1;
+      color: var(--ed-gild-text);
+    }
+
+    dd {
+      margin: 0;
+      font-variant-caps: all-small-caps;
+      letter-spacing: 0.14em;
+      font-size: 0.85rem;
+      color: var(--ed-text-faint);
+    }
+  }
+
+  // --- Today ---
+  .home-today {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: start;
+
+    @media (max-width: map-get($grid-breakpoints, 'lg')) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .home-today__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .home-panel--phrase {
+    .daily-sentence {
+      margin-bottom: 0;
+    }
+  }
+
+  .home-panel__word {
+    font-family: $font-family-display;
+    font-weight: 400;
+    font-size: 2.25rem;
+    line-height: 1.1;
+    margin: 0.5rem 0 0.25rem;
+    color: var(--ed-text) !important;
+  }
+
+  .home-panel__gloss {
+    font-size: 1.15rem;
+    color: var(--ed-text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .home-panel__more {
+    margin-top: 0.75rem;
+    margin-bottom: 0;
+  }
+
+  .home-panel__banner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .home-panel__footnote {
+    margin-top: 0.75rem;
+  }
+
+  .home-searches {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    li {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      padding: 0.2rem 0.7rem;
+      border: 1px solid var(--ed-border);
+      border-radius: $border-radius;
+      background: var(--ed-bg-surface);
+      font-style: italic;
+    }
+  }
+
+  // --- Pastimes ---
+  .home-pastimes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.75rem;
+    align-items: stretch;
+  }
+
+  // The weekly puzzle is the second call to action, so it is gilded
+  .home-panel--featured {
+    border-color: var(--ed-gild);
+    background:
+      linear-gradient(180deg, rgba(201, 164, 76, 0.12) 0%, transparent 55%),
+      var(--ed-bg-elevated);
+    display: flex;
+    flex-direction: column;
+
+    .home-panel__cta {
+      margin-top: auto;
+      align-self: flex-start;
+    }
+  }
+
+  .home-panel__cta {
+    margin-top: 1.25rem;
+  }
+
+  .home-panel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+  }
+
+  // --- Community ---
+  .home-community {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  // --- Progressive disclosure ---
+  //
   // When the user types (SearchResults <section> appears) or selects a result
   // (glossary .ed-glossary-waypoint loads), collapse the hero and welcome.
   main > .container {
@@ -676,6 +997,190 @@ hr.next-overlaps {
         pointer-events: none;
       }
     }
+  }
+}
+
+// ============================================================
+// The colophon
+// ============================================================
+
+.ed-colophon {
+  margin: 4.5rem 0 1rem;
+
+  .ed-colophon__rule {
+    font-size: 0.9rem;
+  }
+
+  .ed-colophon__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+    gap: 3rem;
+    align-items: center;
+    padding: 2.5rem 0;
+
+    @media (max-width: map-get($grid-breakpoints, 'md')) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  .ed-colophon__heading {
+    font-family: $font-family-display;
+    font-weight: 300;
+    font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+    line-height: 1.12;
+    margin: 0.5rem 0 1rem;
+    text-wrap: balance;
+  }
+
+  .ed-colophon__lead {
+    font-size: 1.15rem;
+    color: var(--ed-text-muted);
+    text-wrap: pretty;
+
+    // An illuminated initial, as a book opens a chapter
+    &::first-letter {
+      font-family: $font-family-display;
+      font-size: 3.4rem;
+      line-height: 0.82;
+      float: left;
+      padding: 0.15rem 0.6rem 0 0;
+      color: var(--ed-gild-text);
+    }
+  }
+
+  .ed-colophon__body {
+    color: var(--ed-text-muted);
+    margin-top: 1rem;
+    text-wrap: pretty;
+  }
+
+  .ed-colophon__signature {
+    font-style: italic;
+    color: var(--ed-text-faint);
+    margin-top: 1rem;
+  }
+
+  // The ask, framed like a bookplate
+  .ed-colophon__plate {
+    text-align: center;
+    padding: 2rem 1.75rem;
+    border: 1px solid var(--ed-gild);
+    border-radius: $border-radius-lg;
+    background:
+      linear-gradient(180deg, rgba(201, 164, 76, 0.12) 0%, transparent 60%),
+      var(--ed-bg-elevated);
+    box-shadow: 0 2px 16px var(--ed-shadow);
+  }
+
+  .ed-colophon__mark {
+    font-size: 2rem;
+    color: var(--ed-gild-text);
+    --ed-text-icon: currentColor;
+  }
+
+  .ed-colophon__figure {
+    color: var(--ed-text-muted);
+    margin: 0.75rem 0 1.25rem;
+    text-wrap: pretty;
+  }
+
+  .ed-colophon__cta {
+    display: block;
+    width: 100%;
+    font-size: 1.05rem;
+  }
+
+  .ed-colophon__alternatives {
+    margin-top: 1rem;
+    color: var(--ed-text-faint);
+  }
+}
+
+// ============================================================
+// Phrase of the day: fading a long phrase out
+// ============================================================
+//
+// A mask rather than an overlaid gradient, so the fade works against any
+// background -- panel, page or painting -- without having to know which
+// colour sits behind it.
+
+.daily-sentence {
+  .tengwar-lg.is-clamped {
+    max-height: 9.5em;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+  }
+
+  .daily-sentence__latin.is-clamped {
+    max-height: 6.5em;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+  }
+}
+
+// A way onward that does not compete with the page's one call to action
+.ed-readmore {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+// ============================================================
+// Word-by-word annotations on a phrase
+// ============================================================
+
+.ed-annotations {
+  margin-top: 1.25rem;
+
+  .ed-annotations__title {
+    margin-bottom: 0.5rem;
+  }
+
+  .ed-annotations__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
+  }
+
+  .ed-annotations__word {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .ed-annotations__form {
+    font-size: 1.1rem;
+    color: var(--ed-text);
+
+    &:hover {
+      color: var(--ed-link);
+    }
+  }
+
+  .ed-annotations__speech,
+  .ed-annotations__inflection {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  .ed-annotations__speech {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.1em;
+    color: var(--ed-link);
+  }
+
+  .ed-annotations__inflection {
+    color: var(--ed-text-faint);
+    font-style: italic;
+  }
+
+  .ed-annotations__more {
+    margin: 0.75rem 0 0;
   }
 }
 
