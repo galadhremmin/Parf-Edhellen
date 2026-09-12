@@ -21,12 +21,14 @@ $enable-gradients: false;
 // - Georgia: compatible with everything except Linux
 // - Bitstream Charter, Charis SIL, Utopia, URW Bookman L: Linux compatibility
 // - serif: fallback
-$font-family-sans-serif: "EB Garamond", "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
+// "EB Garamond Fallback" re-serves Iowan/Georgia with EB Garamond's metrics
+// (see _fonts.scss), so the swap from fallback to webfont does not reflow.
+$font-family-sans-serif: "EB Garamond", "EB Garamond Fallback", "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
 
 // Display face, for headings and anything set large. Much lighter and
 // airier than Georgia at size, which is most of what makes a hero feel
 // like a title page rather than a banner.
-$font-family-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+$font-family-display: "Cormorant Garamond", "Cormorant Garamond Fallback", "Iowan Old Style", Georgia, serif;
 
 // The machine's voice: counts, timestamps, badges, breadcrumbs and
 // form-control internals. Never above 14px, never for prose.

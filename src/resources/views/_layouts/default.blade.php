@@ -42,6 +42,15 @@
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
+  {{-- The two faces every page sets text in. Preloaded because they are
+       otherwise only discovered once index.css has parsed, which is late
+       enough that they swap in after first paint. The italic and
+       latin-extended subsets are deliberately NOT preloaded: most pages
+       never use them, and an unused preload is wasted bandwidth.
+       `crossorigin` is required even same-origin -- fonts fetch in CORS
+       mode, and without it the preload is discarded and fetched twice. --}}
+  <link rel="preload" href="@assetpath(fonts/eb-garamond-latin.woff2)" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="@assetpath(fonts/cormorant-garamond-latin.woff2)" as="font" type="font/woff2" crossorigin>
   <link href="@assetpath(/index.css)" rel="stylesheet">
   @yield('styles')
   @if (!empty(config('ed.header_view')))

@@ -79,3 +79,49 @@
   src: url("../fonts/garamond/cormorant-garamond-latin-ext.woff2") format("woff2");
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
+
+// ============================================================
+// Metric-matched fallbacks
+// ============================================================
+//
+// `font-display: swap` above means the page paints in a fallback
+// face first and swaps when the woff2 arrives. Georgia and Iowan
+// are both ~16% wider than EB Garamond and sit on a taller
+// baseline, so that swap used to reflow the whole page.
+//
+// These two faces re-serve the SAME local fonts with their metrics
+// overridden to match the webfont, so the swap changes letterforms
+// without moving anything. They sit between the webfont and the
+// plain fallbacks in the stacks in _variables.scss.
+//
+// The percentages are measured, not guessed: size-adjust is the
+// ratio of average lowercase advance width (weighted by English
+// letter frequency), and the vertical overrides are the WEBFONT's
+// hhea metrics divided by that adjustment. Iowan and Georgia differ
+// by under 0.2%, so one declaration covers both -- the browser takes
+// whichever local() it finds. Linux, which has neither, falls
+// through to the unadjusted stack as before.
+//
+// If you ever replace the woff2 files, re-measure. Stale numbers
+// here are worse than no fallback at all.
+// ============================================================
+
+// Matches EB Garamond (upm 1000, ascent 1007, descent -298).
+@font-face {
+  font-family: "EB Garamond Fallback";
+  src: local("Iowan Old Style"), local("Georgia"), local("Times New Roman");
+  size-adjust: 86.1%;
+  ascent-override: 116.9%;
+  descent-override: 34.6%;
+  line-gap-override: 0%;
+}
+
+// Matches Cormorant Garamond (upm 1000, ascent 924, descent -287).
+@font-face {
+  font-family: "Cormorant Garamond Fallback";
+  src: local("Iowan Old Style"), local("Georgia"), local("Times New Roman");
+  size-adjust: 87.3%;
+  ascent-override: 105.8%;
+  descent-override: 32.9%;
+  line-gap-override: 0%;
+}
