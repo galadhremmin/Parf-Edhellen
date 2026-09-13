@@ -10,8 +10,6 @@ return [
 
     // optional header. Should refer to a blade file.
     'header_view' => env('ED_HEADER_INCLUDE', ''),
-    'jumbotron_files' => ! empty(env('ED_SITE_JUMBOTRON_FILES', ''))
-        ? explode(',', env('ED_SITE_JUMBOTRON_FILES')) : [],
 
     // optional footer. Should refer to a blade file.
     'footer_view' => env('ED_FOOTER_INCLUDE', ''),

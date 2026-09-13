@@ -9,6 +9,7 @@ use App\Models\GameCrosswordLanguage;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use DateInterval;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -31,9 +32,19 @@ class CrosswordController extends Controller
     }
 
     /**
-     * Calendar for a language: year and month in URL; default to current month when omitted.
+     * A year of puzzles for a language, one cell per ISO week.
+     *
+     * Puzzles are generated weekly, so a day grid was mostly empty space: four
+     * or five filled squares in a month of thirty. A year of 52 (sometimes 53)
+     * week cells shows the same information at a glance, and a year's worth of
+     * it.
+     *
+     * Where a week holds more than one puzzle -- which happens when the
+     * generator is run by hand -- the latest one is the one the week links to.
+     * The others stay playable at their own /play/{date} address; they are
+     * simply not reachable from here.
      */
-    public function calendar(Request $request, int $languageId, ?int $year = null, ?int $month = null): View|\Illuminate\Http\RedirectResponse
+    public function calendar(Request $request, int $languageId, ?int $year = null): View|RedirectResponse
     {
         $gameLanguage = GameCrosswordLanguage::with('language')->find($languageId);
         if ($gameLanguage === null) {
@@ -41,116 +52,126 @@ class CrosswordController extends Controller
         }
 
         $now = Carbon::now();
-        $resolvedYear  = $year  ?? $now->year;
-        $resolvedMonth = $month ?? $now->month;
+        $resolvedYear = $year ?? $now->year;
 
-        if ($resolvedMonth < 1 || $resolvedMonth > 12) {
-            abort(404);
-        }
         if ($resolvedYear < 2000 || $resolvedYear > 2100) {
             abort(404);
         }
 
-        if ($year === null || $month === null) {
+        if ($year === null) {
             return redirect()->route('crossword.calendar', [
                 'languageId' => $languageId,
-                'year'       => $resolvedYear,
-                'month'      => $resolvedMonth,
+                'year' => $resolvedYear,
             ]);
         }
 
-        $year  = $resolvedYear;
-        $month = $resolvedMonth;
+        $year = $resolvedYear;
+        $today = $now->copy()->startOfDay();
 
-        $startOfMonth = Carbon::createFromDate($year, $month, 1)->startOfDay();
-        $endOfMonth   = $startOfMonth->copy()->endOfMonth();
-        $today        = $now->startOfDay();
+        // ISO weeks: Monday-based, and a year has 52 or 53 of them.
+        $firstWeekStart = Carbon::create($year, 1, 4)->startOfWeek(Carbon::MONDAY);
+        $weeksInYear = $firstWeekStart->isoWeeksInYear();
+        $yearStart = $firstWeekStart->copy();
+        $yearEnd = $firstWeekStart->copy()->addWeeks($weeksInYear)->subDay()->endOfDay();
 
-        $puzzles = CrosswordPuzzle::query()
+        // Keyed by ISO week number, holding the latest puzzle of that week.
+        $puzzlesByWeek = CrosswordPuzzle::query()
             ->where('language_id', $languageId)
-            ->whereBetween('puzzle_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->whereBetween('puzzle_date', [$yearStart->toDateString(), $yearEnd->toDateString()])
             ->where('puzzle_date', '<=', $today->toDateString())
             ->orderBy('puzzle_date')
             ->get()
-            ->keyBy(fn (CrosswordPuzzle $p) => $p->puzzle_date->format('Y-m-d'));
+            ->groupBy(fn (CrosswordPuzzle $puzzle) => $puzzle->puzzle_date->isoWeek())
+            ->map(fn ($puzzlesInWeek) => $puzzlesInWeek->last());
 
-        $completedDates = [];
-        if (Auth::check() && $puzzles->isNotEmpty()) {
-            $completedDates = CrosswordCompletion::query()
+        $completedWeeks = [];
+        if (Auth::check() && $puzzlesByWeek->isNotEmpty()) {
+            $completedWeeks = CrosswordCompletion::query()
                 ->where('account_id', Auth::id())
-                ->whereIn('crossword_puzzle_id', $puzzles->keys()->map(
-                    fn (string $date) => $puzzles[$date]->id
-                )->all())
+                ->whereIn('crossword_puzzle_id', $puzzlesByWeek->map(fn (CrosswordPuzzle $p) => $p->id)->all())
                 ->join('crossword_puzzles', 'crossword_completions.crossword_puzzle_id', '=', 'crossword_puzzles.id')
                 ->pluck('crossword_puzzles.puzzle_date')
-                ->map(fn ($d) => Carbon::parse($d)->format('Y-m-d'))
+                ->map(fn ($date) => Carbon::parse($date)->isoWeek())
                 ->all();
         }
 
-        $prevMonth   = $startOfMonth->copy()->subMonth();
-        $nextMonth   = $startOfMonth->copy()->addMonth();
-        $canShowNext = $nextMonth->startOfDay()->lte($today);
+        $weeks = [];
+        for ($weekNumber = 1; $weekNumber <= $weeksInYear; $weekNumber++) {
+            $weekStart = $firstWeekStart->copy()->addWeeks($weekNumber - 1);
+            $weekEnd = $weekStart->copy()->endOfWeek(Carbon::SUNDAY);
+            $puzzle = $puzzlesByWeek->get($weekNumber);
 
-        // Tomorrow's puzzle (may not be generated yet).
-        $tomorrowStr       = $today->copy()->addDay()->format('Y-m-d');
-        $hasTomorrowPuzzle = CrosswordPuzzle::query()
-            ->where('language_id', $languageId)
-            ->where('puzzle_date', $tomorrowStr)
-            ->exists();
+            $weeks[] = [
+                'number' => $weekNumber,
+                'start' => $weekStart,
+                'end' => $weekEnd,
+                'date' => $puzzle?->puzzle_date->format('Y-m-d'),
+                'has_puzzle' => $puzzle !== null,
+                'is_completed' => in_array($weekNumber, $completedWeeks, true),
+                'is_current' => $today->between($weekStart, $weekEnd),
+                'is_future' => $weekStart->gt($today),
+            ];
+        }
 
-        // Consecutive-day streak for this language (walks backward from today across all time).
+        // Consecutive weeks solved, walking backwards from the most recent puzzle.
         $streak = ! Auth::check() ? 0 : //
             Cache::remember('ed.games.crosswords.streak.'.$request->user()->id.'.'.$languageId,
-            DateInterval::createFromDateString('5 minutes'), function () use ($languageId, $today) {
-                $allPuzzleDates = CrosswordPuzzle::query()
-                    ->where('language_id', $languageId)
-                    ->where('puzzle_date', '<=', $today->toDateString())
-                    ->orderByDesc('puzzle_date')
-                    ->pluck('puzzle_date')
-                    ->map(fn ($d) => Carbon::parse($d)->format('Y-m-d'))
-                    ->all();
+                DateInterval::createFromDateString('5 minutes'), function () use ($languageId, $today) {
+                    $allPuzzleWeeks = CrosswordPuzzle::query()
+                        ->where('language_id', $languageId)
+                        ->where('puzzle_date', '<=', $today->toDateString())
+                        ->orderByDesc('puzzle_date')
+                        ->pluck('puzzle_date')
+                        ->map(fn ($date) => Carbon::parse($date)->format('o-W'))
+                        ->unique()
+                        ->values()
+                        ->all();
 
-                $allCompleted = CrosswordCompletion::query()
-                    ->join('crossword_puzzles', 'crossword_puzzles.id', '=', 'crossword_completions.crossword_puzzle_id')
-                    ->where('crossword_completions.account_id', Auth::id())
-                    ->where('crossword_puzzles.language_id', $languageId)
-                    ->pluck('crossword_puzzles.puzzle_date')
-                    ->map(fn ($d) => Carbon::parse($d)->format('Y-m-d'))
-                    ->all();
+                    $allCompleted = CrosswordCompletion::query()
+                        ->join('crossword_puzzles', 'crossword_puzzles.id', '=', 'crossword_completions.crossword_puzzle_id')
+                        ->where('crossword_completions.account_id', Auth::id())
+                        ->where('crossword_puzzles.language_id', $languageId)
+                        ->pluck('crossword_puzzles.puzzle_date')
+                        ->map(fn ($date) => Carbon::parse($date)->format('o-W'))
+                        ->all();
 
-                $completedSet = array_flip($allCompleted);
-                $streak = 0;
-                foreach ($allPuzzleDates as $dateStr) {
-                    if (isset($completedSet[$dateStr])) {
-                        $streak++;
-                    } else {
-                        break;
+                    $completedSet = array_flip($allCompleted);
+                    $streak = 0;
+                    foreach ($allPuzzleWeeks as $week) {
+                        if (isset($completedSet[$week])) {
+                            $streak++;
+                        } else {
+                            break;
+                        }
                     }
-                }
 
-                return $streak;
-            });
+                    return $streak;
+                });
 
-        $monthCompletedCount = count($completedDates);
+        $availableCount = $puzzlesByWeek->count();
+        $completedCount = count($completedWeeks);
+
+        // Is there a puzzle waiting that is not playable yet?
+        $nextPuzzleDate = CrosswordPuzzle::query()
+            ->where('language_id', $languageId)
+            ->where('puzzle_date', '>', $today->toDateString())
+            ->orderBy('puzzle_date')
+            ->value('puzzle_date');
 
         return view('crossword.calendar', [
-            'gameLanguage'        => $gameLanguage,
-            'year'                => $year,
-            'month'               => $month,
-            'startOfMonth'        => $startOfMonth,
-            'endOfMonth'          => $endOfMonth,
-            'today'               => $today,
-            'tomorrowStr'         => $tomorrowStr,
-            'hasTomorrowPuzzle'   => $hasTomorrowPuzzle,
-            'puzzles'             => $puzzles,
-            'completedDates'      => $completedDates,
-            'monthCompletedCount' => $monthCompletedCount,
-            'streak'              => $streak,
-            'prevYear'            => $prevMonth->year,
-            'prevMonth'           => $prevMonth->month,
-            'nextYear'            => $nextMonth->year,
-            'nextMonth'           => $nextMonth->month,
-            'canShowNext'         => $canShowNext,
+            'gameLanguage' => $gameLanguage,
+            'year' => $year,
+            'weeks' => $weeks,
+            'weeksInYear' => $weeksInYear,
+            'today' => $today,
+            'availableCount' => $availableCount,
+            'completedCount' => $completedCount,
+            'streak' => $streak,
+            'nextPuzzleDate' => $nextPuzzleDate ? Carbon::parse($nextPuzzleDate) : null,
+            'prevYear' => $year - 1,
+            'nextYear' => $year + 1,
+            'canShowNext' => $year < $now->year,
+            'canShowPrev' => $year > 2000,
         ]);
     }
 
@@ -188,14 +209,15 @@ class CrosswordController extends Controller
         // Strip answers from clues before passing to client.
         $clues = array_map(function (array $clue) {
             unset($clue['answer']);
+
             return $clue;
         }, $puzzle->clues ?? []);
 
-        $cells         = null;
-        $completed     = null;
+        $cells = null;
+        $completed = null;
         $daysCompleted = null;
         $secondsElapsed = null;
-        $isAssisted    = false;
+        $isAssisted = false;
 
         if (Auth::check()) {
             $completion = CrosswordCompletion::query()
@@ -204,9 +226,9 @@ class CrosswordController extends Controller
                 ->first();
 
             if ($completion !== null) {
-                $completed      = true;
+                $completed = true;
                 $secondsElapsed = $completion->seconds_elapsed;
-                $isAssisted     = $completion->is_assisted;
+                $isAssisted = $completion->is_assisted;
 
                 // The existence of a CrosswordCompletion is proof the user solved the puzzle
                 // correctly. It is therefore safe to regenerate and serve the correct answers.
@@ -223,24 +245,24 @@ class CrosswordController extends Controller
         }
 
         $initialState = [
-            'puzzle_id'       => $puzzle->id,
-            'date'            => $puzzle->puzzle_date->format('Y-m-d'),
-            'language_id'     => $puzzle->language_id,
-            'grid'            => $grid,
-            'clues'           => $clues,
-            'completed'       => $completed,
-            'days_completed'  => $daysCompleted,
+            'puzzle_id' => $puzzle->id,
+            'date' => $puzzle->puzzle_date->format('Y-m-d'),
+            'language_id' => $puzzle->language_id,
+            'grid' => $grid,
+            'clues' => $clues,
+            'completed' => $completed,
+            'days_completed' => $daysCompleted,
             'seconds_elapsed' => $secondsElapsed,
-            'is_assisted'     => $isAssisted,
-            'cells'           => $cells,
+            'is_assisted' => $isAssisted,
+            'cells' => $cells,
         ];
 
         return view('crossword.play', [
-            'gameLanguage'   => $gameLanguage,
-            'puzzle'         => $puzzle,
-            'date'           => $date,
+            'gameLanguage' => $gameLanguage,
+            'puzzle' => $puzzle,
+            'date' => $date,
             'containerClass' => 'container-fluid',
-            'initialState'   => $initialState,
+            'initialState' => $initialState,
         ]);
     }
 
@@ -258,18 +280,19 @@ class CrosswordController extends Controller
         $map = [];
         foreach ($clues as $clue) {
             $answer = (string) ($clue['answer'] ?? '');
-            $row    = (int) $clue['row'];
-            $col    = (int) $clue['col'];
+            $row = (int) $clue['row'];
+            $col = (int) $clue['col'];
             $across = ($clue['direction'] ?? '') === 'across';
-            $dr     = $across ? 0 : 1;
-            $dc     = $across ? 1 : 0;
+            $dr = $across ? 0 : 1;
+            $dc = $across ? 1 : 0;
 
             $len = mb_strlen($answer, 'UTF-8');
             for ($i = 0; $i < $len; $i++) {
-                $key       = ($row + $i * $dr) . ':' . ($col + $i * $dc);
+                $key = ($row + $i * $dr).':'.($col + $i * $dc);
                 $map[$key] = mb_substr($answer, $i, 1, 'UTF-8');
             }
         }
+
         return $map;
     }
 }

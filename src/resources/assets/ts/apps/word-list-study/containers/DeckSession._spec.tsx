@@ -141,6 +141,25 @@ const clickText = (text: string) => {
     fireEvent.click(screen.getByText(text));
 };
 
+/**
+ * Clicks a link and reports whether the component let the navigation through.
+ *
+ */
+const clickLink = (element: Element, init?: Parameters<typeof fireEvent.click>[1]) => {
+    let cancelledByComponent = false;
+
+    const __onClick = (ev: Event) => {
+        cancelledByComponent = ev.defaultPrevented;
+        ev.preventDefault();
+    };
+
+    document.addEventListener('click', __onClick);
+    fireEvent.click(element, init);
+    document.removeEventListener('click', __onClick);
+
+    return ! cancelledByComponent;
+};
+
 describe('apps/word-list-study/containers/DeckSession', () => {
     beforeAll(() => {
         setInstance(DI.GlobalEvents, GlobalEventConnector);
@@ -247,13 +266,13 @@ describe('apps/word-list-study/containers/DeckSession', () => {
         const onLoadReference = (ev: Event) => received.push((ev as CustomEvent).detail.lexicalEntryId);
         window.addEventListener(GlobalEventLoadReference, onLoadReference);
 
-        const notCancelled = fireEvent.click(link, { button: 0 });
+        const notCancelled = clickLink(link, { button: 0 });
 
         window.removeEventListener(GlobalEventLoadReference, onLoadReference);
 
         expect(received).toEqual([ 1 ]);
-        // fireEvent returns false once preventDefault has been called, which is
-        // what stops the browser following the href and dropping the session.
+        // The component cancels the click, which is what stops the browser following the
+        // href and dropping the session.
         expect(notCancelled).toBe(false);
     });
 
@@ -273,7 +292,7 @@ describe('apps/word-list-study/containers/DeckSession', () => {
         const onLoadReference = (ev: Event) => received.push((ev as CustomEvent).detail.lexicalEntryId);
         window.addEventListener(GlobalEventLoadReference, onLoadReference);
 
-        const notCancelled = fireEvent.click(
+        const notCancelled = clickLink(
             screen.getByText('Open the dictionary entry'), { button: 0, ctrlKey: true }
         );
 

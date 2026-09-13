@@ -1,0 +1,112 @@
+@import '../../../../_scss/_variables';
+
+// ============================================================
+// The glossary, between the tap and the answer
+// ============================================================
+//
+// Two states, because there are two situations:
+//
+//   1. A glossary is already on screen. It stays exactly where it is,
+//      dimmed, and a small card floats over it. Nothing moves.
+//   2. Nothing is on screen yet (the first expansion of a session). One
+//      composed state that names the word, making no attempt to imitate
+//      a layout whose shape is not knowable yet.
+
+// --- 1. Fetching, with a glossary already in place --------------------
+
+.ed-glossary-waypoint {
+  transition: opacity 0.25s ease, filter 0.25s ease;
+
+  &--fetching {
+    opacity: 0.32;
+    filter: saturate(0.6);
+    pointer-events: none;
+  }
+}
+
+.GlossaryEntitiesFetching {
+  // Fixed rather than absolute: a glossary can run for several screens, and
+  // reference links are followed from the middle of one as often as the top.
+  // Anchored to the container, the card would sit off-screen above the reader
+  // exactly when they most need to know something is happening.
+  position: fixed;
+  top: 5rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  // Below the minimap (1040), above the page.
+  z-index: 1030;
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 1.35rem;
+    border: 1px solid var(--ed-gild);
+    border-radius: $border-radius-lg;
+    background: var(--ed-bg-elevated);
+    box-shadow: 0 6px 24px var(--ed-shadow-heavy);
+  }
+
+  &__word {
+    font-size: 1.15rem;
+    color: var(--ed-text);
+  }
+
+  &__hint {
+    font-family: $font-family-tiny;
+    font-size: 0.8125rem;
+    color: var(--ed-text-faint);
+  }
+}
+
+// --- 2. Fetching, with nothing to keep in place -----------------------
+
+.GlossaryEntitiesLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+
+  &__word {
+    font-family: $font-family-display;
+    font-weight: 300;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--ed-text);
+    margin: 0;
+  }
+
+  &__rule {
+    display: block;
+    width: 220px;
+    max-width: 60%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(201, 164, 76, 0) 0%,
+      rgba(201, 164, 76, 0.55) 50%,
+      rgba(201, 164, 76, 0) 100%
+    );
+  }
+
+  &__status {
+    font-family: $font-family-tiny;
+    font-size: 0.8125rem;
+    color: var(--ed-text-faint);
+    margin: 0;
+  }
+}
+
+// Dimming is a transition, not information. Anyone who has asked for less
+// motion gets the same states without the fade.
+@media (prefers-reduced-motion: reduce) {
+  .ed-glossary-waypoint {
+    transition: none;
+  }
+}

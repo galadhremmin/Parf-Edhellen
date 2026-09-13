@@ -8,9 +8,9 @@ use App\Events\SentenceEdited;
 use App\Events\SentenceFragmentsDestroyed;
 use App\Helpers\SentenceHelper;
 use App\Helpers\StringHelper;
-use App\Models\LexicalEntry;
 use App\Models\Inflection;
 use App\Models\Initialization\Morphs;
+use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use App\Models\SentenceFragment;
 use Exception;
@@ -67,6 +67,42 @@ class SentenceRepository
             ->get();
     }
 
+    /**
+     * Gets the sentences either side of the specified sentence within its language, so that a
+     * phrase can offer a way onward rather than ending at its comments. Ordering follows
+     * getByLanguage() -- by name -- so "next" means the next one on the language's own list.
+     *
+     * One row is fetched per direction rather than the language's whole list, so the cost does
+     * not grow with the corpus. Names are not unique by any constraint, so the comparison falls
+     * back to the id where two phrases share a name: without that tiebreak a tied pair would be
+     * stepped over rather than through.
+     *
+     * @return array{previous: ?Sentence, next: ?Sentence}
+     */
+    public function getAdjacentSentences(Sentence $sentence): array
+    {
+        $neighbour = function (string $comparison, string $direction) use ($sentence) {
+            return Sentence::approved()
+                ->byLanguage($sentence->language_id)
+                ->where(function ($query) use ($sentence, $comparison) {
+                    $query->where('name', $comparison, $sentence->name)
+                        ->orWhere(function ($query) use ($sentence, $comparison) {
+                            $query->where('name', $sentence->name)
+                                ->where('id', $comparison, $sentence->id);
+                        });
+                })
+                ->orderBy('name', $direction)
+                ->orderBy('id', $direction)
+                ->select('id', 'name', 'description', 'language_id')
+                ->first();
+        };
+
+        return [
+            'previous' => $neighbour('<', 'desc'),
+            'next' => $neighbour('>', 'asc'),
+        ];
+    }
+
     public function getAllGroupedByLanguage()
     {
         return DB::table('sentences as s')
@@ -113,7 +149,23 @@ class SentenceRepository
             return $sentence;
         }
 
-        $fragments = $sentence->sentence_fragments()->with(['lexical_entry_inflections', 'speech'])->get();
+        // The headword and its gloss travel with the fragment deliberately. A phrase can link
+        // eighty entries, and the reader needs the dictionary form of every one of them at once:
+        // to list the words beside the text, and to show where the written form differs from the
+        // form you would look up -- which is most of them. Fetching that per word cost a request
+        // each, so nothing could be shown until you clicked.
+        $fragments = $sentence->sentence_fragments()
+            ->with([
+                'lexical_entry_inflections',
+                'speech',
+                'lexical_entry:id,word_id,sense_id,source,lexical_entry_group_id',
+                'lexical_entry.word:id,word',
+                // Sense and Word share a primary key, so the gloss is one hop further.
+                'lexical_entry.sense:id',
+                'lexical_entry.sense.word:id,word',
+                'lexical_entry.lexical_entry_group:id,name',
+            ])
+            ->get();
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'paragraph_number', 'translation')
             ->orderBy('paragraph_number', 'asc')
@@ -162,7 +214,7 @@ class SentenceRepository
         $changed = (bool) $sentence->id;
         $numberOfFragments = count($fragments);
         if ($numberOfFragments !== count($inflectionsPerFragments)) {
-            throw new \Exception('The number of fragments must match the number of inflections.');
+            throw new Exception('The number of fragments must match the number of inflections.');
         }
 
         try {

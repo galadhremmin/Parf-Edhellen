@@ -1,4 +1,3 @@
-/* tslint:disable */
 import {
     describe,
     expect,
@@ -7,89 +6,141 @@ import {
 
 import type {
     ISentenceFragmentEntity,
-    ITextTransformation,
+    ISentenceTranslation,
+    ITextTransformationsMap,
+    ParagraphTransformation,
 } from '@root/connectors/backend/IBookApi';
-import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
+import { SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 
-import convertTransformationToTextComponents from './TextConverter';
+import convertTransformationsToLines, { PROSE_AT } from './TextConverter';
 
-describe('apps/sentence/utilities/TextConverter', () => {
-    const MinimumId = 0;
-    const Fragments: ISentenceFragmentEntity[] = snakeCasePropsToCamelCase(
-        JSON.parse(`[{"id":3242,"gloss_id":366116,"type":0,"fragment":"A","tengwar":"\`C","speech":"interjection","speech_id":12,"comments":null,"inflections":[]},{"id":3243,"gloss_id":336024,"type":0,"fragment":"T\u00farin","tengwar":"1~M7T5","speech":"masculine name","speech_id":13,"comments":"","inflections":[]},{"id":3244,"gloss_id":369112,"type":0,"fragment":"Turambar","tengwar":"1U7Ew#6","speech":"masculine name","speech_id":13,"comments":null,"inflections":[]},{"id":3245,"gloss_id":115037,"type":0,"fragment":"tur\u00fan\u2019","tengwar":"1U7~M5","speech":"verb","speech_id":26,"comments":"","inflections":[{"id":43,"name":"passive participle"}]},{"id":3246,"gloss_id":103246,"type":0,"fragment":"ambartanen","tengwar":"\`Cw#61E5$5","speech":"noun","speech_id":14,"comments":"","inflections":[{"id":115,"name":"instrumental"}]},{"id":3247,"gloss_id":null,"type":31,"fragment":"!","tengwar":"\u00c1","speech":null,"speech_id":null,"comments":null,"inflections":[]}]`)
-    );
-    const LatinMap: ITextTransformation = JSON.parse(`{"10":[[0]," ",[1]," ",[2]," ",[3]," ",[4],[5]]}`);
-    const TengwarMap: ITextTransformation = JSON.parse(`{"10":[[0,"\`C"]," ",[1,"1~M7T5"]," ",[2,"1U7Ew#6"]," ",[3,"1U7~M5"]," ",[4,"\`Cw#61E5$5"]," ",[5,"\u00c1"]]}`);
+const word = (id: number, fragment: string, tengwar: string): ISentenceFragmentEntity => ({
+    fragment,
+    id,
+    lexicalEntryId: id * 100,
+    paragraphNumber: 1,
+    sentenceNumber: 1,
+    tengwar,
+    type: SentenceFragmentType.Word,
+});
 
-    test('supports simple map without substitutions', () => {
-        const map = convertTransformationToTextComponents('latin', LatinMap, Fragments);
+const punctuation = (id: number, fragment: string): ISentenceFragmentEntity => ({
+    fragment,
+    id,
+    paragraphNumber: 1,
+    sentenceNumber: 1,
+    type: SentenceFragmentType.Interpunctuation,
+});
 
-        expect(map.paragraphs.length).toEqual(1);
-        expect(map.paragraphs[0].length).toEqual(10);
-        
-        const expectedIds = [
-            Fragments[0].id,
-            MinimumId,
-            Fragments[1].id,
-            MinimumId,
-            Fragments[2].id,
-            MinimumId,
-            Fragments[3].id,
-            MinimumId,
-            Fragments[4].id,
-            MinimumId,
-        ];
-        expect(map.paragraphs[0].map((v) => v.id)).toEqual(expectedIds);
+describe('apps/sentence-inspector/utilities/TextConverter', () => {
+    // A, Elbereth, Gilthoniel -- the opening of the hymn, with its exclamation mark.
+    const Fragments: ISentenceFragmentEntity[] = [
+        word(1, 'A', 'x'),
+        word(2, 'Elbereth', 'y'),
+        word(3, 'Gilthoniel', 'z'),
+        punctuation(4, '!'),
+    ];
 
-        const expectedFragments = [
-            Fragments[0].fragment,
-            ' ',
-            Fragments[1].fragment,
-            ' ',
-            Fragments[2].fragment,
-            ' ',
-            Fragments[3].fragment,
-            ' ',
-            Fragments[4].fragment,
-            Fragments[5].fragment,
-        ];
-        expect(map.paragraphs[0].map((v) => v.fragment)).toEqual(expectedFragments);
+    const Transformations: ITextTransformationsMap = {
+        latin: { 1: [[0], ' ', [1], ' ', [2], [3]] },
+        tengwar: { 1: [[0, 'x'], ' ', [1, 'y'], ' ', [2, 'z'], [3, '!']] },
+    };
+
+    const Translations: ISentenceTranslation[] = [
+        { paragraphNumber: 1, sentenceNumber: 1, translation: 'O Elbereth Starkindler,' },
+    ];
+
+    test('builds one line per paragraph, joining words to the fragments they stand for', () => {
+        const state = convertTransformationsToLines(Transformations, Translations, Fragments);
+
+        expect(state.lines.length).toEqual(1);
+        expect(state.shape).toEqual('verse');
+        expect(state.lines[0].kind).toEqual('stanza');
+        expect(state.lines[0].n).toEqual(1);
+
+        expect(state.lines[0].latin.map((t) => t.text)).toEqual([ 'A', ' ', 'Elbereth', ' ', 'Gilthoniel', '!' ]);
+
+        // Punctuation and separators are not words, so they cannot be opened.
+        expect(state.lines[0].latin.map((t) => t.fragmentId)).toEqual([ 1, 0, 2, 0, 3, 0 ]);
+        expect(state.lines[0].wordCount).toEqual(3);
     });
 
-    test('supports map with substitutions', () => {
-        const map = convertTransformationToTextComponents('tengwar', TengwarMap, Fragments);
+    test('carries the tengwar of each word, for prose to set beside its transcription', () => {
+        const state = convertTransformationsToLines(Transformations, Translations, Fragments);
 
-        expect(map.paragraphs.length).toEqual(1);
-        expect(map.paragraphs[0].length).toEqual(11);
-        
-        const expectedIds = [
-            Fragments[0].id,
-            MinimumId,
-            Fragments[1].id,
-            MinimumId,
-            Fragments[2].id,
-            MinimumId,
-            Fragments[3].id,
-            MinimumId,
-            Fragments[4].id,
-            MinimumId,
-            MinimumId,
-        ];
-        expect(map.paragraphs[0].map((v) => v.id)).toEqual(expectedIds);
+        expect(state.lines[0].tengwarByFragment).toEqual({ 1: 'x', 2: 'y', 3: 'z' });
+    });
 
-        const expectedFragments = [
-            '\`C',
-            ' ',
-            '1~M7T5',
-            ' ',
-            '1U7Ew#6',
-            ' ',
-            '1U7~M5',
-            ' ',
-            '\`Cw#61E5$5',
-            ' ',
-            '\u00c1'
+    test('joins the translation by paragraph number rather than by position', () => {
+        const transformations: ITextTransformationsMap = {
+            latin: { 1: [[0]], 2: [[1]], 3: [[2]] },
+            tengwar: {},
+        };
+        // Only the last paragraph is translated. Matching by position would have put this
+        // translation under the first line.
+        const translations: ISentenceTranslation[] = [
+            { paragraphNumber: 3, sentenceNumber: 1, translation: 'the glory of the starry host!' },
         ];
-        expect(map.paragraphs[0].map((v) => v.fragment)).toEqual(expectedFragments);
+
+        const state = convertTransformationsToLines(transformations, translations, Fragments);
+
+        expect(state.lines.length).toEqual(3);
+        expect(state.lines[0].translation).toBeNull();
+        expect(state.lines[1].translation).toBeNull();
+        expect(state.lines[2].translation).toEqual('the glory of the starry host!');
+        expect(state.hasTranslations).toEqual(true);
+    });
+
+    test('reports a phrase with no translations at all', () => {
+        const state = convertTransformationsToLines(Transformations, [], Fragments);
+
+        expect(state.hasTranslations).toEqual(false);
+        expect(state.lines[0].translation).toBeNull();
+    });
+
+    test('draws a paragraph with no letters in it as a section rule', () => {
+        const fragments = [ word(1, 'Túrin', 'x'), punctuation(2, '------------') ];
+        const transformations: ITextTransformationsMap = {
+            latin: { 1: [[0]], 2: [[1]], 3: [[0]] },
+            tengwar: {},
+        };
+
+        const state = convertTransformationsToLines(transformations, [], fragments);
+
+        expect(state.lines.map((l) => l.kind)).toEqual([ 'stanza', 'rule', 'stanza' ]);
+        // The rule takes no line number: the numbering counts lines of text.
+        expect(state.lines.map((l) => l.n)).toEqual([ 1, 0, 2 ]);
+    });
+
+    test('sets the whole phrase as prose once any paragraph runs long', () => {
+        const fragments: ISentenceFragmentEntity[] = [];
+        const paragraph: ParagraphTransformation = [];
+        for (let i = 0; i < PROSE_AT + 1; i += 1) {
+            fragments.push(word(i + 1, `word${i}`, 'x'));
+            paragraph.push([ i ]);
+            paragraph.push(' ');
+        }
+
+        const state = convertTransformationsToLines(
+            { latin: { 1: paragraph, 2: [[0]] }, tengwar: {} },
+            [],
+            fragments,
+        );
+
+        // Never mixed: a document reads as one thing or the other, so the short second
+        // paragraph is set as prose alongside the long first one.
+        expect(state.shape).toEqual('prose');
+        expect(state.lines.map((l) => l.kind)).toEqual([ 'prose', 'prose' ]);
+    });
+
+    test('keeps a phrase of short lines as verse', () => {
+        const state = convertTransformationsToLines(Transformations, Translations, Fragments);
+
+        expect(state.shape).toEqual('verse');
+    });
+
+    test('survives a phrase with no transformations', () => {
+        expect(convertTransformationsToLines(null, [], Fragments).lines).toEqual([]);
+        expect(convertTransformationsToLines({}, [], Fragments).lines).toEqual([]);
     });
 });

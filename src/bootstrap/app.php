@@ -136,10 +136,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ->weekly() //
             ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
                 $systemErrorRepository->saveException(new Exception(
-                    sprintf('Failed to generate daily crosswords. Output: %s', $output)
+                    sprintf('Failed to generate weekly crosswords. Output: %s', $output)
                 ), 'scheduler');
             }) //
-            ->name('Generate daily crossword puzzles for enabled languages');
+            ->name('Generate weekly crossword puzzles for enabled languages');
 
         $schedule->command('queue:cleanup-statistics', ['--days' => 30]) //
             ->daily() //

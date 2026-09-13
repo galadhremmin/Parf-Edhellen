@@ -49,7 +49,7 @@ const clientConfig = {
       chunks: 'async',
       cacheGroups: {
         vendors: {
-          test: /[\\/]node_modules[\\/](html-to-react|redux|spinkit)[\\/]/,
+          test: /[\\/]node_modules[\\/](html-to-react|redux)[\\/]/,
           name: 'vendors',
           priority: 30,
           reuseExistingChunk: true,
@@ -178,6 +178,17 @@ const clientConfig = {
             },
           },
         ]
+      },
+      {
+        // Fonts keep their own names rather than a content hash, so that the
+        // layout can <link rel="preload"> them by name. Without a preload the
+        // browser only discovers them once index.css has parsed, which is late
+        // enough that the face swaps in after first paint and reflows the text.
+        test: /\.(woff2?|ttf|otf|eot)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext]',
+        },
       },
     ],
   },

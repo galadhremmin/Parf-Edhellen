@@ -20,6 +20,9 @@ export interface IEntitiesComponentProps<T = ILexicalEntryEntity> {
      * match of its own — the unusual section should then render above the normal one. */
     leadWithUnusual?: boolean;
     loading: boolean;
+    /** The word being fetched, for the optimistic loading state. Absent when the
+      * expansion did not start from something the user tapped. */
+    pendingWord?: string;
     sections?: ISectionsState<T>;
     single: boolean;
     word: string;

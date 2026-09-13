@@ -27,7 +27,7 @@ require 'web-routes/author-user.php';
 require 'web-routes/dictionary.php';
 require 'web-routes/flashcards.php';
 require 'web-routes/flashcards-user.php';
-require 'web-routes/games.php';
+require 'web-routes/practice.php';
 require 'web-routes/crossword.php';
 require 'web-routes/crossword-admin.php';
 require 'web-routes/phrases.php';

@@ -12,6 +12,9 @@ export interface IEntitiesAction<T = IGlossaryResponse> extends IReduxAction {
 
 export interface IEntitiesState {
     entityMorph?: string;
+    /** The word being fetched, known from the moment it is tapped. Lets the
+      * glossary show the real headword while the rest is still in flight. */
+    pendingWord?: string;
     groupId: number;
     groupIntlName: string;
     languages: ILanguageEntity[];

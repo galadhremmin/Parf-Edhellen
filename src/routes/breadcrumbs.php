@@ -183,18 +183,18 @@ Breadcrumbs::for('contribution.confirm-reject', function (BreadcrumbTrail $bread
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Games
+// Practice
 
-Breadcrumbs::for('games', function (BreadcrumbTrail $breadcrumbs) {
+Breadcrumbs::for('practice', function (BreadcrumbTrail $breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Games', route('games'));
+    $breadcrumbs->push(__('practice.title'), route('practice'));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Games > Flashcards
+// Practice > Flashcards
 
 Breadcrumbs::for('flashcard', function (BreadcrumbTrail $breadcrumbs) {
-    $breadcrumbs->parent('games');
+    $breadcrumbs->parent('practice');
     $breadcrumbs->push('Flashcards', route('flashcard'));
 });
 
@@ -209,10 +209,10 @@ Breadcrumbs::for('flashcard.list', function (BreadcrumbTrail $breadcrumbs, App\M
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Games > Sage
+// Practice > Sage
 
 Breadcrumbs::for('word-finder', function (BreadcrumbTrail $breadcrumbs) {
-    $breadcrumbs->parent('games');
+    $breadcrumbs->parent('practice');
     $breadcrumbs->push('Sage', route('word-finder.index'));
 });
 
@@ -227,29 +227,25 @@ Breadcrumbs::for('word-finder.config.index', function (BreadcrumbTrail $breadcru
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Games > Crossword
+// Practice > Crossword
 
 Breadcrumbs::for('crossword.index', function (BreadcrumbTrail $breadcrumbs) {
-    $breadcrumbs->parent('games');
+    $breadcrumbs->parent('practice');
     $breadcrumbs->push(__('crossword.title'), route('crossword.index'));
 });
 
-Breadcrumbs::for('crossword.calendar', function (BreadcrumbTrail $breadcrumbs, $languageId, $year, $month) {
+Breadcrumbs::for('crossword.calendar', function (BreadcrumbTrail $breadcrumbs, $languageId, $year) {
     $breadcrumbs->parent('crossword.index');
     $gameLanguage = \App\Models\GameCrosswordLanguage::with('language')->find($languageId);
-    $monthName = $gameLanguage && $year && $month
-        ? \Carbon\Carbon::createFromDate((int) $year, (int) $month, 1)->format('F Y')
-        : '';
-    $label = $gameLanguage ? $gameLanguage->getFriendlyName() . ' – ' . $monthName : 'Calendar';
-    $breadcrumbs->push($label, route('crossword.calendar', ['languageId' => $languageId, 'year' => $year, 'month' => $month]));
+    $label = $gameLanguage ? $gameLanguage->getFriendlyName() . ' – ' . $year : 'Calendar';
+    $breadcrumbs->push($label, route('crossword.calendar', ['languageId' => $languageId, 'year' => $year]));
 });
 
 Breadcrumbs::for('crossword.play', function (BreadcrumbTrail $breadcrumbs, $languageId, $date) {
     $gameLanguage = \App\Models\GameCrosswordLanguage::with('language')->find($languageId);
     $dateLabel = $date ? \Carbon\Carbon::parse($date)->format('j F Y') : '';
-    $year = $date ? (int) substr($date, 0, 4) : null;
-    $month = $date ? (int) substr($date, 5, 2) : null;
-    $breadcrumbs->parent('crossword.calendar', $languageId, $year, $month);
+    $year = $date ? (int) \Carbon\Carbon::parse($date)->isoWeekYear : null;
+    $breadcrumbs->parent('crossword.calendar', $languageId, $year);
     $label = $gameLanguage ? $gameLanguage->getFriendlyName() . ' – ' . $dateLabel : $dateLabel;
     $breadcrumbs->push($label, route('crossword.play', ['languageId' => $languageId, 'date' => $date]));
 });

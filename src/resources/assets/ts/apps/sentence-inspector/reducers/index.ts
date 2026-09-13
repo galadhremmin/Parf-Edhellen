@@ -2,20 +2,20 @@ import { combineReducers } from 'redux';
 
 import type { CreateRootReducer } from '@root/_types';
 
+import DisplayReducer from './DisplayReducer';
 import FragmentsReducer from './FragmentsReducer';
-import LatinFragmentsReducer from './LatinFragmentsReducer';
+import LinesReducer from './LinesReducer';
 import SelectionReducer from './SelectionReducer';
 import SentenceReducer from './SentenceReducer';
-import TengwarFragmentsReducer from './TengwarFragmentsReducer';
-import TranslationsReducer from './TranslationsReducer';
+import TrailReducer from './TrailReducer';
 
 const reducers = {
+    display: DisplayReducer,
     fragments: FragmentsReducer,
-    latinFragments: LatinFragmentsReducer,
+    lines: LinesReducer,
     selection: SelectionReducer,
     sentence: SentenceReducer,
-    tengwarFragments: TengwarFragmentsReducer,
-    translations: TranslationsReducer,
+    trail: TrailReducer,
 };
 
 export type RootReducer = CreateRootReducer<typeof reducers>;

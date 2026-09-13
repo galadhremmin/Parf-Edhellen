@@ -42,6 +42,15 @@
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
+  {{-- The two faces every page sets text in. Preloaded because they are
+       otherwise only discovered once index.css has parsed, which is late
+       enough that they swap in after first paint. The italic and
+       latin-extended subsets are deliberately NOT preloaded: most pages
+       never use them, and an unused preload is wasted bandwidth.
+       `crossorigin` is required even same-origin -- fonts fetch in CORS
+       mode, and without it the preload is discarded and fetched twice. --}}
+  <link rel="preload" href="@assetpath(fonts/eb-garamond-latin.woff2)" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="@assetpath(fonts/cormorant-garamond-latin.woff2)" as="font" type="font/woff2" crossorigin>
   <link href="@assetpath(/index.css)" rel="stylesheet">
   @yield('styles')
   @if (!empty(config('ed.header_view')))
@@ -86,24 +95,7 @@
     </main>
   </div>
 </div>
-<footer class="bg-dark text-secondary p-4 d-flex" data-ad-region="no-ads">
-  <section class="flex-fill w-100">
-    <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
-    <nav>
-      <ul>
-        <li><a href="{{ route('login') }}" class="link-secondary text-decoration-underline">Sign in</a></li>
-        <li><a href="{{ route('about') }}" class="link-secondary text-decoration-underline">About the website</a></li>
-        <li><a href="{{ route('about.cookies') }}" class="link-secondary text-decoration-underline">Cookie policy</a></li>
-        <li><a href="{{ route('about.privacy') }}" class="link-secondary text-decoration-underline">Privacy policy</a></li>
-      </ul>
-    </nav>
-  </section>
-  <section class="flex-fill w-100">
-    Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
-    we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank" class="link-secondary text-decoration-underline">Middle-earth Enterprises</a> nor 
-    <a href="http://www.tolkienestate.com/" target="_blank" class="link-secondary text-decoration-underline">Tolkien Estate</a>.
-  </section>
-</footer>
+@include('_layouts._footer')
 
 <script type="text/javascript" src="@assetpath(runtime.js)"></script>
 <script type="text/javascript" src="@assetpath(index.js)"></script>

@@ -1,8 +1,10 @@
-$primary: #015788;
-$info: #8eb4cb;
-$success: #2ab27b;
-$warning: #cbb956;
-$danger: #bf5329;
+$primary: #8A6F2E;   // gilding, dark enough to carry white text on the light theme
+$secondary: #6b6152; // warm stone. Bootstrap's default grey is the coldest thing
+                     // on the page, and it reaches 24 views through .btn-secondary
+$info: #4f6f80;
+$success: #4d7c4f;
+$warning: #b08a2e;
+$danger: #9B4722;
 
 // Disable custom bootstrap components
 $enable-cssgrid: false;
@@ -12,15 +14,33 @@ $enable-deprecation-messages: false;
 $enable-shadows: true;
 $enable-gradients: false;
 
-// Default body font:
+// Default body font. EB Garamond is self-hosted (see _fonts.scss); the
+// rest of the stack is what the site shipped before it, so nothing
+// looks broken if the webfont never arrives:
 // - Iowan Old Style: preferred serif font on iOS
 // - Georgia: compatible with everything except Linux
 // - Bitstream Charter, Charis SIL, Utopia, URW Bookman L: Linux compatibility
 // - serif: fallback
-$font-family-sans-serif: "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
+// "EB Garamond Fallback" re-serves Iowan/Georgia with EB Garamond's metrics
+// (see _fonts.scss), so the swap from fallback to webfont does not reflow.
+$font-family-sans-serif: "EB Garamond", "EB Garamond Fallback", "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
+
+// Display face, for headings and anything set large. Much lighter and
+// airier than Georgia at size, which is most of what makes a hero feel
+// like a title page rather than a banner.
+$font-family-display: "Cormorant Garamond", "Cormorant Garamond Fallback", "Iowan Old Style", Georgia, serif;
+
+// The machine's voice: counts, timestamps, badges, breadcrumbs and
+// form-control internals. Never above 14px, never for prose.
 $font-family-tiny: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 $font-size-root: 16px;
-$line-height-base: 1.6;
+$line-height-base: 1.65;
+
+// A printed plate, not an app card.
+$border-radius:    2px;
+$border-radius-sm: 2px;
+$border-radius-lg: 3px;
+$border-radius-xl: 3px;
 
 // Custom sizes
 $screen-xxl-width: 1700px;

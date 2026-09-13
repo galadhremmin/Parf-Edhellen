@@ -22,20 +22,30 @@ export function useWordListMembership() {
 }
 
 interface IProviderProps {
-    sections: ISectionsState;
     children: ReactNode;
+    /**
+     * The entries to check, given directly. The phrase reader knows its words as a flat
+     * list rather than as glossary sections, so it passes them this way; when present this
+     * takes precedence over `sections`.
+     */
+    lexicalEntryIds?: number[];
+    sections?: ISectionsState;
 }
 
 /**
  * Fetches word-list membership for every lexical entry currently visible
  * in a single batched request.  Anonymous users skip the check entirely.
  */
-export function WordListMembershipProvider({ sections, children }: IProviderProps) {
+export function WordListMembershipProvider({ children, lexicalEntryIds, sections }: IProviderProps) {
     const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
     const lastCheckedKey = useRef<string>('');
 
     // Collect all entry IDs from every language section.
     const entryIds = useMemo(() => {
+        if (Array.isArray(lexicalEntryIds)) {
+            return lexicalEntryIds;
+        }
+
         const ids: number[] = [];
         if (sections) {
             for (const languageId of Object.keys(sections)) {
@@ -48,7 +58,7 @@ export function WordListMembershipProvider({ sections, children }: IProviderProp
             }
         }
         return ids;
-    }, [sections]);
+    }, [lexicalEntryIds, sections]);
 
     useEffect(() => {
         if (entryIds.length === 0) {

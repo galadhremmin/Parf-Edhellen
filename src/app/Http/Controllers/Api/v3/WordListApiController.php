@@ -18,6 +18,7 @@ use App\Services\Flashcards\WordListDeckSource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class WordListApiController extends Controller
 {
@@ -218,6 +219,47 @@ class WordListApiController extends Controller
         return response()->json([
             'number_of_entries' => $numberOfEntries,
         ]);
+    }
+
+    /**
+     * Adds several lexical entries to a word list at once.
+     *
+     * A phrase can carry eighty glossed words, and a reader who has just worked through one
+     * wants to keep the vocabulary in a single gesture rather than eighty. Entries the list
+     * already holds are left alone, so this is safe to repeat.
+     */
+    public function addEntries(Request $request, int $wordListId): JsonResponse
+    {
+        $wordList = WordList::forAccount($request->user())
+            ->findOrFail($wordListId);
+
+        $data = $request->validate([
+            'lexical_entry_ids' => 'required|array|max:1000',
+            'lexical_entry_ids.*' => 'integer',
+        ]);
+
+        $lexicalEntryIds = array_values(array_unique($data['lexical_entry_ids']));
+
+        // `exists:` on the wildcard runs one query per id; one whereIn answers the same.
+        $knownCount = LexicalEntry::whereIn('id', $lexicalEntryIds)->count();
+        if ($knownCount !== count($lexicalEntryIds)) {
+            throw ValidationException::withMessages([
+                'lexical_entry_ids' => 'One or more of the lexical entries do not exist.',
+            ]);
+        }
+
+        $existingIds = $wordList->lexical_entries()
+            ->whereIn('lexical_entries.id', $lexicalEntryIds)
+            ->pluck('lexical_entries.id')
+            ->all();
+
+        // syncWithoutDetaching leaves what the list already holds untouched; the count
+        // reports what was genuinely new, which is what the caller wants to report back.
+        $wordList->lexical_entries()->syncWithoutDetaching($lexicalEntryIds);
+
+        return response()->json([
+            'number_of_entries' => count($lexicalEntryIds) - count($existingIds),
+        ], 201);
     }
 
     /**

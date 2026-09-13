@@ -14,7 +14,7 @@ class GenerateDailyCrosswordsCommand extends Command
         {--language= : Only generate for this language ID (optional)}
         {--words=8 : Number of target words per puzzle}';
 
-    protected $description = 'Generate daily crossword puzzles for all enabled languages (or one language). Skips dates that already have a puzzle.';
+    protected $description = 'Generate the weekly crossword puzzles for all enabled languages (or one language). Skips dates that already have a puzzle.';
 
     public function handle(CrosswordPuzzleGenerator $generator): int
     {
@@ -38,7 +38,7 @@ class GenerateDailyCrosswordsCommand extends Command
             return Command::SUCCESS;
         }
 
-        $this->info("Generating daily crosswords for {$targetDate->toDateString()}...");
+        $this->info("Generating crosswords for {$targetDate->toDateString()}...");
         $languages = \App\Models\GameCrosswordLanguage::pluck('language_id');
         $created = 0;
         $skipped = 0;
