@@ -39,6 +39,11 @@ const toTokens = (
             return { fragmentId: 0, text: item };
         }
 
+        // A fragment without a transcription used to arrive as null, and brought the page down.
+        if (! Array.isArray(item)) {
+            return { fragmentId: 0, text: '' };
+        }
+
         const fragment = fragments[item[0]];
         if (fragment === undefined) {
             return { fragmentId: 0, text: '' };
@@ -46,8 +51,8 @@ const toTokens = (
 
         // The transformation may substitute the text -- that is how the tengwar line gets
         // its glyphs -- but the fragment is what identifies the word either way.
-        const text = useTransformedText && item[1] !== undefined
-            ? item[1] : fragment.fragment;
+        const text = useTransformedText && item.length > 1
+            ? item[1] ?? '' : fragment.fragment;
 
         const isWord = fragment.type === SentenceFragmentType.Word && Boolean(fragment.lexicalEntryId);
 
