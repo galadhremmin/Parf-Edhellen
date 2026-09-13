@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Commands\Traits\MapsEldamoLanguages;
 use App\Jobs\ProcessDerivationResolution;
 use App\Jobs\ProcessGlossDeprecation;
 use App\Jobs\ProcessGlossImport;
@@ -9,7 +10,6 @@ use App\Jobs\RebuildLexicalEntryDerivationData;
 use App\Models\Account;
 use App\Models\Gloss;
 use App\Models\Inflection;
-use App\Models\Language;
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDetail;
 use App\Models\LexicalEntryGroup;
@@ -20,6 +20,8 @@ use Ramsey\Uuid\Uuid;
 
 class ImportEldamoCommand extends Command
 {
+    use MapsEldamoLanguages;
+
     /**
      * The name and signature of the console command.
      *
@@ -33,8 +35,6 @@ class ImportEldamoCommand extends Command
      * @var string
      */
     protected $description = 'Imports definitions from eldamo.json. Transform the XML data source to JSON using EDEldamoParser.exe.';
-
-    private $_languageMap;
 
     private $_speechMap;
 
@@ -53,7 +53,6 @@ class ImportEldamoCommand extends Command
     {
         parent::__construct();
 
-        $this->_languageMap = null;
         $this->_speechMap = null;
         try {
             $this->_inflectionMap = Inflection::get()->keyBy('name');
@@ -528,112 +527,6 @@ class ImportEldamoCommand extends Command
         $languageId = $languageMap[$eldamoLanguage] ?? null;
 
         return $languageId ?: null;
-    }
-
-    private function getLanguageMap()
-    {
-        if (is_array($this->_languageMap)) {
-            return $this->_languageMap;
-        }
-
-        // Establish a language mapping between Eldamo and Parf Edhellen. This map is based on
-        // Eldamo's XSD (xs:simpleType name="language-type") for v0.5.5
-        $languageMap = [
-            'ad' => 'adunaic',
-            'aq' => 'ancient quenya',
-            'at' => 'ancient telerin',
-            'av' => 'avarin',
-            'bel' => 0, // _beleriandic_ not supported
-            'bs' => 'black speech',
-            'cir' => 0, // _cirth_ not supported
-            'dan' => 'ossriandric', // <~~ deviation from "danian"!
-            'dun' => 'dunlending',
-            'dor' => 'doriathrin',
-            'eas' => 'easterling',
-            'ed' => 'edain',
-            'edan' => 0,
-            'eilk' => 'early ilkorin',
-            'en' => 'early noldorin',
-            'ent' => 'entish',
-            'eon' => 0, // 'early old noldorin',
-            'eoq' => 0, // 'early old qenya',
-            'ep' => 'early primitive elvish',
-            'eq' => 'early quenya',
-            'et' => 'solosimpi', // 'early telerin',
-            'fal' => 'doriathrin', // 'falathrin',
-            'g' => 'gnomish',
-            'ilk' => 'doriathrin', // <~~ deviation from "ilkorin"!
-            'kh' => 'khuzdul',
-            'khx' => 'khuzdul', // <~~ deviation from "Khuzdul, External"!
-            'lem' => 'lemberin',
-            'ln' => 'noldorin', // <~~ deviation from "late noldorin"!
-            'lon' => 'old noldorin', // <~~ deviation from "late old noldorin"!
-            'mp' => 'middle primitive elvish',
-            'mq' => 'qenya', // <~~ deviation from "middle quenya"!
-            'mt' => 'middle telerin',
-            'n' => 'noldorin',
-            'oss' => 'ossriandric',
-            'p' => 'primitive elvish',
-            'pad' => 'primitive adunaic',
-            'nan' => 'nandorin',
-            'ns' => 'north sindarin',
-            'on' => 'old noldorin',
-            'os' => 'old sindarin',
-            'q' => 'quenya',
-            'roh' => 'rohirric',
-            's' => 'sindarin',
-            'sar' => 0, // _sarati_ not supported
-            'sol' => 'solosimpi',
-            't' => 'telerin',
-            'tal' => 'taliska',
-            'teng' => 0, // _tengwar_ not supported
-            'un' => 'undetermined',
-            'val' => 'valarin',
-            'van' => 'quendya', // vanyarin
-            'wes' => 'westron',
-            'wos' => 'wose',
-            'maq' => 'middle ancient quenya',
-            'norths' => 'north sindarin',
-        ];
-
-        $missing = [];
-        foreach ($languageMap as $key => $id) {
-            if (is_numeric($id)) {
-                continue;
-            }
-
-            $language = Language::where('name', $id)
-                ->select('id')
-                ->first();
-
-            if (! $language) {
-                $missing[] = $id;
-
-                continue;
-            }
-
-            $languageMap[$key] = $language->id;
-        }
-
-        if (! empty($missing)) {
-            $this->error('Missing the languages: "'.implode('", "', $missing).'". Can\'t proceed.');
-            exit;
-        }
-
-        $this->_languageMap = $languageMap;
-
-        return $languageMap;
-    }
-
-    private function getNeoLanguageMap()
-    {
-        $languageMap = $this->getLanguageMap();
-
-        return [
-            'ns' => $languageMap['s'],
-            'nq' => $languageMap['q'],
-            'np' => $languageMap['p'],
-        ];
     }
 
     private function getSpeechMap()

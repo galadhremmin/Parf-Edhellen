@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
     use SoftDeletes;
@@ -14,11 +13,11 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
 
     protected $fillable = [
         'description', 'language_id', 'source', 'is_neologism', 'is_approved', 'account_id',
-        'long_description', 'name',
+        'long_description', 'name', 'external_id',
     ];
 
     /**
-     * @return HasMany<SentenceFragment, Sentence> 
+     * @return HasMany<SentenceFragment, Sentence>
      */
     public function sentence_fragments(): HasMany
     {

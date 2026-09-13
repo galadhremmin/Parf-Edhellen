@@ -139,6 +139,19 @@ describe('apps/sentence-inspector/utilities/TextConverter', () => {
         expect(state.shape).toEqual('verse');
     });
 
+    test('survives fragments that were never transcribed to tengwar', () => {
+        // "(hara) máriessë" as imported, before any tengwar existed: brackets arrive as a bare null.
+        const transformations = {
+            latin: { 1: [[0], ' ', [1]] },
+            tengwar: { 1: [null, [0, null], null, ' ', [1, null]] },
+        } as unknown as ITextTransformationsMap;
+
+        const state = convertTransformationsToLines(transformations, [], Fragments);
+
+        expect(state.lines).toHaveLength(1);
+        expect(Object.values(state.lines[0].tengwarByFragment).every((t) => t === '')).toEqual(true);
+    });
+
     test('survives a phrase with no transformations', () => {
         expect(convertTransformationsToLines(null, [], Fragments).lines).toEqual([]);
         expect(convertTransformationsToLines({}, [], Fragments).lines).toEqual([]);
