@@ -16,6 +16,12 @@ $apparatus-breakpoint: 1080px;
   margin-top: 1.5rem;
 }
 
+// Auto ads splits a line between its tengwar and transcription; google-anno-skip isn't guaranteed to stop it.
+.phrase-reader .google-auto-placed,
+.phrase-reader ins.adsbygoogle {
+  display: none !important;
+}
+
 .phrase-reader__body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) $apparatus-width;

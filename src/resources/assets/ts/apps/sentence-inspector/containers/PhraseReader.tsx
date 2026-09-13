@@ -188,7 +188,7 @@ export function PhraseReader(props: IProps) {
         : unopened[0];
 
     return <WordListMembershipProvider lexicalEntryIds={isSignedIn ? lexicalEntryIds : []}>
-        <div className={classNames('phrase-reader', { 'phrase-reader--sheet-open': isSheetOpen })}>
+        <div className={classNames('phrase-reader', 'google-anno-skip', { 'phrase-reader--sheet-open': isSheetOpen })}>
             <StudyBar
                 action={isSignedIn
                     ? <SavePhraseWords lexicalEntryIds={lexicalEntryIds} phraseName={sentence?.name || 'this phrase'} />
