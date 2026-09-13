@@ -1,4 +1,6 @@
 #!/bin/sh
+# Stop at the first failure, or a refused pull still builds the stale branch
+set -e
 
 cd src
 git checkout master
