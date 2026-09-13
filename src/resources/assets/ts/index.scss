@@ -1094,6 +1094,13 @@ hr.next-overlaps {
   .ed-colophon__alternatives {
     margin-top: 1rem;
     color: var(--ed-text-faint);
+
+    // small-caps reads as a label, so these need the underline the global `a` rule removes
+    a {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.25em;
+    }
   }
 }
 

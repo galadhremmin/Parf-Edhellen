@@ -118,7 +118,7 @@ class HomeControllerTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk();
-        $response->assertSee('Fifteen years, kept by one pair of hands', false);
+        $response->assertSee('Fifteen years of dedication', false);
         $response->assertDontSee('searches a day', false);
     }
 

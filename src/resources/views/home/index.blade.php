@@ -35,9 +35,7 @@
       <p class="ed-label">The first chapter</p>
       <h2 class="home-section__title">A book of sources, not a list of words</h2>
       <p class="home-section__lead">
-        Tolkien revised his languages for fifty years and finished almost nothing. So this book
-        never hands you a bare answer — it shows you who wrote the word down, where, and how
-        sure they were.
+        Tolkien revised his languages for fifty years and never felt he had finished them. Parf Edhellen gives you an unopinionated view into the words as they were recorded, including where and how they evolved throughout Tolkien's lifetime.
       </p>
     </header>
 
@@ -76,6 +74,9 @@
           <div><dt>@number($noOfLexicalEntries)</dt><dd>glosses</dd></div>
           <div><dt>@number($noOfPosts)</dt><dd>discussions</dd></div>
           <div><dt>@number($noOfThanks)</dt><dd>thanks</dd></div>
+          @if (! empty($searchesPerDay))
+          <div><dt>@number($searchesPerDay)</dt><dd>searches a day</dd></div>
+          @endif
         </dl>
       </article>
     </div>
@@ -140,7 +141,7 @@
   <section class="home-section">
     <header class="home-section__header home-section__header--centred">
       <p class="ed-label">Pastimes</p>
-      <h2 class="home-section__title">Learn it by playing at it</h2>
+      <h2 class="home-section__title">Learn by practice</h2>
       <div class="ed-rule home-section__rule">&#10022;</div>
     </header>
 

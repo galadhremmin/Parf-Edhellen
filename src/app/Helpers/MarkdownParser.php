@@ -26,6 +26,9 @@ class MarkdownParser extends \Parsedown
         // escapes markup (HTML)
         $this->setMarkupEscaped(true);
 
+        // escaping markup leaves link URLs alone; safe mode whitelists href/src schemes
+        $this->setSafeMode(true);
+
         foreach ($disabledBlockTypes as $disabledBlockType) {
             unset($this->BlockTypes[$disabledBlockType]);
         }

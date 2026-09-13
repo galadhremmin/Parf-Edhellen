@@ -80,6 +80,7 @@ Route::group([
         ->name('api.word-lists.remove-entry');
     Route::post('word-lists/{id}/entries/bulk-add', [WordListApiController::class, 'addEntries'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:30,1')
         ->name('api.word-lists.bulk-add-entries');
     Route::post('word-lists/{id}/entries/bulk-delete', [WordListApiController::class, 'removeEntries'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])

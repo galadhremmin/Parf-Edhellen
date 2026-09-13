@@ -18,6 +18,7 @@ use App\Services\Flashcards\WordListDeckSource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class WordListApiController extends Controller
 {
@@ -234,10 +235,18 @@ class WordListApiController extends Controller
 
         $data = $request->validate([
             'lexical_entry_ids' => 'required|array|max:1000',
-            'lexical_entry_ids.*' => 'integer|exists:lexical_entries,id',
+            'lexical_entry_ids.*' => 'integer',
         ]);
 
         $lexicalEntryIds = array_values(array_unique($data['lexical_entry_ids']));
+
+        // `exists:` on the wildcard runs one query per id; one whereIn answers the same.
+        $knownCount = LexicalEntry::whereIn('id', $lexicalEntryIds)->count();
+        if ($knownCount !== count($lexicalEntryIds)) {
+            throw ValidationException::withMessages([
+                'lexical_entry_ids' => 'One or more of the lexical entries do not exist.',
+            ]);
+        }
 
         $existingIds = $wordList->lexical_entries()
             ->whereIn('lexical_entries.id', $lexicalEntryIds)

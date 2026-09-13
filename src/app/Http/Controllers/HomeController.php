@@ -128,10 +128,9 @@ class HomeController extends Controller
             return GameWordFinderLanguage::orderBy('title')->get();
         });
 
-        // The one figure in the colophon. An average over a trailing month, not a
-        // count for today, which would read as near zero every morning.
+        // A trailing average, not a count for today, which would read as near zero every morning.
         $searchesPerDay = Cache::remember('ed.home.searches-per-day', DateInterval::createFromDateString('1 hour'), function () {
-            return $this->_trendingRepository->getAverageSearchesPerDay(30);
+            return $this->_trendingRepository->getAverageSearchesPerDay(7);
         });
 
         $data = $randomSentence + $randomGloss + $statistics + [
