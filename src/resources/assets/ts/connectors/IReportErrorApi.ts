@@ -9,6 +9,8 @@ export const enum ErrorCategory {
     Performance = 'performance',
 }
 
+export type ErrorReportCategory = ErrorCategory | `http-${number}`;
+
 export interface IReportErrorApi {
-    error(message: string, url: string, error: string, category?: ErrorCategory): Promise<void>;
+    error(message: string, url: string, error: string, category?: ErrorReportCategory): Promise<void>;
 }

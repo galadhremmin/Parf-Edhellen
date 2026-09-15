@@ -7,17 +7,19 @@ use App\Http\Middleware\InvalidUserGate;
 use App\Http\Middleware\IpGate;
 use App\Http\Middleware\LogExpensiveRequests;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RejectCrawlers;
 use App\Http\Middleware\SafeSubstituteBindings;
 use App\Http\Middleware\TrimStrings;
 use App\Models\FailedJob;
 use App\Repositories\SystemErrorRepository;
 use App\Security\WebAuthnService;
 use Carbon\Carbon;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
@@ -50,8 +52,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => EnsureEmailIsVerified::class,
             'auth.require-role' => CheckRole::class,
             'log.expensive' => LogExpensiveRequests::class,
+            'reject.crawlers' => RejectCrawlers::class,
         ];
         $middleware->alias($routeMiddleware);
+
+        // Laravel sorts authentication ahead of unprioritised middleware, which would let it answer crawlers first.
+        $middleware->prependToPriorityList(AuthenticatesRequests::class, RejectCrawlers::class);
 
         $middleware->group('web', [
             EncryptCookies::class,

@@ -31,6 +31,8 @@ export interface IErrorReport {
     error?: string;
     headers?: any;
     status?: number;
+    visibilityState?: DocumentVisibilityState;
+    webdriver?: boolean;
 }
 
 export interface IQueryStringMap {

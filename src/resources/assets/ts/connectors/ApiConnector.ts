@@ -21,6 +21,7 @@ import type {
 } from './ApiConnector._types';
 import {
     ErrorCategory,
+    type ErrorReportCategory,
     type IReportErrorApi,
 } from './IReportErrorApi';
 import ValidationError from './ValidationError';
@@ -117,7 +118,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     /**
      * Register the specified error.
      */
-    public error(message: string, url: string, error: string, category: ErrorCategory = null, duration: number = null) {
+    public error(message: string, url: string, error: string, category: ErrorReportCategory = null, duration: number = null) {
         return this.post<void>(this._apiErrorMethod, {
             message,
             url,
@@ -268,12 +269,17 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             return Promise.reject(error instanceof Error ? error : new Error('Unknown error'));
         }
 
+        // Automated browsers' failures aren't ours to fix.
+        if (typeof navigator === 'object' && navigator.webdriver === true) {
+            return Promise.reject(error instanceof Error ? error : new Error(`API request failed ${apiMethod}`));
+        }
+
         const requestWasCanceled = (error as IConnectorError)?.name === 'AbortError' ||
             (error as IConnectorError)?.code === 'ECONNABORTED' ||
             (duration || 0) >= ApiTimeoutInMilliseconds;
 
         let errorReport: IErrorReport = null;
-        let category: ErrorCategory;
+        let category: ErrorReportCategory;
         if (requestWasCanceled) {
             console.warn('Your request timed out. This is likely due to us failing to respond to your request in time. Please try to reload the page and try again.');
             // We don't need to record cancellations.
@@ -299,6 +305,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                     category = ErrorCategory.SessionExpired;
                     break;
                 case 429:
+                case 503:
+                    // Throttled, either by us or by something in front of us.
                     return Promise.reject(new Error('Too many requests. Please try again later.'));
                 case this._apiValidationErrorStatusCode:
                     return Promise.reject(new ValidationError(
@@ -312,6 +320,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                         headers: response.headers,
                         status: response.status,
                     };
+                    category = `http-${response.status}`;
                     break;
             }
 
@@ -356,6 +365,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
 
         if (errorReport !== null) {
             errorReport.config = (error as IConnectorError).config;
+            errorReport.webdriver = typeof navigator === 'object' ? navigator.webdriver : undefined;
+            errorReport.visibilityState = typeof document === 'object' ? document.visibilityState : undefined;
             await this.error(
                 'API request failed', 
                 apiMethod, 

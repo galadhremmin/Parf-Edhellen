@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'reviewer',
-    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Reviewers, 'verified'],
+    'middleware' => ['reject.crawlers', 'auth', 'auth.require-role:'.RoleConstants::Reviewers, 'verified'],
 ], function () {
     Route::get('contribution/list', [ContributionController::class, 'list'])->name('admin.contribution.list');
     Route::get('contribution/{id}/reject', [ContributionController::class, 'confirmReject'])
