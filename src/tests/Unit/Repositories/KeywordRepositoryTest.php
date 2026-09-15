@@ -31,8 +31,9 @@ class KeywordRepositoryTest extends TestCase
 
         $repository = resolve(KeywordRepository::class);
 
-        $repository->createKeyword($gloss->word, $gloss->sense, $gloss);
-        $repository->createKeyword($gloss->word, $gloss->sense, $gloss);
+        $repository->createKeyword($gloss->word, $gloss->sense, $gloss, $gloss->language);
+        $repository->createKeyword($gloss->word, $gloss->sense, $gloss, $gloss->language);
+        $gloss->load('keywords');
 
         $expected = array_unique(array_merge($keywords, array_map(function ($t) {
             return $t->translation;

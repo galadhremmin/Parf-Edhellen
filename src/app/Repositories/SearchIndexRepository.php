@@ -3,10 +3,10 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
-use App\Models\LexicalEntry;
 use App\Models\Initialization\Morphs;
 use App\Models\Interfaces\IHasLanguage;
 use App\Models\Language;
+use App\Models\LexicalEntry;
 use App\Models\ModelBase;
 use App\Models\SearchKeyword;
 use App\Models\Word;
@@ -17,10 +17,6 @@ use Illuminate\Support\Collection;
 
 class SearchIndexRepository
 {
-    private static array $latestStoredIndexHashes = [];
-
-    private static array $upsetFields = ['keyword', 'language_id', 'lexical_entry_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
-
     private KeywordsSearchIndexResolver $_keywordsResolver;
 
     private WordRepository $_wordRepository;
@@ -91,6 +87,7 @@ class SearchIndexRepository
         }
 
         $keywords = $this->_keywordsResolver->resolve($v);
+
         return $keywords;
     }
 
@@ -104,6 +101,7 @@ class SearchIndexRepository
         }
 
         $entities = $resolver->resolve($v);
+
         return $this->formatEntitiesResponse($entities, $searchGroupId, $word);
     }
 
@@ -200,17 +198,11 @@ class SearchIndexRepository
             'search_group' => $this->getSearchGroup($entityName),
         ];
 
-        $hash = $this->makeStoreHash($data);
-        if (! in_array($hash, self::$latestStoredIndexHashes)) {
-
-            SearchKeyword::upsert([$data], self::$upsetFields, [
-                // UPSERT update field if a row already exists
-                'normalized_keyword', 'normalized_keyword_unaccented', 'keyword_length', 'normalized_keyword_length', 
-                'normalized_keyword_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
-            ]);
-
-            self::$latestStoredIndexHashes[] = $hash;
-        }
+        SearchKeyword::upsert([$data + ['identity_hash' => SearchKeyword::identityHash($data)]], ['identity_hash'], [
+            // UPSERT update field if a row already exists
+            'normalized_keyword', 'normalized_keyword_unaccented', 'keyword_length', 'normalized_keyword_length',
+            'normalized_keyword_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
+        ]);
 
         return $data;
     }
@@ -298,20 +290,6 @@ class SearchIndexRepository
             'word' => $word,
             'entity_morph' => $entityMorph,
         ];
-    }
-
-    private function makeStoreHash(array $keywordData)
-    {
-        $values = '';
-
-        $keys = array_keys($keywordData);
-        sort($keys);
-
-        foreach ($keys as $key) {
-            $values .= $key.'='.$keywordData[$key].'|';
-        }
-
-        return sha1($values);
     }
 
     private function shortCircuitInEfficientQueries(?string $word): bool

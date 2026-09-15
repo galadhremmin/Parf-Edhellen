@@ -6,28 +6,18 @@ use App\Events\LexicalEntryCreated;
 use App\Events\LexicalEntryDestroyed;
 use App\Events\LexicalEntryEdited;
 use App\Events\LexicalEntryInflectionsCreated;
-use App\Interfaces\ISystemLanguageFactory;
+use App\Jobs\ProcessLexicalEntryReindex;
 use App\Jobs\ProcessSearchIndexCreation;
 use App\Models\LexicalEntry;
-use App\Models\Language;
 use App\Repositories\SearchIndexRepository;
-use App\Repositories\WordRepository;
-use Illuminate\Support\Collection;
 
 class GlossIndexerSubscriber
 {
     private SearchIndexRepository $_searchIndexRepository;
 
-    private WordRepository $_wordRepository;
-
-    private ?Language $_systemLanguage;
-
-    public function __construct(SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository,
-        ISystemLanguageFactory $systemLanguageFactory)
+    public function __construct(SearchIndexRepository $searchIndexRepository)
     {
         $this->_searchIndexRepository = $searchIndexRepository;
-        $this->_wordRepository = $wordRepository;
-        $this->_systemLanguage = $systemLanguageFactory->language();
     }
 
     /**
@@ -45,12 +35,12 @@ class GlossIndexerSubscriber
 
     public function onGlossCreated(LexicalEntryCreated $event): void
     {
-        $this->update($event->lexicalEntry, $event->lexicalEntry->lexical_entry_inflections);
+        $this->reindex($event->lexicalEntry);
     }
 
     public function onGlossEdited(LexicalEntryEdited $event): void
     {
-        $this->update($event->lexicalEntry, $event->lexicalEntry->lexical_entry_inflections);
+        $this->reindex($event->lexicalEntry);
     }
 
     public function onGlossInflectionsCreated(LexicalEntryInflectionsCreated $event): void
@@ -64,7 +54,7 @@ class GlossIndexerSubscriber
                     $inflection->word)->onQueue('indexing');
             }
         } else {
-            $this->update($event->lexicalEntry, $event->lexicalEntryInflections);
+            $this->reindex($event->lexicalEntry);
         }
     }
 
@@ -73,32 +63,9 @@ class GlossIndexerSubscriber
         $this->delete($event->lexicalEntry);
     }
 
-    private function update(LexicalEntry $lexicalEntry, Collection $inflections): void
+    public function reindex(LexicalEntry $lexicalEntry): void
     {
-        $this->delete($lexicalEntry);
-
-        $glosses = $lexicalEntry->glosses->map(function ($t) {
-            return $t->translation;
-        });
-
-        foreach ($lexicalEntry->keywords as $keyword) {
-            if (! $glosses->contains($keyword->keyword)) {
-                $keywordLanguage = $keyword->keyword_language ?: $this->_systemLanguage;
-                ProcessSearchIndexCreation::dispatch($lexicalEntry, $keyword->wordEntity, $keywordLanguage, $keyword->keyword) //
-                    ->onQueue('indexing');
-            }
-        }
-
-        foreach ($glosses as $glossTranslation) {
-            $glossWord = $this->_wordRepository->save($glossTranslation, $lexicalEntry->account_id);
-            ProcessSearchIndexCreation::dispatch($lexicalEntry, $glossWord, $this->_systemLanguage) //
-                ->onQueue('indexing');
-        }
-
-        foreach ($inflections as $inflection) {
-            ProcessSearchIndexCreation::dispatch($lexicalEntry, $lexicalEntry->word, $lexicalEntry->language, $inflection->word) //
-                ->onQueue('indexing');
-        }
+        ProcessLexicalEntryReindex::dispatch($lexicalEntry)->onQueue('indexing');
     }
 
     private function delete(LexicalEntry $lexicalEntry): void

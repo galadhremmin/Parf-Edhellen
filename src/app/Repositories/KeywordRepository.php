@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
-use App\Models\LexicalEntry;
 use App\Models\Keyword;
 use App\Models\Language;
+use App\Models\LexicalEntry;
 use App\Models\Sense;
 use App\Models\Word;
 
@@ -48,12 +48,10 @@ class KeywordRepository
             $data['keyword_language_id'] = $keywordLanguage->id;
         }
 
-        $qualifyingFields = [
-            'keyword', 'word_id', 'sense_id', 'lexical_entry_id', 'sentence_fragment_id', 'keyword_language_id',
-        ];
+        $data['identity_hash'] = Keyword::identityHash($data);
         $updateFields = [
             'is_old', 'is_sense', 'normalized_keyword',
         ];
-        Keyword::upsert([$data], $qualifyingFields, $updateFields);
+        Keyword::upsert([$data], ['identity_hash'], $updateFields);
     }
 }

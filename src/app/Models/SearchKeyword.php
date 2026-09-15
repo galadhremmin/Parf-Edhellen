@@ -2,11 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasIdentityHash;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class SearchKeyword extends ModelBase implements Interfaces\IHasLanguage
 {
+    use HasIdentityHash;
+
+    public static function identityColumns(): array
+    {
+        return [
+            'keyword', 'language_id', 'lexical_entry_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group',
+        ];
+    }
+
     public const SEARCH_GROUP_UNASSIGNED = 0;
 
     public const SEARCH_GROUP_DICTIONARY = 1;
