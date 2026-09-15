@@ -134,6 +134,28 @@ class MarkdownTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function test_table()
+    {
+        $markdown = "| Word | Gloss |\n| --- | --- |\n| syeru | *juice* |";
+        $expected = '<div class="table-responsive"><table class="table table-condensed table-striped table-hover"><thead><tr><th>Word</th><th>Gloss</th></tr></thead><tbody><tr><td>syeru</td><td><em>juice</em></td></tr></tbody></table></div>';
+
+        $parser = new MarkdownParser;
+        $actual = $parser->text($markdown);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_reference_with_special_characters()
+    {
+        $markdown = "[[an'<b>]]";
+        $expected = '<p><a href="/w/an%27%3Cb%3E" title="Navigate to an&#039;&lt;b&gt;." class="ed-word-reference" data-word="an&#039;&lt;b&gt;" data-original-word="an&#039;&lt;b&gt;">an\'&lt;b&gt;</a></p>';
+
+        $parser = new MarkdownParser;
+        $actual = $parser->text($markdown);
+
+        $this->assertEquals($expected, $actual);
+    }
+
     public function test_reference()
     {
         $markdown = 'mae govannen [[mellon]]!';

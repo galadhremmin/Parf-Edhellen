@@ -75,11 +75,10 @@ class MarkdownParser extends \Parsedown
     {
         $Block['element'] = [
             'name' => 'div',
-            'handler' => 'element',
             'attributes' => [
                 'class' => 'table-responsive',
             ],
-            'text' => $Block['element'],
+            'element' => $Block['element'],
         ];
 
         return $Block;
@@ -146,9 +145,6 @@ class MarkdownParser extends \Parsedown
             $word = substr($word, $pos + 1);
         }
 
-        // escape/encode special characters as their HTML equivalent
-        $word = htmlspecialchars($word, ENT_QUOTES | ENT_HTML5);
-
         // remove footnotes, in case they were  imported by accident
         $word = str_replace(['¹', '²', '³'], '', $word);
         $wordLowercase = mb_strtolower($word);
@@ -170,7 +166,6 @@ class MarkdownParser extends \Parsedown
             'extent' => $wordLength,
             'element' => [
                 'name' => 'a',
-                'handler' => 'line',
                 'text' => $word,
                 'attributes' => $attrs,
             ],
