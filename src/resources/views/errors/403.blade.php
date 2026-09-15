@@ -6,7 +6,7 @@
 <h1>Daro othol!</h1>
 
 <p>
-  You are not authorized to view this page.
+  {{ $exception->getMessage() ?: 'You are not authorized to view this page.' }}
 </p>
 
 @endsection

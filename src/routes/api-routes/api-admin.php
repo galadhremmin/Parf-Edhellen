@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => API_PATH,
-    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified'],
+    'middleware' => ['reject.crawlers', 'auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified'],
 ], function () {
     Route::delete('lexical-entry/{id}', [LexicalEntryApiController::class, 'destroy'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);

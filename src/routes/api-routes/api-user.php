@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => API_PATH,
-    'middleware' => 'auth',
+    'middleware' => ['reject.crawlers', 'auth'],
 ], function () {
     Route::get('book/word/{id}', [BookApiController::class, 'getWord'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);

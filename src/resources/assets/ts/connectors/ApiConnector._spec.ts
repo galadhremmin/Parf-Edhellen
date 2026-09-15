@@ -128,6 +128,52 @@ describe('connectors/ApiConnector', () => {
         return api.get(ApiMethod).catch(() => true);
     });
 
+    test('reports unhandled statuses by status with client state', async () => {
+        let report: any = null;
+        fetchStub = sandbox.stub(global as any, 'fetch')
+            .callsFake((input: RequestInfo | URL, init?: RequestInit) => {
+                if (String(input).endsWith(ApiMethod)) {
+                    return Promise.resolve(_makeJsonResponse({ dummy: true }, 500));
+                }
+                report = JSON.parse(String(init?.body));
+                return Promise.resolve(_makeJsonResponse(ApiResponse.data, 200));
+            });
+
+        await expect(api.get(ApiMethod)).rejects.toThrow();
+        expect(report.category).toEqual('http-500');
+
+        const error = JSON.parse(report.error);
+        expect(error.visibilityState).toEqual(document.visibilityState);
+        expect(error).not.toHaveProperty('webdriver', true);
+    });
+
+    test('does not report errors from automated browsers', async () => {
+        Object.defineProperty(navigator, 'webdriver', { value: true, configurable: true });
+        try {
+            fetchStub = sandbox.stub(global as any, 'fetch')
+                .callsFake(() => Promise.resolve(_makeJsonResponse({ dummy: true }, 500)));
+
+            await expect(api.get(ApiMethod)).rejects.toThrow();
+            expect(fetchStub.callCount).toEqual(1);
+        } finally {
+            Object.defineProperty(navigator, 'webdriver', { value: false, configurable: true });
+        }
+    });
+
+    test('does not report throttled requests', async () => {
+        for (const status of [429, 503]) {
+            fetchStub = sandbox.stub(global as any, 'fetch')
+                .callsFake((input: RequestInfo | URL) => {
+                    expect(String(input).endsWith(ApiMethod)).toBe(true);
+                    return Promise.resolve(_makeJsonResponse('', status, {}));
+                });
+
+            await expect(api.get(ApiMethod)).rejects.toThrow('Too many requests');
+            expect(fetchStub.callCount).toEqual(1);
+            fetchStub.restore();
+        }
+    });
+
     test('can report errors', async () => {
         const message = 'something went wrong';
         const url = 'http://localhost/unit-tests';

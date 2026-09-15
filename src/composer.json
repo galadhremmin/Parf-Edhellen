@@ -12,6 +12,7 @@
         "erusev/parsedown": "^1.6",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.5",
+        "jaybizzle/crawler-detect": "^1.4",
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.0",
         "laravel/tinker": "^2.10.1",

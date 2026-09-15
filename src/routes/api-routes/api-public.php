@@ -5,8 +5,8 @@
 use App\Http\Controllers\Api\v3\AccountApiController;
 use App\Http\Controllers\Api\v3\AccountFeedApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
-use App\Http\Controllers\Api\v3\LexicalEntryApiController;
 use App\Http\Controllers\Api\v3\InflectionApiController;
+use App\Http\Controllers\Api\v3\LexicalEntryApiController;
 use App\Http\Controllers\Api\v3\PasskeyApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SpeechApiController;
@@ -67,6 +67,13 @@ Route::group([
     Route::post('account/find', [AccountApiController::class, 'findAccount']);
     Route::get('account/{id}/feed', [AccountFeedApiController::class, 'getFeed'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
+});
+
+// Public crawler-gated API
+Route::group([
+    'prefix' => API_PATH,
+    'middleware' => 'reject.crawlers',
+], function () {
 
     // Passkey authentication (public - no auth required)
     Route::post('passkey/login/challenge', [PasskeyApiController::class, 'generateAuthenticationChallenge'])
@@ -75,12 +82,6 @@ Route::group([
     Route::post('passkey/login/verify', [PasskeyApiController::class, 'verifyAuthenticationResponse'])
         ->middleware('throttle:3,1')
         ->name('api.passkey.login-verify');
-});
-
-// Public, throttled API
-Route::group([
-    'prefix' => API_PATH,
-], function () {
 
     Route::post('utility/markdown', [UtilityApiController::class, 'parseMarkdown']);
     Route::post('utility/error', [UtilityApiController::class, 'logError'])

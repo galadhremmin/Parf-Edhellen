@@ -48,7 +48,7 @@ Route::group([
 
 Route::group([
     'prefix' => API_PATH.'/discuss',
-    'middleware' => ['auth', 'verified', 'auth.require-role:'.RoleConstants::Discuss.',verification.notice'],
+    'middleware' => ['reject.crawlers', 'auth', 'verified', 'auth.require-role:'.RoleConstants::Discuss.',verification.notice'],
 ], function () {
     Route::post('like', [DiscussApiController::class, 'storeLike'])
         ->name('api.discuss.like');
@@ -66,7 +66,7 @@ Route::group([
 
 Route::group([
     'prefix' => API_PATH.'/discuss',
-    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators],
+    'middleware' => ['reject.crawlers', 'auth', 'auth.require-role:'.RoleConstants::Administrators],
 ], function () {
     Route::put('thread/stick', [DiscussApiController::class, 'updateThreadStickiness'])
         ->name('api.discuss.stick');
