@@ -11,6 +11,8 @@ return new class extends Migration
 {
     private const CHUNK_SIZE = 1000;
 
+    private const DELETE_BATCH_SIZE = 10000;
+
     private const MODELS = [Keyword::class, SearchKeyword::class];
 
     /**
@@ -32,10 +34,19 @@ return new class extends Migration
             $this->backfill($model, $table);
             $this->deleteDuplicates($table);
 
-            Schema::table($table, function (Blueprint $table) {
-                $table->dropIndex(['identity_hash']);
-                $table->char('identity_hash', 32)->nullable(false)->change();
-                $table->unique('identity_hash');
+            // Each step is conditional so the migration can be re-run after an interruption.
+            $indexes = collect(Schema::getIndexes($table))->keyBy('name');
+
+            Schema::table($table, function (Blueprint $blueprint) use ($table, $indexes) {
+                if ($indexes->has($table.'_identity_hash_index')) {
+                    $blueprint->dropIndex(['identity_hash']);
+                }
+
+                $blueprint->char('identity_hash', 32)->nullable(false)->change();
+
+                if (! $indexes->has($table.'_identity_hash_unique')) {
+                    $blueprint->unique('identity_hash');
+                }
             });
         }
     }
@@ -74,17 +85,22 @@ return new class extends Migration
 
     private function deleteDuplicates(string $table): void
     {
-        $duplicates = DB::table($table)
-            ->select('identity_hash', DB::raw('MAX(id) AS keep_id'))
-            ->groupBy('identity_hash')
-            ->havingRaw('COUNT(*) > 1')
-            ->get();
+        // A batch at a time: the tables hold hundreds of thousands of duplicate groups, and deleting a group's
+        // extra rows takes it out of the next batch.
+        do {
+            $duplicates = DB::table($table)
+                ->select('identity_hash', DB::raw('MAX(id) AS keep_id'))
+                ->groupBy('identity_hash')
+                ->havingRaw('COUNT(*) > 1')
+                ->limit(self::DELETE_BATCH_SIZE)
+                ->get();
 
-        foreach ($duplicates->chunk(self::CHUNK_SIZE) as $chunk) {
-            DB::table($table)
-                ->whereIn('identity_hash', $chunk->pluck('identity_hash'))
-                ->whereNotIn('id', $chunk->pluck('keep_id'))
-                ->delete();
-        }
+            if ($duplicates->isNotEmpty()) {
+                DB::table($table)
+                    ->whereIn('identity_hash', $duplicates->pluck('identity_hash'))
+                    ->whereNotIn('id', $duplicates->pluck('keep_id'))
+                    ->delete();
+            }
+        } while ($duplicates->isNotEmpty());
     }
 };

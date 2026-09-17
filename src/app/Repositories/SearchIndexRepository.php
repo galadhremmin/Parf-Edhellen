@@ -27,9 +27,14 @@ class SearchIndexRepository
         $this->_wordRepository = $wordRepository;
     }
 
-    public function createIndex(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): void
+    /**
+     * `$entityLanguage` is for entities that have no language column of their own, like sentence fragments,
+     * which belong to their phrase's language. Searches filter on it, so it must be set.
+     */
+    public function createIndex(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null,
+        ?Language $entityLanguage = null): void
     {
-        $data = $this->saveIndexInternal($model, $wordEntity, $keywordLanguage, $inflection);
+        $data = $this->saveIndexInternal($model, $wordEntity, $keywordLanguage, $inflection, $entityLanguage);
 
         if (config('ed.search_index_expands_english_infinitives')) {
             // Expansion of English infinitives is designed to create _two_ search keywords for every to-infinitive,
@@ -43,7 +48,7 @@ class SearchIndexRepository
                 if ($isVerb) {
                     $expandedString = $containsTo ? substr($data['keyword'], 3 /* 'to ' */) : 'to '.$data['keyword'];
                     $expandedWord = $this->_wordRepository->save($expandedString, $model->account_id);
-                    $this->saveIndexInternal($model, $expandedWord, $keywordLanguage);
+                    $this->saveIndexInternal($model, $expandedWord, $keywordLanguage, null, $entityLanguage);
                 }
             }
         }
@@ -136,7 +141,8 @@ class SearchIndexRepository
             ->groupBy('keyword');
     }
 
-    private function saveIndexInternal(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): array
+    private function saveIndexInternal(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null,
+        ?Language $entityLanguage = null): array
     {
 
         if (! $model->exists) {
@@ -161,8 +167,8 @@ class SearchIndexRepository
                 : false;
         }
 
-        $languageId = null;
-        if ($model instanceof IHasLanguage) {
+        $languageId = $entityLanguage?->id;
+        if ($languageId === null && $model instanceof IHasLanguage) {
             $languageId = $model->language_id;
         }
 

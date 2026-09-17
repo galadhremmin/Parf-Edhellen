@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SentenceFragment extends ModelBase
@@ -21,6 +22,17 @@ class SentenceFragment extends ModelBase
     public function lexical_entry(): BelongsTo
     {
         return $this->belongsTo(LexicalEntry::class, 'lexical_entry_id');
+    }
+
+    /**
+     * The search index rows for this fragment. `entity_name`/`entity_id` is a morph pair, so it belongs in a
+     * relation rather than being spelled out at each call site.
+     *
+     * @return MorphMany<SearchKeyword>
+     */
+    public function search_keywords(): MorphMany
+    {
+        return $this->morphMany(SearchKeyword::class, 'entity', 'entity_name', 'entity_id');
     }
 
     /**

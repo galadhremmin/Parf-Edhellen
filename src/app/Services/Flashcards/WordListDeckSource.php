@@ -3,6 +3,7 @@
 namespace App\Services\Flashcards;
 
 use App\Interfaces\IFlashcardDeckSource;
+use App\Models\LexicalEntry;
 use App\Models\WordList;
 use Illuminate\Support\Collection;
 
@@ -13,7 +14,7 @@ class WordListDeckSource implements IFlashcardDeckSource
 {
     private WordList $_wordList;
 
-    /** @var Collection<int,\App\Models\LexicalEntry>|null */
+    /** @var Collection<int,LexicalEntry>|null */
     private ?Collection $_entries = null;
 
     public function __construct(WordList $wordList)
@@ -59,7 +60,7 @@ class WordListDeckSource implements IFlashcardDeckSource
     }
 
     /**
-     * @return Collection<int,\App\Models\LexicalEntry>
+     * @return Collection<int,LexicalEntry>
      */
     private function entries(): Collection
     {

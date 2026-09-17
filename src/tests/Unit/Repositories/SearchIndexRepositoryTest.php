@@ -4,7 +4,6 @@ namespace Tests\Unit\Repositories;
 
 use App\Jobs\ProcessLexicalEntryReindex;
 use App\Models\Keyword;
-use App\Models\SearchKeyword;
 use App\Repositories\KeywordRepository;
 use App\Repositories\SearchIndexRepository;
 use App\Repositories\WordRepository;
@@ -93,7 +92,8 @@ class SearchIndexRepositoryTest extends TestCase
         }
 
         // Both columns have accent-insensitive collations, so compare bytes.
-        $this->assertEquals(2, SearchKeyword::where('entity_id', $entry->id)->whereRaw('BINARY keyword IN (?, ?)', ['la'.$suffix, 'lá'.$suffix])->count());
+        $indexed = $repository->getForEntity($entry)->filter(fn ($s) => in_array($s->keyword, ['la'.$suffix, 'lá'.$suffix], true));
+        $this->assertEquals(2, $indexed->count());
         $this->assertEquals(2, Keyword::where('lexical_entry_id', $entry->id)->whereRaw('BINARY keyword IN (?, ?)', ['la'.$suffix, 'lá'.$suffix])->count());
     }
 
