@@ -26,6 +26,11 @@ class Sense extends ModelBase
         return $this->hasMany(Keyword::class);
     }
 
+    public function terms(): HasMany
+    {
+        return $this->hasMany(SenseTerm::class)->orderBy('position');
+    }
+
     public function scopeForString($query, string $word)
     {
         $query->join('words', 'senses.id', 'words.id')
