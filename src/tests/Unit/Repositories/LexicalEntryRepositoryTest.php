@@ -263,6 +263,65 @@ class LexicalEntryRepositoryTest extends TestCase
         $this->assertEquals(2, $versions->getVersions()->count());
     }
 
+    public function test_save_sense_moves_entry_and_keywords()
+    {
+        $r = $this->getLexicalEntryRepository();
+
+        extract($this->createLexicalEntry(__FUNCTION__, 'testword'));
+        $r->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $lexicalEntry->refresh();
+
+        $newSense = 'new sense '.uniqid();
+        $r->saveSense($lexicalEntry, $newSense);
+        $lexicalEntry->refresh()->load('sense.word', 'keywords', 'glosses', 'lexical_entry_details');
+
+        $this->assertEquals($newSense, $lexicalEntry->sense->word->word);
+        $this->assertTrue($lexicalEntry->keywords->every(fn ($k) => $k->sense_id === $lexicalEntry->sense_id));
+
+        $actual = $lexicalEntry->keywords->pluck('keyword')->sort()->values()->all();
+        $expected = collect(array_merge([$word, $newSense], $keywords, array_map(fn ($g) => $g->translation, $glosses)))
+            ->unique()->sort()->values()->all();
+        $this->assertEquals($expected, $actual);
+
+        $this->assertEquals(count($glosses), $lexicalEntry->glosses->count());
+        $this->assertEquals(count($details), $lexicalEntry->lexical_entry_details->count());
+        $this->assertEquals(2, $r->getLexicalEntryVersions($lexicalEntry->id)->getVersions()->count());
+    }
+
+    public function test_rebuilds_keywords_when_sense_changes_to_an_existing_keyword()
+    {
+        $r = $this->getLexicalEntryRepository();
+
+        extract($this->createLexicalEntry(__FUNCTION__, 'testword'));
+        $keywords[] = 'keyword sense '.uniqid();
+        $r->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $lexicalEntry->refresh();
+
+        // The keyword strings stay identical, but they must follow the entry to its new sense.
+        $r->saveLexicalEntry($word, end($keywords), $lexicalEntry, $glosses, array_merge($keywords, [$sense]), $details);
+        $lexicalEntry->refresh()->load('keywords');
+
+        $this->assertTrue($lexicalEntry->keywords->every(fn ($k) => $k->sense_id === $lexicalEntry->sense_id));
+    }
+
+    public function test_filters_lexical_entries_for_language()
+    {
+        $r = $this->getLexicalEntryRepository();
+
+        extract($this->createLexicalEntry(__FUNCTION__, 'filterword'.uniqid()));
+        $lexicalEntry->source = '';
+        $entry = $r->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+
+        $ids = fn (array $filters) => collect($r->getLexicalEntriesForLanguage($entry->language_id, $filters, 1000)->items())->pluck('id');
+
+        $this->assertContains($entry->id, $ids(['word' => substr($word, 3)]));
+        $this->assertContains($entry->id, $ids(['word' => $word, 'gloss' => 'test 1', 'sense' => $sense]));
+        $this->assertContains($entry->id, $ids(['word' => $word, 'speech_id' => $entry->speech_id, 'missing' => 'source']));
+        $this->assertNotContains($entry->id, $ids(['word' => $word, 'gloss' => 'no such gloss']));
+        $this->assertNotContains($entry->id, $ids(['word' => $word, 'missing' => 'sense']));
+        $this->assertNotContains($entry->id, $ids(['word' => '%']));
+    }
+
     public function test_navigation_properties_for_lexical_entry()
     {
         $r = $this->getLexicalEntryRepository();

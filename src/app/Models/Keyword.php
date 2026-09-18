@@ -2,10 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasIdentityHash;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Keyword extends ModelBase
 {
+    use HasIdentityHash;
+
+    public static function identityColumns(): array
+    {
+        return [
+            'keyword', 'word_id', 'sense_id', 'lexical_entry_id', 'sentence_fragment_id', 'keyword_language_id',
+        ];
+    }
+
     protected $fillable = [
         'keyword',
         'normalized_keyword',
@@ -18,6 +28,7 @@ class Keyword extends ModelBase
 
     /**
      * Retrieves the Word entity associated with this keyword. It is deliberately suffixed `Entity` because `word` exists as a column. :(
+     *
      * @return BelongsTo<Word>
      */
     public function wordEntity(): BelongsTo

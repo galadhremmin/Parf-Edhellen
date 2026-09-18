@@ -22,6 +22,7 @@ use App\Repositories\Enumerations\LexicalEntryChange;
 use App\Repositories\ValueObjects\LexicalEntrySamplingValue;
 use App\Repositories\ValueObjects\LexicalEntryVersionsValue;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -594,7 +595,8 @@ class LexicalEntryRepository
                     $lexicalEntry->glosses()->saveMany($glosses);
                 }
 
-                if ($isNew || $changed & LexicalEntryChange::KEYWORDS->value) {
+                // Keywords carry the sense ID, so they're rebuilt when the sense moves even if their strings didn't change.
+                if ($isNew || $changed & (LexicalEntryChange::KEYWORDS->value | LexicalEntryChange::WORD_OR_SENSE->value)) {
                     if (! $isNew) {
                         $lexicalEntry->keywords()->delete();
                     }
@@ -634,6 +636,74 @@ class LexicalEntryRepository
         }
 
         return $lexicalEntry;
+    }
+
+    /**
+     * Pages through active lexical entries for a language, ordered by word. Supported filters:
+     * `word`, `gloss` and `sense` (substring matches), `speech_id`, and `missing` (`source` or `sense`).
+     */
+    public function getLexicalEntriesForLanguage(int $languageId, array $filters = [], int $perPage = 30): LengthAwarePaginator
+    {
+        $like = fn (string $value) => '%'.addcslashes($value, '%_\\').'%';
+
+        $query = LexicalEntry::active()
+            ->where('lexical_entries.language_id', $languageId)
+            ->join('words', 'words.id', 'lexical_entries.word_id')
+            ->orderBy('words.word', 'asc')
+            ->with('glosses', 'account', 'sense.word', 'speech', 'keywords', 'word')
+            ->select('lexical_entries.*');
+
+        if (! empty($filters['word'])) {
+            $query->where('words.word', 'like', $like($filters['word']));
+        }
+
+        if (! empty($filters['gloss'])) {
+            $query->whereHas('glosses', fn ($q) => $q->where('translation', 'like', $like($filters['gloss'])));
+        }
+
+        if (! empty($filters['sense'])) {
+            $query->whereHas('sense.word', fn ($q) => $q->where('word', 'like', $like($filters['sense'])));
+        }
+
+        if (! empty($filters['speech_id'])) {
+            $query->where('lexical_entries.speech_id', intval($filters['speech_id']));
+        }
+
+        switch ($filters['missing'] ?? null) {
+            case 'source':
+                $query->where(fn ($q) => $q->whereNull('lexical_entries.source')->orWhere('lexical_entries.source', ''));
+                break;
+            case 'sense':
+                $query->whereDoesntHave('sense');
+                break;
+        }
+
+        return $query->paginate($perPage)->withQueryString();
+    }
+
+    /**
+     * Moves the lexical entry to a different sense, keeping everything else intact.
+     */
+    public function saveSense(LexicalEntry $lexicalEntry, string $senseString): LexicalEntry
+    {
+        $lexicalEntry->load('word', 'sense.word', 'glosses', 'keywords', 'lexical_entry_details');
+
+        $oldSenseString = $lexicalEntry->sense?->word?->word;
+        $keywords = $lexicalEntry->keywords
+            ->pluck('keyword')
+            ->reject(fn ($k) => $k === $oldSenseString)
+            ->unique()
+            ->values()
+            ->all();
+
+        return $this->saveLexicalEntry(
+            $lexicalEntry->word->word,
+            $senseString,
+            $lexicalEntry,
+            $lexicalEntry->glosses->all(),
+            $keywords,
+            $lexicalEntry->lexical_entry_details->all()
+        );
     }
 
     public function deleteLexicalEntryWithId(int $id, ?int $replaceId = null)

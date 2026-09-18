@@ -3,10 +3,10 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
-use App\Models\LexicalEntry;
 use App\Models\Initialization\Morphs;
 use App\Models\Interfaces\IHasLanguage;
 use App\Models\Language;
+use App\Models\LexicalEntry;
 use App\Models\ModelBase;
 use App\Models\SearchKeyword;
 use App\Models\Word;
@@ -17,10 +17,6 @@ use Illuminate\Support\Collection;
 
 class SearchIndexRepository
 {
-    private static array $latestStoredIndexHashes = [];
-
-    private static array $upsetFields = ['keyword', 'language_id', 'lexical_entry_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
-
     private KeywordsSearchIndexResolver $_keywordsResolver;
 
     private WordRepository $_wordRepository;
@@ -31,9 +27,14 @@ class SearchIndexRepository
         $this->_wordRepository = $wordRepository;
     }
 
-    public function createIndex(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): void
+    /**
+     * `$entityLanguage` is for entities that have no language column of their own, like sentence fragments,
+     * which belong to their phrase's language. Searches filter on it, so it must be set.
+     */
+    public function createIndex(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null,
+        ?Language $entityLanguage = null): void
     {
-        $data = $this->saveIndexInternal($model, $wordEntity, $keywordLanguage, $inflection);
+        $data = $this->saveIndexInternal($model, $wordEntity, $keywordLanguage, $inflection, $entityLanguage);
 
         if (config('ed.search_index_expands_english_infinitives')) {
             // Expansion of English infinitives is designed to create _two_ search keywords for every to-infinitive,
@@ -47,7 +48,7 @@ class SearchIndexRepository
                 if ($isVerb) {
                     $expandedString = $containsTo ? substr($data['keyword'], 3 /* 'to ' */) : 'to '.$data['keyword'];
                     $expandedWord = $this->_wordRepository->save($expandedString, $model->account_id);
-                    $this->saveIndexInternal($model, $expandedWord, $keywordLanguage);
+                    $this->saveIndexInternal($model, $expandedWord, $keywordLanguage, null, $entityLanguage);
                 }
             }
         }
@@ -91,6 +92,7 @@ class SearchIndexRepository
         }
 
         $keywords = $this->_keywordsResolver->resolve($v);
+
         return $keywords;
     }
 
@@ -104,6 +106,7 @@ class SearchIndexRepository
         }
 
         $entities = $resolver->resolve($v);
+
         return $this->formatEntitiesResponse($entities, $searchGroupId, $word);
     }
 
@@ -138,7 +141,8 @@ class SearchIndexRepository
             ->groupBy('keyword');
     }
 
-    private function saveIndexInternal(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): array
+    private function saveIndexInternal(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null,
+        ?Language $entityLanguage = null): array
     {
 
         if (! $model->exists) {
@@ -163,8 +167,8 @@ class SearchIndexRepository
                 : false;
         }
 
-        $languageId = null;
-        if ($model instanceof IHasLanguage) {
+        $languageId = $entityLanguage?->id;
+        if ($languageId === null && $model instanceof IHasLanguage) {
             $languageId = $model->language_id;
         }
 
@@ -200,17 +204,11 @@ class SearchIndexRepository
             'search_group' => $this->getSearchGroup($entityName),
         ];
 
-        $hash = $this->makeStoreHash($data);
-        if (! in_array($hash, self::$latestStoredIndexHashes)) {
-
-            SearchKeyword::upsert([$data], self::$upsetFields, [
-                // UPSERT update field if a row already exists
-                'normalized_keyword', 'normalized_keyword_unaccented', 'keyword_length', 'normalized_keyword_length', 
-                'normalized_keyword_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
-            ]);
-
-            self::$latestStoredIndexHashes[] = $hash;
-        }
+        SearchKeyword::upsert([$data + ['identity_hash' => SearchKeyword::identityHash($data)]], ['identity_hash'], [
+            // UPSERT update field if a row already exists
+            'normalized_keyword', 'normalized_keyword_unaccented', 'keyword_length', 'normalized_keyword_length',
+            'normalized_keyword_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
+        ]);
 
         return $data;
     }
@@ -298,20 +296,6 @@ class SearchIndexRepository
             'word' => $word,
             'entity_morph' => $entityMorph,
         ];
-    }
-
-    private function makeStoreHash(array $keywordData)
-    {
-        $values = '';
-
-        $keys = array_keys($keywordData);
-        sort($keys);
-
-        foreach ($keys as $key) {
-            $values .= $key.'='.$keywordData[$key].'|';
-        }
-
-        return sha1($values);
     }
 
     private function shortCircuitInEfficientQueries(?string $word): bool

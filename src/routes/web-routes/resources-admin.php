@@ -3,7 +3,6 @@
 // Admin resources
 
 use App\Http\Controllers\Resources\AccountController;
-use App\Http\Controllers\Resources\ContributionController;
 use App\Http\Controllers\Resources\GlossController;
 use App\Http\Controllers\Resources\InflectionController;
 use App\Http\Controllers\Resources\SentenceController;
@@ -47,6 +46,9 @@ Route::group([
     Route::get('lexical-entry/list/{id}', [GlossController::class, 'listForLanguage'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('gloss.list');
+    Route::put('lexical-entry/{id}/sense', [GlossController::class, 'updateSense'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('gloss.update-sense');
 
     Route::get('account/by-role/{id}', [AccountController::class, 'byRole'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])

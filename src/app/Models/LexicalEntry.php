@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Versioning\LexicalEntryVersion;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
@@ -86,6 +87,17 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     /**
      * @return HasMany<Keyword, LexicalEntry>
      */
+    /**
+     * The search index rows for this lexical entry. `entity_name`/`entity_id` is a morph pair, so it belongs in a
+     * relation rather than being spelled out at each call site.
+     *
+     * @return MorphMany<SearchKeyword>
+     */
+    public function search_keywords(): MorphMany
+    {
+        return $this->morphMany(SearchKeyword::class, 'entity', 'entity_name', 'entity_id');
+    }
+
     public function keywords(): HasMany
     {
         return $this->hasMany(Keyword::class, 'lexical_entry_id');

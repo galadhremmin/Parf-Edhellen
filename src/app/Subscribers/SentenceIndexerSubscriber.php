@@ -6,9 +6,7 @@ use App\Events\SentenceCreated;
 use App\Events\SentenceDestroyed;
 use App\Events\SentenceEdited;
 use App\Events\SentenceFragmentsDestroyed;
-use App\Helpers\SentenceBuilders\SentenceBuilder;
-use App\Helpers\StringHelper;
-use App\Jobs\ProcessSearchIndexCreation;
+use App\Jobs\ProcessSentenceReindex;
 use App\Models\Sentence;
 use App\Repositories\SearchIndexRepository;
 
@@ -64,25 +62,6 @@ class SentenceIndexerSubscriber
 
     private function update(Sentence $sentence): void
     {
-        foreach ($sentence->sentence_fragments as $fragment) {
-            if ($fragment->type === SentenceBuilder::TYPE_CODE_WORD) {
-                // A word need not be linked to a dictionary entry -- the contribution form allows
-                // it, and an imported phrase may quote a word we don't have. There is nothing to
-                // index it under, so leave it be.
-                if ($fragment->lexical_entry === null) {
-                    continue;
-                }
-
-                $word = $fragment->lexical_entry->word;
-                $inflection = StringHelper::toLower($fragment->fragment);
-
-                if ($inflection === StringHelper::toLower($word->word)) {
-                    $inflection = null; // if the words are identical, don't consider the fragment an inflection
-                }
-
-                ProcessSearchIndexCreation::dispatch($fragment, $word, $fragment->lexical_entry->language, $inflection) //
-                    ->onQueue('indexing');
-            }
-        }
+        ProcessSentenceReindex::dispatch($sentence)->onQueue('indexing');
     }
 }
