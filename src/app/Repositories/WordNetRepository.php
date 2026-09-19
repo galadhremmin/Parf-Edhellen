@@ -42,6 +42,8 @@ class WordNetRepository implements IWordNetLexicon
     }
 
     /**
+     * The lemma's senses, fetched once per lemma.
+     *
      * @return Collection<int, WordNetSense>
      */
     private function senses(string $lemma): Collection

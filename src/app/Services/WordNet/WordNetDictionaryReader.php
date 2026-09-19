@@ -30,6 +30,8 @@ class WordNetDictionaryReader
     public function __construct(private readonly string $_path) {}
 
     /**
+     * Every synset in the four data files, with its lexicographer file and definition.
+     *
      * @return Generator<array{id: string, pos: string, lexname: string, definition: string}>
      */
     public function synsets(): Generator
@@ -56,6 +58,8 @@ class WordNetDictionaryReader
         foreach ([WordNetPos::NOUN, WordNetPos::VERB] as $pos) {
             foreach ($this->dataLines($pos) as [$fields]) {
                 $synsetId = self::synsetId($fields[0], $pos);
+                // a data line: offset, lexicographer file, type, word count (hex), a word and lex id per word, the
+                // pointer count, then four fields per pointer: symbol, target offset, target type, source/target
                 $wordCount = hexdec($fields[3]);
                 $cursor = 4 + $wordCount * 2;
                 $pointerCount = (int) $fields[$cursor];
@@ -75,6 +79,8 @@ class WordNetDictionaryReader
     }
 
     /**
+     * Every lemma's membership of a synset, from `index.sense`, with how often it was tagged in WordNet's corpus.
+     *
      * @return Generator<array{lemma: string, synset_id: string, pos: string, sense_number: int, tag_count: int}>
      */
     public function senses(): Generator
@@ -95,6 +101,8 @@ class WordNetDictionaryReader
     }
 
     /**
+     * Irregular inflections from the `.exc` files, one row per base form: elves → elf.
+     *
      * @return Generator<array{pos: string, form: string, base: string}>
      */
     public function exceptions(): Generator
@@ -117,6 +125,8 @@ class WordNetDictionaryReader
     }
 
     /**
+     * The synset lines of a data file, split into their fields and their gloss.
+     *
      * @return Generator<array{0: string[], 1: string}> the space separated fields before the gloss, and the gloss
      */
     private function dataLines(WordNetPos $pos): Generator
@@ -133,6 +143,8 @@ class WordNetDictionaryReader
     }
 
     /**
+     * The non-empty lines of a file in the `dict` directory, read one at a time.
+     *
      * @return Generator<string>
      */
     private function lines(string $file): Generator
@@ -165,6 +177,9 @@ class WordNetDictionaryReader
         return $offset.'-'.$letter;
     }
 
+    /**
+     * WordNet writes spaces as underscores: oak_tree → oak tree.
+     */
     private static function lemma(string $lemma): string
     {
         return mb_strtolower(str_replace('_', ' ', $lemma));

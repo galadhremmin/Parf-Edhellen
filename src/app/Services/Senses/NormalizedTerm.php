@@ -12,5 +12,7 @@ class NormalizedTerm
         public readonly string $term,
         public readonly string $key,
         public readonly bool $isVerb,
+        // the word the lemmatiser reduced, e.g. "trees" for the key "tree"
+        public readonly ?string $reducedFrom = null,
     ) {}
 }

@@ -18,6 +18,9 @@ class NounLemmatizer
 
     public function __construct(private readonly IWordNetLexicon $_lexicon) {}
 
+    /**
+     * The singular of a plural noun; any other word comes back unchanged.
+     */
     public function lemmatize(string $word): string
     {
         $irregular = $this->_lexicon->exceptionBases($word, WordNetPos::NOUN);
@@ -39,6 +42,9 @@ class NounLemmatizer
         return $base;
     }
 
+    /**
+     * Applies the suffix rules in order; the first result WordNet knows as a noun wins.
+     */
     private function regularBase(string $word): ?string
     {
         foreach (self::RULES as [$suffix, $ending]) {

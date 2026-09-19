@@ -95,6 +95,9 @@ return [
     // gloss repository configuration
     'gloss_repository_maximum_results' => env('ED_LEXICAL_ENTRIES_MAXIMUM_RESULTS', 1000),
 
+    // widen dictionary searches by sense headword (sense_terms), so "trees" finds "tree"
+    'sense_term_search' => env('ED_SENSE_TERM_SEARCH', true),
+
     // maximum number of descendant leaves BookAdapter::adaptDerivatives() will render for a
     // heavily-cited root (e.g. a common sound-root with many attested descendants). Only applies
     // at precompute time (RebuildLexicalEntryDerivationData) — there's no live computation to

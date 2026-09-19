@@ -11,6 +11,7 @@ use App\Models\Sense;
 use App\Repositories\DiscussRepository;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
+use App\Repositories\SenseTermRepository;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
@@ -26,17 +27,20 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     private BookAdapter $_bookAdapter;
 
+    private SenseTermRepository $_senseTermRepository;
+
     private ?string $_lexicalEntryMorph;
 
     private ?string $_senseMorph;
 
     public function __construct(LexicalEntryRepository $lexicalEntryRepository, LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
-        DiscussRepository $discussRepository, BookAdapter $bookAdapter)
+        DiscussRepository $discussRepository, BookAdapter $bookAdapter, SenseTermRepository $senseTermRepository)
     {
         $this->_lexicalEntryRepository = $lexicalEntryRepository;
         $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
         $this->_discussRepository = $discussRepository;
         $this->_bookAdapter = $bookAdapter;
+        $this->_senseTermRepository = $senseTermRepository;
 
         $this->_lexicalEntryMorph = Morphs::getAlias(LexicalEntry::class);
         $this->_senseMorph = Morphs::getAlias(Sense::class);
@@ -88,22 +92,22 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                     $entities = collect([]);
                 }
 
-                $entityIds = [];
+                $senseIds = collect();
 
-                // Senses are *not* supported by the search index, so with this shim, the 'sense' is resolved to
-                // whatever lexical entry it might be associated with. This ensures that all relevant lexical entries are found.
+                // The legacy sense rows described above index a sense directly: their entity ID is already a sense ID.
                 if ($entities->has($this->_senseMorph)) {
-                    // we've got the sense, now obtain lexical entries
-                    $entityIds = LexicalEntry::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
-                        ->pluck('id')
-                        ->all();
+                    $senseIds = $entities[$this->_senseMorph]->pluck('entity_id');
                 }
 
                 if ($entities->has($this->_lexicalEntryMorph)) {
-                    $entityIds = array_merge(
-                        $entityIds,
-                        $entities[$this->_lexicalEntryMorph]->pluck('entity_id')->all()
+                    $senseIds = $senseIds->merge(
+                        LexicalEntry::whereIn('id', $entities[$this->_lexicalEntryMorph]->pluck('entity_id'))->pluck('sense_id')
                     );
+                }
+
+                // fulltext has no notion of plurals or compounds: "trees" finds senses glossed "tree" by headword
+                if (config('ed.sense_term_search')) {
+                    $senseIds = $senseIds->merge($this->_senseTermRepository->senseIdsMatching($value->getWord()));
                 }
 
                 $filters = [];
@@ -114,8 +118,8 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                     $filters['speech_id'] = $value->getSpeechIds();
                 }
 
-                $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
-                    $entityIds,
+                $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesBySenses(
+                    $senseIds->unique()->values()->all(),
                     $value->getLanguageId(),
                     $value->getIncludesOld(),
                     $filters

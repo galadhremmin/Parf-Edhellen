@@ -61,6 +61,14 @@ class SenseNormalizerTest extends TestCase
         $this->assertTrue($term->isVerb);
     }
 
+    public function test_records_the_word_the_lemmatiser_reduced()
+    {
+        [$reduced, $unchanged] = $this->_normalizer->normalize('pine-trees, tree')->all();
+
+        $this->assertSame('trees', $reduced->reducedFrom);
+        $this->assertNull($unchanged->reducedFrom);
+    }
+
     public function test_positions_are_contiguous_after_skipped_terms()
     {
         $terms = $this->_normalizer->normalize('elf, (lit.) shining one, fairy');

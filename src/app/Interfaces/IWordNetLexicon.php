@@ -15,6 +15,8 @@ interface IWordNetLexicon
     public function exceptionBases(string $form, WordNetPos $pos): array;
 
     /**
+     * Whether WordNet lists the word as a lemma.
+     *
      * @param  WordNetPos|null  $pos  null for any part of speech
      */
     public function isLemma(string $lemma, ?WordNetPos $pos = null): bool;

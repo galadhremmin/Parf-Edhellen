@@ -14,9 +14,10 @@ use Normalizer;
  */
 class SenseNormalizer
 {
-    // a literal translation or an editorial note is not a synonym
+    // a term opening with a note such as "(lit.)" or "[orig.]": a literal translation or an editorial note is not a synonym
     private const ANNOTATION = '/^\s*[\(\[](lit|orig|cf|pl|sg|fem|masc)\.?[\)\]]/u';
 
+    // anything in round or square brackets: "(tall) tree", "[dark] stain"
     private const QUALIFIER = '/[\(\[][^\)\]]*[\)\]]/u';
 
     // * reconstructed, ? uncertain, and quotes around coined names
@@ -30,6 +31,8 @@ class SenseNormalizer
     public function __construct(private readonly NounLemmatizer $_lemmatizer) {}
 
     /**
+     * Splits a sense into its terms, skips annotations such as "(lit.) shining one", and keys the rest.
+     *
      * @param  bool  $isVerb  whether every entry with this sense is a verb, for senses written without "to"
      * @return Collection<int, NormalizedTerm>
      */
@@ -82,28 +85,40 @@ class SenseNormalizer
     }
 
     /**
+     * Strips a term down to what identifies it (qualifiers, editorial marks, articles, "to"), lemmatises its last
+     * word and compacts it into a key.
+     *
      * @return NormalizedTerm|null null for a term with nothing left to compare
      */
     private function term(string $part, bool $isVerb, int $position): ?NormalizedTerm
     {
+        // "[to] free" → "to free", before the brackets are dropped with the other qualifiers
         $term = preg_replace('/^\s*[\(\[]to[\)\]]\s*/u', 'to ', $part);
         $term = preg_replace(self::QUALIFIER, ' ', $term);
         $term = preg_replace(self::EDITORIAL_MARKS, ' ', $term);
+        // collapse the gaps the removals leave
         $term = preg_replace('/\s+/u', ' ', trim($term));
+        // "the Elves" → "elves"
         $term = preg_replace('/^(a|an|the) /u', '', $term);
 
+        // "to fall" → "fall", remembered as a verb
         if (preg_match('/^to (.+)$/u', $term, $matches)) {
             $term = $matches[1];
             $isVerb = true;
         }
 
-        if (! $isVerb) {
-            $term = preg_replace_callback('/\p{L}+$/u', fn (array $word) => mb_strlen($word[0]) >= self::MIN_LEMMATIZED_LENGTH
-                ? $this->_lemmatizer->lemmatize($word[0])
-                : $word[0], $term);
+        // only the last word of a noun phrase carries the plural: "oak-trees" → "oak-tree"
+        $reducedFrom = null;
+        $lastWord = $isVerb ? null : $this->lastWord($term);
+        if ($lastWord !== null) {
+            $lemma = $this->_lemmatizer->lemmatize($lastWord);
+            if ($lemma !== $lastWord) {
+                $reducedFrom = $lastWord;
+                $term = mb_substr($term, 0, -mb_strlen($lastWord)).$lemma;
+            }
         }
 
-        // pine tree, pine-tree and pinetree are one key; diacritics stay, so éyë isn't eye
+        // drop spaces and hyphens: pine tree, pine-tree and pinetree are one key; diacritics stay, so éyë isn't eye
         $key = preg_replace('/[\s\-]+/u', '', $term);
         if ($key === '') {
             return null;
@@ -114,6 +129,20 @@ class SenseNormalizer
             mb_substr(trim($part), 0, self::MAX_LENGTH),
             mb_substr(($isVerb ? 'to:' : '').$key, 0, self::MAX_LENGTH),
             $isVerb,
+            $reducedFrom,
         );
+    }
+
+    /**
+     * The word a term ends with, or null when it is too short to lemmatise safely.
+     */
+    private function lastWord(string $term): ?string
+    {
+        // the run of letters at the end: "trees" in "oak-trees"
+        if (! preg_match('/\p{L}+$/u', $term, $matches) || mb_strlen($matches[0]) < self::MIN_LEMMATIZED_LENGTH) {
+            return null;
+        }
+
+        return $matches[0];
     }
 }

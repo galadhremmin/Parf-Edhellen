@@ -39,6 +39,7 @@ class EventServiceProvider extends ServiceProvider
         \App\Subscribers\DiscussPostIndexerSubscriber::class,
         \App\Subscribers\GlossIndexerSubscriber::class,
         \App\Subscribers\SentenceIndexerSubscriber::class,
+        \App\Subscribers\SenseTermSubscriber::class,
         \App\Subscribers\QueueJobEventSubscriber::class,
         \App\Subscribers\EntityViewEventSubscriber::class,
     ];

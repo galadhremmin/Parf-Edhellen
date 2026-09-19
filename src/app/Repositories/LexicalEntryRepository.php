@@ -141,20 +141,17 @@ class LexicalEntryRepository
     }
 
     /**
-     * Obtains the senses for the specified array of glosses and uses these senses to, in turn, find *all* glosses
-     * with the same senses. This is useful for the search index, which currently only indexes glosses.
+     * Finds *all* lexical entries with the specified senses. The search index finds entries; widening by sense
+     * brings in every entry that shares their meaning.
      *
-     * @param  array  $glossIds  list of glosses
+     * @param  int[]  $senseIds
      * @param  int  $languageId  optional language parameter
      * @param  bool  $includeOld  optional is_old filter (false filters them out)
      * @param  array  $filters  optional filters, refer to `createGlossQuery` for more information.
      * @return array
      */
-    public function getLexicalEntriesByExpandingViaSense(array $lexicalEntryIds, $languageId = 0, $includeOld = true, $filters = [])
+    public function getLexicalEntriesBySenses(array $senseIds, $languageId = 0, $includeOld = true, $filters = [])
     {
-        $senseIds = LexicalEntry::whereIn('id', $lexicalEntryIds) //
-            ->pluck('sense_id');
-
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
         $query = self::createLexicalEntryQuery($languageId, $includeOld, function ($q) use ($senseIds, $filters) {
             $q = $q->whereIn('g.sense_id', $senseIds);
@@ -630,7 +627,9 @@ class LexicalEntryRepository
 
             event($event);
 
-            if ($isNew || $changed & LexicalEntryChange::KEYWORDS->value) {
+            // a new sense needs terms; a changed speech can make a sense a verb
+            $senseChanges = LexicalEntryChange::KEYWORDS->value | LexicalEntryChange::WORD_OR_SENSE->value | LexicalEntryChange::METADATA->value;
+            if ($isNew || $changed & $senseChanges) {
                 event(new SenseEdited($sense));
             }
         }

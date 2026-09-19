@@ -73,6 +73,9 @@ class ImportWordNetCommand extends Command
         $this->info(sprintf('[%s] %s: %d rows in %.1f s', now()->format('H:i:s'), $table, $total, microtime(true) - $started));
     }
 
+    /**
+     * Downloads and unpacks WordNet into storage once; later runs reuse the download.
+     */
     private function download(): string
     {
         $directory = storage_path('app/wordnet');

@@ -21,10 +21,14 @@ class SearchIndexRepository
 
     private WordRepository $_wordRepository;
 
-    public function __construct(KeywordsSearchIndexResolver $keywordsResolver, WordRepository $wordRepository)
+    private SenseTermRepository $_senseTermRepository;
+
+    public function __construct(KeywordsSearchIndexResolver $keywordsResolver, WordRepository $wordRepository,
+        SenseTermRepository $senseTermRepository)
     {
         $this->_keywordsResolver = $keywordsResolver;
         $this->_wordRepository = $wordRepository;
+        $this->_senseTermRepository = $senseTermRepository;
     }
 
     /**
@@ -92,6 +96,46 @@ class SearchIndexRepository
         }
 
         $keywords = $this->_keywordsResolver->resolve($v);
+        if (config('ed.sense_term_search')) {
+            $keywords = $this->withHeadword($keywords, $v);
+        }
+
+        return $keywords;
+    }
+
+    /**
+     * Suggests the headword the search normalises to ("tree" for "trees") when no keyword spells it, right after
+     * the exact matches the keyword resolver ranks first.
+     */
+    private function withHeadword(array $keywords, SearchIndexSearchValue $v): array
+    {
+        $headword = $this->_senseTermRepository->headwordFor($v->getWord());
+        if ($headword === null) {
+            return $keywords;
+        }
+
+        $dictionary = SearchKeyword::SEARCH_GROUP_DICTIONARY;
+        $normalizedHeadword = StringHelper::transliterate($headword, false);
+        $inDictionary = fn (array $keyword) => (int) $keyword['g'] === $dictionary;
+        if (collect($keywords)->contains(fn (array $keyword) => $inDictionary($keyword) && $keyword['nk'] === $normalizedHeadword)) {
+            return $keywords;
+        }
+
+        $hasEntries = LexicalEntry::active()
+            ->whereIn('sense_id', $this->_senseTermRepository->senseIdsMatching($v->getWord()))
+            ->when($v->getLanguageId(), fn ($query, $languageId) => $query->where('language_id', $languageId))
+            ->when($v->getSpeechIds(), fn ($query, $speechIds) => $query->whereIn('speech_id', $speechIds))
+            ->when($v->getLexicalEntryGroupIds(), fn ($query, $groupIds) => $query->whereIn('lexical_entry_group_id', $groupIds))
+            ->exists();
+        if (! $hasEntries) {
+            return $keywords;
+        }
+
+        $exact = StringHelper::transliterate($v->getWord(), false);
+        $position = collect($keywords)
+            ->takeWhile(fn (array $keyword) => $inDictionary($keyword) && $keyword['nk'] === $exact)
+            ->count();
+        array_splice($keywords, $position, 0, [['g' => $dictionary, 'k' => $headword, 'nk' => $normalizedHeadword, 'ok' => $headword]]);
 
         return $keywords;
     }
