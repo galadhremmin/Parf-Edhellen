@@ -16,7 +16,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
     action: ISearchResultReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSearchResults: {
-            let {
+            const {
                 resultsById,
                 selectedId,
             } = state;
