@@ -1,3 +1,4 @@
+import type { IConceptSuggestion } from './ISenseApi';
 import type { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IAccountEntity {
@@ -68,6 +69,10 @@ export interface IKeywordEntity {
 }
 
 export interface ISenseEntity {
+    /** The meaning chosen for this sense, kept for display while the form is open. */
+    concept?: IConceptSuggestion;
+    /** The meaning chosen for this sense; the concept itself belongs to the sense, not to the entry. */
+    conceptId?: number;
     createdAt?: string;
     description?: string;
     id?: number;

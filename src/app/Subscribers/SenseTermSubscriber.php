@@ -3,7 +3,9 @@
 namespace App\Subscribers;
 
 use App\Events\SenseEdited;
+use App\Jobs\ProcessSenseConceptResolution;
 use App\Jobs\ProcessSenseNormalization;
+use Illuminate\Support\Facades\Bus;
 
 class SenseTermSubscriber
 {
@@ -14,8 +16,14 @@ class SenseTermSubscriber
         ];
     }
 
+    /**
+     * The concept is resolved after the terms are rebuilt, in a chain: every step of the resolver reads them.
+     */
     public function onSenseEdited(SenseEdited $event): void
     {
-        ProcessSenseNormalization::dispatch($event->sense)->onQueue('indexing');
+        Bus::chain([
+            new ProcessSenseNormalization($event->sense),
+            new ProcessSenseConceptResolution($event->sense),
+        ])->onQueue('indexing')->dispatch();
     }
 }

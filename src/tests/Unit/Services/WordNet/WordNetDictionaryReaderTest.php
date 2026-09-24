@@ -23,6 +23,8 @@ class WordNetDictionaryReaderTest extends TestCase
 
         $oak = $synsets['12288763-n'];
         $this->assertSame('n', $oak['pos']);
+        $this->assertSame('oak', $oak['label']);
+        $this->assertSame('Tolkien', $synsets['11365176-n']['label']);
         $this->assertSame('noun.plant', $oak['lexname']);
         $this->assertStringStartsWith('a deciduous tree of the genus Quercus', $oak['definition']);
     }

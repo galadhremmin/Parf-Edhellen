@@ -14,6 +14,19 @@ enum WordNetPos: string
     case ADVERB = 'r';
 
     /**
+     * What to call this part of speech in a sentence.
+     */
+    public function label(): string
+    {
+        return match ($this) {
+            self::NOUN => 'noun',
+            self::VERB => 'verb',
+            self::ADJECTIVE, self::ADJECTIVE_SATELLITE => 'adjective',
+            self::ADVERB => 'adverb',
+        };
+    }
+
+    /**
      * The data file a synset of this part of speech lives in. Satellites share the adjective file.
      */
     public function file(): string

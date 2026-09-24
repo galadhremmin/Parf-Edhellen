@@ -4,7 +4,9 @@ namespace App\Repositories;
 
 use App\Models\LexicalEntry;
 use App\Models\Sense;
+use App\Models\SenseConcept;
 use App\Models\SenseTerm;
+use App\Repositories\ValueObjects\SenseSuggestion;
 use App\Services\Flashcards\VerbSpeechCatalogue;
 use App\Services\Senses\NormalizedTerm;
 use App\Services\Senses\SenseNormalizer;
@@ -30,7 +32,10 @@ class SenseTermRepository
             ->whereHas('word')
             ->with([
                 'word:id,word',
-                'lexical_entries' => fn ($query) => $query->active()->select('id', 'sense_id', 'speech_id'),
+                // the entries' own words and glosses say whether the sense translates anything
+                'lexical_entries' => fn ($query) => $query->active()
+                    ->select('id', 'sense_id', 'speech_id', 'word_id')
+                    ->with(['word:id,word', 'glosses:id,lexical_entry_id,translation']),
             ])
             ->select('id');
     }
@@ -48,6 +53,7 @@ class SenseTermRepository
                 'sense_id' => $sense->id,
                 'position' => $term->position,
                 'term' => $term->term,
+                'lemma' => $term->lemma,
                 'term_key' => $term->key,
                 'is_verb' => $term->isVerb,
             ]));
@@ -100,6 +106,50 @@ class SenseTermRepository
         }
 
         return SenseTerm::whereIn('term_key', $keys)->distinct()->pluck('sense_id');
+    }
+
+    /**
+     * The keys a search is looked up by, the way senses are keyed: "trees" and "Tree" both come out as "tree", and a
+     * query without "to" is also looked up as a verb.
+     *
+     * @return Collection<int, string>
+     */
+    public function keysFor(string $query): Collection
+    {
+        return $this->queryKeys($query);
+    }
+
+    /**
+     * Wordings the dictionary already glosses words with, most used first. Offered so that a new entry can join an
+     * existing sense instead of starting a near-identical one.
+     *
+     * @param  int|null  $conceptId  limits them to the wordings that mean this, so a contributor who has said what
+     *                               their entry means is shown how others have worded it
+     * @return Collection<int, SenseSuggestion>
+     */
+    public function suggestionsFor(string $query, int $limit, ?int $conceptId = null): Collection
+    {
+        $keys = $this->queryKeys($query);
+        if ($keys->isEmpty() && $conceptId === null) {
+            return collect();
+        }
+
+        return SenseTerm::where('position', 0)
+            ->when($keys->isNotEmpty(), fn ($term) => $term->where(function ($match) use ($keys) {
+                $keys->each(fn (string $key) => $match->orWhere('term_key', 'like', $key.'%'));
+            }))
+            ->when($conceptId, fn ($term, $concept) => $term->whereIn('sense_terms.sense_id',
+                SenseConcept::where('concept_id', $concept)->select('sense_id')))
+            ->join('words', 'words.id', 'sense_terms.sense_id')
+            ->join('lexical_entries', function ($join) {
+                $join->on('lexical_entries.sense_id', 'sense_terms.sense_id')->where('lexical_entries.is_deleted', 0);
+            })
+            ->groupBy('sense_terms.sense_id', 'words.word')
+            ->orderByRaw('COUNT(lexical_entries.id) DESC')
+            ->orderBy('words.word')
+            ->limit($limit)
+            ->get(['sense_terms.sense_id', 'words.word', DB::raw('COUNT(lexical_entries.id) AS entries')])
+            ->map(fn (SenseTerm $term) => new SenseSuggestion($term->sense_id, $term->word, (int) $term->entries));
     }
 
     /**

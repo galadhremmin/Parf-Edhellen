@@ -15,7 +15,7 @@ class WordNetSynset extends ModelBase
 
     public $timestamps = false;
 
-    protected $fillable = ['id', 'pos', 'lexname', 'definition'];
+    protected $fillable = ['id', 'pos', 'label', 'lexname', 'definition'];
 
     public function senses(): HasMany
     {

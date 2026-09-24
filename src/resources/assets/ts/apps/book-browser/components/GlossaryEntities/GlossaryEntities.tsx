@@ -19,6 +19,7 @@ import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
 import GlossaryEntitiesFetching from './GlossaryEntitiesFetching';
 import GlossaryLanguages from './GlossaryLanguages';
 import GlossaryMinimap from './GlossaryMinimap';
+import ConceptChips from './ConceptChips';
 import UnusualLanguagesWarning from './UnusualLanguagesWarning';
 import { LanguageLookupProvider } from './LanguageLookupContext';
 import { WordListMembershipProvider } from './WordListMembershipContext';
@@ -43,8 +44,10 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         languageDictionary,
         languages: commonLanguages,
         leadWithUnusual,
+        broader,
         loading,
         isEmpty,
+        narrower,
         pendingWord,
         sections,
         single,
@@ -133,6 +136,13 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
                     <div className={classNames('ed-glossary-waypoint', {
                         'ed-glossary-waypoint--fetching': dimOutgoing,
                     })} ref={waypointRef} aria-busy={dimOutgoing}>
+                        {/* Above the entries, under the search results: the kinds of what was searched for, to
+                            narrow it down. The entries cannot offer this themselves, since oak and beech share no
+                            words with tree. */}
+                        {! single && <>
+                            <ConceptChips concepts={broader} heading="A kind of" />
+                            <ConceptChips concepts={narrower} heading={`Kinds of ${word}`} />
+                        </>}
                         {/* The single best-rated entry overall is a genuine direct match and lives in an
                             "unusual" (older/rejected conceptual period) language — lead with it, fully shown
                             (no opt-in gate — it's the right word, not just the least-bad fuzzy hit), instead

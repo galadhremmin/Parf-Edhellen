@@ -1,0 +1,44 @@
+.ConceptChips {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+
+  &--list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &--concept,
+  &--more {
+    background: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    border-radius: 999px;
+    color: var(--ed-text);
+    display: inline-block;
+    padding: 0.15rem 0.7rem;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--ed-bg-surface-hover);
+      border-color: var(--ed-border-strong);
+    }
+  }
+
+  &--more {
+    background: none;
+    color: var(--ed-text-muted);
+  }
+
+  // the machine's voice: how much there is to read, not part of the name
+  &--count {
+    color: var(--ed-text-faint);
+    font-family: var(--ed-font-family-tiny, inherit);
+    font-size: 0.75rem;
+    margin-left: 0.35rem;
+  }
+}

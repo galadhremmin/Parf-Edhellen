@@ -126,6 +126,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ->daily() //
             ->name('Prune search view events older than retention period');
 
+        $schedule->command('ed-senses:resolve') //
+            ->daily() //
+            ->name('Give a concept to senses contributed since the last run');
+
         $tweetCron = config('ed.tweet_word_of_day_cron', '');
         if ($tweetCron !== '') {
             $schedule->command('ed:tweet-word-of-the-day') //

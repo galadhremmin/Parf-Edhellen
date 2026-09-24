@@ -30,9 +30,9 @@ class WordNetDictionaryReader
     public function __construct(private readonly string $_path) {}
 
     /**
-     * Every synset in the four data files, with its lexicographer file and definition.
+     * Every synset in the four data files, labelled by its first word, with its lexicographer file and definition.
      *
-     * @return Generator<array{id: string, pos: string, lexname: string, definition: string}>
+     * @return Generator<array{id: string, pos: string, label: string, lexname: string, definition: string}>
      */
     public function synsets(): Generator
     {
@@ -41,6 +41,7 @@ class WordNetDictionaryReader
                 yield [
                     'id' => self::synsetId($fields[0], $pos),
                     'pos' => $fields[2],
+                    'label' => self::label($fields[4]),
                     'lexname' => self::LEXNAMES[(int) $fields[1]],
                     'definition' => $gloss,
                 ];
@@ -175,6 +176,15 @@ class WordNetDictionaryReader
         $letter = $pos === WordNetPos::ADJECTIVE_SATELLITE ? WordNetPos::ADJECTIVE->value : $pos->value;
 
         return $offset.'-'.$letter;
+    }
+
+    /**
+     * A word as a data file writes it, readable: J.R.R._Tolkien → J.R.R. Tolkien.
+     */
+    private static function label(string $word): string
+    {
+        // adjectives can carry a syntactic marker: emergent(p)
+        return str_replace('_', ' ', preg_replace('/\([a-z]+\)$/', '', $word));
     }
 
     /**

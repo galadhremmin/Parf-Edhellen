@@ -10,7 +10,7 @@ class SenseTerm extends ModelBase
 
     public $timestamps = false;
 
-    protected $fillable = ['sense_id', 'position', 'term', 'term_key', 'is_verb'];
+    protected $fillable = ['sense_id', 'position', 'term', 'lemma', 'term_key', 'is_verb'];
 
     protected $casts = [
         'is_verb' => 'boolean',

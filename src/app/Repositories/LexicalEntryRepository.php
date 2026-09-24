@@ -148,13 +148,17 @@ class LexicalEntryRepository
      * @param  int  $languageId  optional language parameter
      * @param  bool  $includeOld  optional is_old filter (false filters them out)
      * @param  array  $filters  optional filters, refer to `createGlossQuery` for more information.
+     * @param  int[]  $lexicalEntryIds  entries to include whatever their sense, for matches that justify no widening
      * @return array
      */
-    public function getLexicalEntriesBySenses(array $senseIds, $languageId = 0, $includeOld = true, $filters = [])
+    public function getLexicalEntriesBySenses(array $senseIds, $languageId = 0, $includeOld = true, $filters = [],
+        array $lexicalEntryIds = [])
     {
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
-        $query = self::createLexicalEntryQuery($languageId, $includeOld, function ($q) use ($senseIds, $filters) {
-            $q = $q->whereIn('g.sense_id', $senseIds);
+        $query = self::createLexicalEntryQuery($languageId, $includeOld, function ($q) use ($senseIds, $lexicalEntryIds, $filters) {
+            $q = $lexicalEntryIds === []
+                ? $q->whereIn('g.sense_id', $senseIds)
+                : $q->where(fn ($entries) => $entries->whereIn('g.sense_id', $senseIds)->orWhereIn('g.id', $lexicalEntryIds));
 
             if (is_array($filters)) {
                 foreach ($filters as $column => $values) {

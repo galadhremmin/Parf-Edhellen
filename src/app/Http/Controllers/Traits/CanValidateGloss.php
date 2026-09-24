@@ -18,6 +18,10 @@ trait CanValidateGloss
             'speech_id' => 'required|numeric|exists:speeches,id',
             'word.word' => 'required|string|min:1|max:64',
             'sense.word.word' => 'required|string|min:1|max:64',
+            // the sense this entry joins, when an existing wording was chosen rather than typed
+            'sense.id' => 'sometimes|nullable|numeric|exists:senses,id',
+            // what the sense means, when the contributor said so
+            'sense.concept_id' => 'sometimes|nullable|numeric|exists:concepts,id',
             'source' => 'required|string|min:3',
             'is_rejected' => 'required|boolean',
             'is_uncertain' => 'required|boolean',

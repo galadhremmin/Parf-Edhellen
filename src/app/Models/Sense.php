@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Sense extends ModelBase
 {
@@ -29,6 +31,24 @@ class Sense extends ModelBase
     public function terms(): HasMany
     {
         return $this->hasMany(SenseTerm::class)->orderBy('position');
+    }
+
+    public function concept_decisions(): HasMany
+    {
+        return $this->hasMany(SenseConceptDecision::class);
+    }
+
+    public function concept_review(): HasOne
+    {
+        return $this->hasOne(SenseConceptReview::class);
+    }
+
+    public function concepts(): BelongsToMany
+    {
+        return $this->belongsToMany(Concept::class, 'sense_concepts')
+            ->using(SenseConcept::class)
+            ->withPivot(['position', 'source', 'confidence', 'is_locked'])
+            ->withTimestamps();
     }
 
     public function scopeForString($query, string $word)

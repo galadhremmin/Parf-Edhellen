@@ -7,8 +7,10 @@ import type {
 const EntitiesReducer = (state: IEntitiesState = {
     groupId: 0,
     groupIntlName: null,
+    broader: [],
     languages: [],
     loading: false,
+    narrower: [],
     pendingWord: null,
     single: false,
     word: '',
@@ -32,6 +34,8 @@ const EntitiesReducer = (state: IEntitiesState = {
                 groupIntlName: action.groupIntlName,
                 languages: action.entities.languages || [],
                 leadWithUnusual: action.entities.leadWithUnusual || false,
+                broader: action.entities.broader || [],
+                narrower: action.entities.narrower || [],
                 single: action.single,
                 word: action.word,
             };

@@ -25,6 +25,11 @@ class SenseNormalizerTest extends TestCase
             'qualifier' => ['(tall straight) tree', ['tree']],
             'uncertainty mark' => ['? tree', ['tree']],
             'reconstruction mark' => ['*oak', ['oak']],
+            'archaic mark' => ['ancestress, †mother', ['ancestress', 'mother']],
+            'reconstructed word mark' => ['#manda', ['manda']],
+            'root mark' => ['√KAL', ['kal']],
+            'a bracketed qualifier goes, commas inside it and all' => ['(great, lofty) tower', ['tower']],
+            'an unclosed bracket is just noise' => ['(great', ['great']],
             'hyphenated compound' => ['pine-tree', ['pinetree']],
             'spaced compound' => ['pine tree', ['pinetree']],
             'plural compound' => ['pine-trees', ['pinetree']],
@@ -66,6 +71,7 @@ class SenseNormalizerTest extends TestCase
         [$reduced, $unchanged] = $this->_normalizer->normalize('pine-trees, tree')->all();
 
         $this->assertSame('trees', $reduced->reducedFrom);
+        $this->assertSame('pine-tree', $reduced->lemma);
         $this->assertNull($unchanged->reducedFrom);
     }
 

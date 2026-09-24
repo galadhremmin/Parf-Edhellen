@@ -11,6 +11,8 @@ class NormalizedTerm
         public readonly int $position,
         public readonly string $term,
         public readonly string $key,
+        // the cleaned, singular term with its spaces and without "to", e.g. "oak-tree": what WordNet knows it by
+        public readonly string $lemma,
         public readonly bool $isVerb,
         // the word the lemmatiser reduced, e.g. "trees" for the key "tree"
         public readonly ?string $reducedFrom = null,

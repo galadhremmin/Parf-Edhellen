@@ -2,6 +2,7 @@
 
 namespace App\Services\Senses;
 
+use App\Helpers\StringHelper;
 use Illuminate\Support\Collection;
 use Normalizer;
 
@@ -62,6 +63,8 @@ class SenseNormalizer
     {
         $sense = Normalizer::normalize($sense, Normalizer::FORM_KC);
         $sense = mb_strtolower(strtr($sense, ['’' => "'", '‘' => "'", '“' => '"', '”' => '"', '‽' => '?']));
+        // removes the markers a lexicographer hangs on a word: † archaic, # reconstructed, √ root
+        $sense = StringHelper::clean($sense);
 
         $parts = collect();
         $depth = 0;
@@ -96,6 +99,8 @@ class SenseNormalizer
         $term = preg_replace('/^\s*[\(\[]to[\)\]]\s*/u', 'to ', $part);
         $term = preg_replace(self::QUALIFIER, ' ', $term);
         $term = preg_replace(self::EDITORIAL_MARKS, ' ', $term);
+        // an unclosed bracket survives the qualifier pattern: "(great" is the headword "great"
+        $term = preg_replace('/[\(\)\[\]]/u', ' ', $term);
         // collapse the gaps the removals leave
         $term = preg_replace('/\s+/u', ' ', trim($term));
         // "the Elves" → "elves"
@@ -128,6 +133,7 @@ class SenseNormalizer
             $position,
             mb_substr(trim($part), 0, self::MAX_LENGTH),
             mb_substr(($isVerb ? 'to:' : '').$key, 0, self::MAX_LENGTH),
+            mb_substr($term, 0, self::MAX_LENGTH),
             $isVerb,
             $reducedFrom,
         );

@@ -3,26 +3,28 @@
 namespace Tests\Unit\Repositories;
 
 use App\Events\SenseEdited;
+use App\Jobs\ProcessSenseConceptResolution;
 use App\Jobs\ProcessSenseNormalization;
-use App\Models\LexicalEntry;
 use App\Models\Sense;
 use App\Models\SenseTerm;
-use App\Models\Speech;
+use App\Repositories\ConceptRepository;
+use App\Repositories\Enumerations\ConceptSource;
 use App\Repositories\SearchIndexRepository;
 use App\Repositories\SenseTermRepository;
+use App\Repositories\ValueObjects\ConceptAssignment;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use App\Repositories\WordRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
+use Tests\Unit\Traits\CanCreateSenses;
 
 class SenseTermRepositoryTest extends TestCase
 {
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpLexicalEntries;
     }
+    use CanCreateSenses;
     use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
     private SenseTermRepository $_repository;
@@ -76,7 +78,7 @@ class SenseTermRepositoryTest extends TestCase
         $this->assertContains($entry->id, $this->search("{$name}tree"));
         $this->assertContains($entry->id, $this->search("{$name} tree"));
 
-        config(['ed.sense_term_search' => false]);
+        config(['senses.term_search' => false]);
         $this->assertNotContains($entry->id, $this->search("{$name}tree"));
     }
 
@@ -100,6 +102,38 @@ class SenseTermRepositoryTest extends TestCase
         $this->assertSame(['g' => 1, 'k' => "{$name}-tree", 'nk' => "{$name}-tree", 'ok' => "{$name}-tree"], $keywords[0]);
     }
 
+    public function test_a_search_finds_the_kinds_of_what_was_asked_for()
+    {
+        $name = 'grelk'.uniqid();
+        $tree = $this->createEntry("{$name}", 'noun');
+        $oak = $this->createEntry("{$name} oak", 'noun');
+        $this->_repository->rebuildSense($tree->sense_id);
+        $this->_repository->rebuildSense($oak->sense_id);
+
+        $concepts = resolve(ConceptRepository::class);
+        $broad = $concepts->forSynset('13124818-n');
+        $narrow = $concepts->forSynset('12288763-n');
+        $concepts->assign($tree->sense_id, ConceptSource::EDITOR, collect([new ConceptAssignment($broad, 0)]));
+        $concepts->assign($oak->sense_id, ConceptSource::EDITOR, collect([new ConceptAssignment($narrow, 0)]));
+        $concepts->rebuildClosure();
+
+        // the oak entry has no word in common with the search, only a meaning below it
+        $this->assertContains($oak->id, $this->search($name));
+    }
+
+    public function test_a_search_for_a_concepts_own_name_finds_what_means_it()
+    {
+        // WordNet's name for a meaning is often no word of the dictionary: nothing here is glossed "bungalow"
+        $entry = $this->createEntry('cottage, hut '.uniqid(), 'noun');
+        $this->_repository->rebuildSense($entry->sense_id);
+        $concepts = resolve(ConceptRepository::class);
+        $bungalow = $concepts->forSynset('02923176-n');
+        $concepts->assign($entry->sense_id, ConceptSource::EDITOR, collect([new ConceptAssignment($bungalow, 0)]));
+        $concepts->rebuildClosure();
+
+        $this->assertContains($entry->id, $this->search('bungalow'));
+    }
+
     public function test_an_edited_sense_is_queued_for_normalisation()
     {
         Queue::fake();
@@ -108,23 +142,8 @@ class SenseTermRepositoryTest extends TestCase
         event(new SenseEdited($sense));
 
         Queue::assertPushedOn('indexing', ProcessSenseNormalization::class);
-    }
-
-    private function createEntry(string $sense, string $speech): LexicalEntry
-    {
-        $template = $this->createLexicalEntry(__FUNCTION__, 'grelkword'.uniqid());
-        $lexicalEntry = $template['lexicalEntry'];
-        $words = resolve(WordRepository::class);
-        $senseWord = $words->save($sense, Auth::user()->id);
-
-        $lexicalEntry->word_id = $words->save($template['word'], Auth::user()->id)->id;
-        $lexicalEntry->sense_id = Sense::firstOrCreate(['id' => $senseWord->id], ['description' => $sense])->id;
-        $lexicalEntry->speech_id = Speech::where('name', $speech)->firstOrFail()->id;
-        $lexicalEntry->save();
-        // search only returns entries with glosses
-        $lexicalEntry->glosses()->saveMany($template['glosses']);
-
-        return $lexicalEntry;
+        // the concept is resolved once the terms it reads exist
+        Queue::assertPushedWithChain(ProcessSenseNormalization::class, [ProcessSenseConceptResolution::class]);
     }
 
     /**
