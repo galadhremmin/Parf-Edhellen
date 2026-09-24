@@ -23,6 +23,7 @@ const createStore = () => configureStore({
 const Inject = (props: IProps) => {
     const {
         highlightThreadPost = false,
+        historyEnabled = true,
         readonly = false,
         prefetched = true,
         stretchUi = false,
@@ -47,7 +48,7 @@ const Inject = (props: IProps) => {
 
         const dispatch = store.dispatch as ReduxThunkDispatch;
 
-        const actions = new DiscussActions();
+        const actions = new DiscussActions(undefined, historyEnabled);
         if (prefetched) {
             if (thread !== undefined) {
                 const args = {
@@ -72,6 +73,7 @@ const Inject = (props: IProps) => {
         <Provider store={store}>
             <Discuss entityId={entityId}
                     entityType={entityType}
+                    historyEnabled={historyEnabled}
                     readonly={readonly}
                     highlightThreadPost={highlightThreadPost}
             />

@@ -43,12 +43,12 @@ return [
             'gloss' => 'new, fresh, young',
         ],
         [
-            'word' => 'echad',
+            'word' => 'carweg',
             'language' => 'Sindarin',
             'language_tag' => 'sjn',
-            'speech' => 'verb',
-            'source' => 'VT/45:19',
-            'gloss' => 'to fashion, to make',
+            'speech' => 'adjective',
+            'source' => 'PE17/144',
+            'gloss' => 'active; busy',
         ],
     ],
 

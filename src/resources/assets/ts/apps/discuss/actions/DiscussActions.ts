@@ -24,7 +24,12 @@ import type {
 import Actions from './Actions';
 
 export default class DiscussActions {
-    constructor(private _api: IDiscussApi = resolve(DI.DiscussApi)) {
+    /**
+     * @param _updatesHistory whether loading a thread may rewrite the browser's address. False for
+     *                        an embedded widget: the page it sits in owns the address, and several
+     *                        widgets on one page would each push an entry of their own.
+     */
+    constructor(private _api: IDiscussApi = resolve(DI.DiscussApi), private _updatesHistory = true) {
     }
 
     public thread(args: IThreadAction, jump = true): ReduxThunk {
@@ -41,7 +46,7 @@ export default class DiscussActions {
             }
 
             const threadData = await this._api.thread(args);
-            dispatch(this.setThread(threadData, true, jump));
+            dispatch(this.setThread(threadData, this._updatesHistory, jump));
         };
     }
 

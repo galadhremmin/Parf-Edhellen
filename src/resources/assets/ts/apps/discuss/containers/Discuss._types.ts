@@ -29,6 +29,7 @@ export interface IProps {
     currentPage?: number;
     entityId?: number;
     entityType?: string;
+    historyEnabled?: boolean;
     jumpPostId?: number;
     highlightThreadPost?: boolean;
     newPostContent?: string;
