@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Tells senses that mean something (a concept can capture them) from names, grammatical labels and function words,
  * and which WordNet parts of speech a sense's entries allow. Works from the entries' parts of speech, which are rows
- * an administrator can add, so the vocabulary it reads them by lives in `config/senses.php`.
+ * an administrator can add, so the vocabulary it reads them by lives in `config/ed-senses.php`.
  */
 class SenseClassifier
 {
@@ -69,7 +69,7 @@ class SenseClassifier
      */
     public function wordNetPos(Sense $sense): ?array
     {
-        $bySpeech = config('senses.wordnet_pos');
+        $bySpeech = config('ed-senses.wordnet_pos');
         $allowed = $this->speechesOf($sense)
             ->flatMap(fn (string $name) => $bySpeech[$name] ?? [])
             ->map(fn (string $pos) => WordNetPos::from($pos));
@@ -146,13 +146,13 @@ class SenseClassifier
     }
 
     /**
-     * One of the vocabularies in `config/senses.php`.
+     * One of the vocabularies in `config/ed-senses.php`.
      *
      * @return string[]
      */
     private function vocabulary(string $key): array
     {
-        return config('senses.'.$key, []);
+        return config('ed-senses.'.$key, []);
     }
 
     /**

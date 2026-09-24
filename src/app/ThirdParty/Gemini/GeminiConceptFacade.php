@@ -24,7 +24,7 @@ class GeminiConceptFacade extends AbstractGeminiFacade implements IJudgesSenseCo
     public function decide(Collection $requests): Collection
     {
         $apiKey = config('gemini.api_key', '');
-        if (! config('senses.judge') || empty($apiKey) || $requests->isEmpty()) {
+        if (! config('ed-senses.judge') || empty($apiKey) || $requests->isEmpty()) {
             return collect();
         }
 

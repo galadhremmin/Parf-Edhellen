@@ -7,7 +7,7 @@ use App\Models\Sense;
 /**
  * The concept a name belongs to. Gildir is a given name, Eglarest a place name: the entry's part of speech already
  * says which, so no judgement is needed. WordNet files all three under "name", so the hierarchy comes with them. The
- * parts of speech are rows an administrator can add, so what each one means lives in `config/senses.php`.
+ * parts of speech are rows an administrator can add, so what each one means lives in `config/ed-senses.php`.
  */
 class NameConcepts
 {
@@ -20,7 +20,7 @@ class NameConcepts
      */
     public function synsetIdFor(Sense $sense): string
     {
-        $bySpeech = config('senses.name_concepts');
+        $bySpeech = config('ed-senses.name_concepts');
 
         return $this->_classifier->speechesOf($sense)
             ->map(fn (string $speech) => $bySpeech[$speech] ?? null)
@@ -29,6 +29,6 @@ class NameConcepts
             ->countBy()
             ->sortDesc()
             ->keys()
-            ->first() ?? config('senses.default_name_concept');
+            ->first() ?? config('ed-senses.default_name_concept');
     }
 }

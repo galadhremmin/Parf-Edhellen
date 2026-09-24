@@ -130,6 +130,6 @@ class ConceptDecisionApplier
 
     private function minimumConfidence(): int
     {
-        return (int) config('senses.minimum_confidence');
+        return (int) config('ed-senses.minimum_confidence');
     }
 }

@@ -35,9 +35,9 @@ class SenseApiController extends Controller
 
         return [
             'concepts' => $query === '' ? [] : $this->_conceptRepository->suggestionsFor(
-                $this->_senseTermRepository->keysFor($query), config('senses.suggestions')
+                $this->_senseTermRepository->keysFor($query), config('ed-senses.suggestions')
             ),
-            'senses' => $this->_senseTermRepository->suggestionsFor($query, config('senses.suggestions'), $conceptId),
+            'senses' => $this->_senseTermRepository->suggestionsFor($query, config('ed-senses.suggestions'), $conceptId),
         ];
     }
 }

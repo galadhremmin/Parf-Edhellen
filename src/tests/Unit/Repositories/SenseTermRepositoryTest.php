@@ -78,7 +78,7 @@ class SenseTermRepositoryTest extends TestCase
         $this->assertContains($entry->id, $this->search("{$name}tree"));
         $this->assertContains($entry->id, $this->search("{$name} tree"));
 
-        config(['senses.term_search' => false]);
+        config(['ed-senses.term_search' => false]);
         $this->assertNotContains($entry->id, $this->search("{$name}tree"));
     }
 

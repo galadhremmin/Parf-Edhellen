@@ -129,7 +129,7 @@ class ImportSenseConceptDecisionsCommand extends Command
     {
         return match (true) {
             array_diff($decision->synsetIds, $offered) !== [] => 'would go to review: '.ConceptReviewReason::INVALID_ANSWER->value,
-            $decision->confidence < (int) config('senses.minimum_confidence') => 'would go to review: '.ConceptReviewReason::UNSURE->value,
+            $decision->confidence < (int) config('ed-senses.minimum_confidence') => 'would go to review: '.ConceptReviewReason::UNSURE->value,
             default => 'would be applied',
         };
     }

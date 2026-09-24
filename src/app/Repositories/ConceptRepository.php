@@ -112,7 +112,7 @@ class ConceptRepository
             ->groupBy('concept_id')
             ->orderByDesc('senses')
             ->orderBy('concept_id')
-            ->limit(config('senses.subject_concepts'))
+            ->limit(config('ed-senses.subject_concepts'))
             ->pluck('senses', 'concept_id');
 
         if ($subjects->isEmpty()) {
@@ -125,7 +125,7 @@ class ConceptRepository
 
         return $subjects->filter(fn (int $senses) => $senses * 2 >= $leading)
             ->keys()
-            ->filter(fn (int $conceptId) => $this->entriesUnder([$conceptId]) <= config('senses.max_entries_under_subject'))
+            ->filter(fn (int $conceptId) => $this->entriesUnder([$conceptId]) <= config('ed-senses.max_entries_under_subject'))
             ->values();
     }
 
@@ -165,7 +165,7 @@ class ConceptRepository
             $termKeys->each(fn (string $key) => $query->orWhere('term_key', 'like', $key.'%'));
         })
             ->distinct()
-            ->limit(config('senses.suggestion_candidates'))
+            ->limit(config('ed-senses.suggestion_candidates'))
             ->pluck('concept_id');
 
         return Concept::whereIn('id', $conceptIds)
@@ -197,10 +197,10 @@ class ConceptRepository
 
         return WordNetSense::where('synset_id', $concept->synset_id)
             ->orderByDesc('tag_count')
-            ->limit(config('senses.synonyms') + 1)
+            ->limit(config('ed-senses.synonyms') + 1)
             ->pluck('lemma')
             ->reject(fn (string $lemma) => $lemma === mb_strtolower($concept->label))
-            ->take(config('senses.synonyms'))
+            ->take(config('ed-senses.synonyms'))
             ->values()
             ->all();
     }
@@ -289,7 +289,7 @@ class ConceptRepository
         $broader = collect();
         foreach ($ancestors as $conceptId) {
             $entries = $this->entriesUnder([$conceptId], /* inclusive = */ true);
-            if ($entries > config('senses.max_entries_under_broader') || $broader->count() >= $limit) {
+            if ($entries > config('ed-senses.max_entries_under_broader') || $broader->count() >= $limit) {
                 break;
             }
 
@@ -311,7 +311,7 @@ class ConceptRepository
             ->whereIn('ancestor_id', $conceptIds)
             ->where('depth', '>', 0)
             ->distinct()
-            ->limit(config('senses.max_narrower_concepts'))
+            ->limit(config('ed-senses.max_narrower_concepts'))
             ->pluck('descendant_id');
     }
 

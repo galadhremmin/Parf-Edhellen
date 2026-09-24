@@ -96,7 +96,7 @@ class SearchIndexRepository
         }
 
         $keywords = $this->_keywordsResolver->resolve($v);
-        if (config('senses.term_search')) {
+        if (config('ed-senses.term_search')) {
             $keywords = $this->withHeadword($keywords, $v);
         }
 

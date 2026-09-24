@@ -107,7 +107,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 $senseIds = $this->sensesWorthWidening($matched, $entities->get($this->_senseMorph, collect()));
 
                 // fulltext has no notion of plurals or compounds: "trees" finds senses glossed "tree" by headword
-                $headwordSenseIds = config('senses.term_search')
+                $headwordSenseIds = config('ed-senses.term_search')
                     ? $this->_senseTermRepository->senseIdsMatching($value->getWord())
                     : collect();
                 $senseIds = $senseIds->merge($headwordSenseIds);
@@ -127,7 +127,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 if ($headwordSenseIds->isNotEmpty()) {
                     $subjects = $this->_conceptRepository->subjectConceptIds($headwordSenseIds->all());
 
-                    if (config('senses.widening')) {
+                    if (config('ed-senses.widening')) {
                         $senseIds = $senseIds->merge($this->_conceptRepository->senseIdsUnder($subjects));
                     }
                 }
@@ -149,11 +149,11 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 );
 
                 // and both ways through the taxonomy are offered: the kinds of it, and what it is a kind of
-                if (config('senses.concept_search') && $subjects->isNotEmpty()) {
+                if (config('ed-senses.concept_search') && $subjects->isNotEmpty()) {
                     $narrower = $this->_conceptRepository->narrowerFor($headwordSenseIds->all(),
-                        (int) config('senses.concept_search_limit'));
+                        (int) config('ed-senses.concept_search_limit'));
                     $broader = $this->_conceptRepository->broaderFor($headwordSenseIds->all(),
-                        (int) config('senses.broader_limit'));
+                        (int) config('ed-senses.broader_limit'));
                 }
             }
         }
