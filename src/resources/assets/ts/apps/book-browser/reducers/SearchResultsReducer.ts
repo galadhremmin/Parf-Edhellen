@@ -16,43 +16,56 @@ const SearchResultsReducer = (state: ISearchResultState = {
     action: ISearchResultReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSearchResults: {
-            let {
+            const {
+                resultsById,
                 selectedId,
             } = state;
             const {
                 searchResults,
             } = action;
 
-            const groups: string[] = [];
-            const resultsByGroupIndex: ISearchResult[][] = [];
-            const resultsById: Record<number, ISearchResult> = {};
-            const resultIds: number[] = [];
+            const newGroups: string[] = [];
+            const newResultsByGroupIndex: ISearchResult[][] = [];
+            const newResultsById: Record<number, ISearchResult> = {};
+            const newResultIds: number[] = [];
+            let newSelectedId: number|null = null;
 
-            for (const group of Object.keys(searchResults.keywords)) {
-                groups.push(group);
+            if (searchResults) {
+                for (const group of Object.keys(searchResults.keywords)) {
+                    newGroups.push(group);
 
-                const r = searchResults.keywords[group];
-                resultsByGroupIndex.push(r);
-                r.forEach((v) => {
-                    resultIds.push(v.id);
-                    resultsById[v.id] = v;
-                });
-            }
+                    const r = searchResults.keywords[group];
+                    newResultsByGroupIndex.push(r);
+                    r.forEach((v) => {
+                        newResultIds.push(v.id);
+                        newResultsById[v.id] = v;
 
-            // `null` rather than the first result: a result is only selected when the customer
-            // actually picks one, so that a fresh set of search results highlights nothing.
-            if (! resultIds.includes(selectedId)) {
-                selectedId = null;
+                        // carry over selected ID in case that an existing selection is 
+                        // in the search results already. This can happen if you search
+                        // for _hopa_ expanding it, and then proceeds to look for _hop_.
+                        // This will ensure that _hopa_ remains highlighted (since its
+                        // expanded) while new search results for _hop_ are populated.
+                        if (selectedId !== null) {
+                            const oldV = resultsById[selectedId];
+                            if (oldV.groupId === v.groupId &&
+                                oldV.normalizedWord === v.normalizedWord &&
+                                oldV.originalWord === v.originalWord &&
+                                oldV.word === v.word) {
+                                newSelectedId = v.id;
+                            }
+                        }
+                    });
+                }
             }
 
             return {
                 ...state,
-                groups,
-                resultIds,
-                resultsByGroupIndex,
-                resultsById,
-                selectedId,
-                groupIdMap: searchResults.searchGroups,
+                groups: newGroups,
+                resultIds: newResultIds,
+                resultsByGroupIndex: newResultsByGroupIndex,
+                resultsById: newResultsById,
+                selectedId: newSelectedId,
+                groupIdMap: searchResults?.searchGroups ?? {},
             };
         }
 
@@ -61,8 +74,8 @@ const SearchResultsReducer = (state: ISearchResultState = {
                 resultIds,
             } = state;
 
-            let selectedId = action.id;
-            if (! resultIds.includes(selectedId)) {
+            let selectedId = action.id ?? null;
+            if (selectedId !== null && ! resultIds.includes(selectedId)) {
                 selectedId = null;
             }
 

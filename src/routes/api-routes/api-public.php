@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\v3\BookApiController;
 use App\Http\Controllers\Api\v3\InflectionApiController;
 use App\Http\Controllers\Api\v3\LexicalEntryApiController;
 use App\Http\Controllers\Api\v3\PasskeyApiController;
+use App\Http\Controllers\Api\v3\SenseApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SpeechApiController;
 use App\Http\Controllers\Api\v3\UtilityApiController;
@@ -39,6 +40,10 @@ Route::group([
     Route::post('book/find', [BookApiController::class, 'find'])
         ->middleware('throttle:60,1')
         ->name('api.book.find');
+
+    Route::get('sense/find', [SenseApiController::class, 'find'])
+        ->middleware('throttle:60,1')
+        ->name('api.sense.find');
 
     Route::get('speech/{id?}', [SpeechApiController::class, 'index'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);

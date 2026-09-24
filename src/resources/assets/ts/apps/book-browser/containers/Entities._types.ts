@@ -3,6 +3,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 import type {
     ILexicalEntryEntity,
     ILanguageEntity,
+    IRelatedConcept,
 } from '@root/connectors/backend/IBookApi';
 import type { ISectionsState } from '../reducers/SectionsReducer._types';
 
@@ -20,6 +21,10 @@ export interface IEntitiesComponentProps<T = ILexicalEntryEntity> {
      * match of its own — the unusual section should then render above the normal one. */
     leadWithUnusual?: boolean;
     loading: boolean;
+    /** What the searched word is a kind of, offered as a way onward. */
+    broader?: IRelatedConcept[];
+    /** The kinds of the word that was searched for, offered as ways onward. */
+    narrower?: IRelatedConcept[];
     /** The word being fetched, for the optimistic loading state. Absent when the
       * expansion did not start from something the user tapped. */
     pendingWord?: string;

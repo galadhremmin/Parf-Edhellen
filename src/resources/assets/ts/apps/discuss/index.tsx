@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
 
@@ -13,14 +13,17 @@ import type { IProps } from './index._types';
 import rootReducer from './reducers';
 import registerApp from '../app';
 
-const store = configureStore({
+// The versions page mounts one of these per lexical entry version, so the store must be per
+// instance -- a shared one lets the widgets overwrite each other's thread.
+const createStore = () => configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
- })
+});
 
 const Inject = (props: IProps) => {
     const {
         highlightThreadPost = false,
+        historyEnabled = true,
         readonly = false,
         prefetched = true,
         stretchUi = false,
@@ -32,6 +35,12 @@ const Inject = (props: IProps) => {
         entityType,
     } = props;
 
+    const storeRef = useRef<ReturnType<typeof createStore>>(null);
+    if (storeRef.current === null) {
+        storeRef.current = createStore();
+    }
+    const store = storeRef.current;
+
     useEffect(() => {
         const {
             jumpEnabled = true,
@@ -39,7 +48,7 @@ const Inject = (props: IProps) => {
 
         const dispatch = store.dispatch as ReduxThunkDispatch;
 
-        const actions = new DiscussActions();
+        const actions = new DiscussActions(undefined, historyEnabled);
         if (prefetched) {
             if (thread !== undefined) {
                 const args = {
@@ -64,6 +73,7 @@ const Inject = (props: IProps) => {
         <Provider store={store}>
             <Discuss entityId={entityId}
                     entityType={entityType}
+                    historyEnabled={historyEnabled}
                     readonly={readonly}
                     highlightThreadPost={highlightThreadPost}
             />

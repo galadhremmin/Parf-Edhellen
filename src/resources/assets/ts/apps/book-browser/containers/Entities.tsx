@@ -109,6 +109,8 @@ const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
     isEmpty: state.categories.isEmpty,
     languages: state.categories.common,
     leadWithUnusual: state.entities.leadWithUnusual,
+    broader: state.entities.broader,
+    narrower: state.entities.narrower,
     unusualLanguages: state.categories.unusual,
 });
 

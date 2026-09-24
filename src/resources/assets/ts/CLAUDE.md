@@ -40,6 +40,8 @@ export default registerApp(Inject);
 
 **Important:** There is no global Redux store. Each app creates its own store at module level. Apps do not share state through Redux — use `GlobalEventConnector` for cross-app communication.
 
+**Exception:** an app that can be mounted more than once on the same page (`discuss`, which the versions page mounts per lexical entry version) must create its store *per instance* via `useRef`, not at module level — otherwise the instances share one store and overwrite each other's state.
+
 ## File & Naming Conventions
 
 Every component lives in its own folder with co-located files:

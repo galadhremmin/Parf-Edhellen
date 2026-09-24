@@ -8,16 +8,21 @@ use App\Http\Controllers\Traits\CanMapGloss;
 use App\Http\Controllers\Traits\CanValidateGloss;
 use App\Models\Account;
 use App\Models\Contribution;
+use App\Models\Gloss;
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDetail;
 use App\Models\Sense;
-use App\Models\Gloss;
+use App\Models\SenseConcept;
 use App\Models\Word;
-use App\Security\RoleConstants;
+use App\Repositories\ConceptRepository;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
+use App\Security\RoleConstants;
+use App\Services\Senses\SenseConceptEditor;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LexicalEntryContributionController extends Controller implements IContributionController
 {
@@ -30,12 +35,19 @@ class LexicalEntryContributionController extends Controller implements IContribu
 
     private LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
+    private SenseConceptEditor $_senseConceptEditor;
+
+    private ConceptRepository $_conceptRepository;
+
     public function __construct(BookAdapter $bookAdapter, LexicalEntryRepository $lexicalEntryRepository,
-        LexicalEntryInflectionRepository $lexicalEntryInflectionRepository)
+        LexicalEntryInflectionRepository $lexicalEntryInflectionRepository, SenseConceptEditor $senseConceptEditor,
+        ConceptRepository $conceptRepository)
     {
         $this->_bookAdapter = $bookAdapter;
         $this->_lexicalEntryRepository = $lexicalEntryRepository;
         $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
+        $this->_senseConceptEditor = $senseConceptEditor;
+        $this->_conceptRepository = $conceptRepository;
     }
 
     public function getViewModel(Contribution $contribution): ViewModel
@@ -119,7 +131,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
     /**
      * HTTP GET. Opens a view for editing a gloss contribution.
      *
-     * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return array|View|Factory
      */
     public function edit(Contribution $contribution, Request $request)
     {
@@ -142,7 +154,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
     /**
      * Shows a form for a new contribution.
      *
-     * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return array|View|Factory
      */
     public function create(Request $request)
     {
@@ -170,6 +182,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
         if ($lexicalEntry !== null) {
             $lexicalEntry->keywords = $this->_lexicalEntryRepository->getKeywords($lexicalEntry->sense_id, $lexicalEntry->id);
             $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntry($lexicalEntry->id);
+            $this->describeSense($lexicalEntry);
         }
 
         return $request->ajax()
@@ -181,6 +194,21 @@ class LexicalEntryContributionController extends Controller implements IContribu
             ] : ($prefillWord !== null ? [
                 'prefill' => ['word' => ['word' => $prefillWord]],
             ] : []));
+    }
+
+    /**
+     * Tells the form what the entry's sense is already taken to mean, so that a contributor can see what they would
+     * be changing rather than choosing blind.
+     */
+    private function describeSense(LexicalEntry $lexicalEntry): void
+    {
+        $conceptId = SenseConcept::where('sense_id', $lexicalEntry->sense_id)->value('concept_id');
+        if ($conceptId === null || $lexicalEntry->sense === null) {
+            return;
+        }
+
+        $lexicalEntry->sense->concept_id = $conceptId;
+        $lexicalEntry->sense->concept = $this->_conceptRepository->describe($conceptId);
     }
 
     public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): mixed
@@ -215,6 +243,8 @@ class LexicalEntryContributionController extends Controller implements IContribu
 
         $entity->_glosses = $glosses;
         $entity->_details = $details;
+        // the meaning the contributor chose, which belongs to the sense and is applied once the sense exists
+        $entity->_concept_id = $conceptId;
 
         $contribution->word = $word;
         $contribution->sense = $sense;
@@ -260,8 +290,15 @@ class LexicalEntryContributionController extends Controller implements IContribu
 
         $keywords = json_decode($contribution->keywords, true);
 
-        $entry = $this->_lexicalEntryRepository->saveLexicalEntry($contribution->word, 
+        $conceptId = $payload['_concept_id'] ?? null;
+        unset($payload['_concept_id']);
+
+        $entry = $this->_lexicalEntryRepository->saveLexicalEntry($contribution->word,
             $contribution->sense, $entry, $glosses, $keywords, $details);
+
+        if ($conceptId !== null) {
+            $this->_senseConceptEditor->choose($entry->sense, intval($conceptId), $request->user());
+        }
 
         return $entry->id;
     }

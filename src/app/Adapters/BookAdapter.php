@@ -681,7 +681,12 @@ class BookAdapter
         ));
     }
 
-    public function adaptLexicalEntryVersions(Collection $values, int $latestVersionId)
+    /**
+     * Transforms the specified lexical entry versions to a view model.
+     *
+     * @param  array  $commentsById  - an associative array mapping version IDs with number of posts (optional)
+     */
+    public function adaptLexicalEntryVersions(Collection $values, int $latestVersionId, array $commentsById = [])
     {
         $word = null;
         $versions = [];
@@ -694,6 +699,7 @@ class BookAdapter
 
             foreach ($versions as $version) {
                 $version->_is_latest = $version->id === $latestVersionId;
+                $version->_has_discussion = ($commentsById[$version->id] ?? 0) > 0;
 
                 $changes = [];
                 foreach (LexicalEntryChange::cases() as $change) {

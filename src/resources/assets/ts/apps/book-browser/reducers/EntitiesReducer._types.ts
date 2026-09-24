@@ -1,4 +1,4 @@
-import type { IGlossaryResponse, ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import type { IGlossaryResponse, ILanguageEntity, IRelatedConcept } from '@root/connectors/backend/IBookApi';
 import type { IReduxAction } from '@root/_types';
 
 export interface IEntitiesAction<T = IGlossaryResponse> extends IReduxAction {
@@ -20,6 +20,10 @@ export interface IEntitiesState {
     languages: ILanguageEntity[];
     leadWithUnusual?: boolean;
     loading: boolean;
+    /** What the word that was searched for is a kind of. */
+    broader?: IRelatedConcept[];
+    /** The kinds of the word that was searched for. */
+    narrower?: IRelatedConcept[];
     single: boolean;
     word: string;
 }

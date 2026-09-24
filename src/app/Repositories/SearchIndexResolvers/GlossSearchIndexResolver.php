@@ -8,13 +8,17 @@ use App\Models\Initialization\Morphs;
 use App\Models\LexicalEntry;
 use App\Models\SearchKeyword;
 use App\Models\Sense;
+use App\Models\Word;
+use App\Repositories\ConceptRepository;
 use App\Repositories\DiscussRepository;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
+use App\Repositories\SenseTermRepository;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
@@ -26,17 +30,24 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     private BookAdapter $_bookAdapter;
 
+    private SenseTermRepository $_senseTermRepository;
+
+    private ConceptRepository $_conceptRepository;
+
     private ?string $_lexicalEntryMorph;
 
     private ?string $_senseMorph;
 
     public function __construct(LexicalEntryRepository $lexicalEntryRepository, LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
-        DiscussRepository $discussRepository, BookAdapter $bookAdapter)
+        DiscussRepository $discussRepository, BookAdapter $bookAdapter, SenseTermRepository $senseTermRepository,
+        ConceptRepository $conceptRepository)
     {
         $this->_lexicalEntryRepository = $lexicalEntryRepository;
         $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
         $this->_discussRepository = $discussRepository;
         $this->_bookAdapter = $bookAdapter;
+        $this->_senseTermRepository = $senseTermRepository;
+        $this->_conceptRepository = $conceptRepository;
 
         $this->_lexicalEntryMorph = Morphs::getAlias(LexicalEntry::class);
         $this->_senseMorph = Morphs::getAlias(Sense::class);
@@ -44,6 +55,9 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     public function resolve(SearchIndexSearchValue $value): array
     {
+        $narrower = collect();
+        $broader = collect();
+
         if ($value instanceof SpecificEntitiesSearchValue) {
             $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntries($value->getIds());
 
@@ -81,29 +95,41 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             } else {
 
                 try {
-                    $entities = $query->select('entity_name', 'entity_id') //
+                    $entities = $query->select('entity_name', 'entity_id', 'normalized_keyword', 'is_keyword_language_invented') //
                         ->get() //
                         ->groupBy('entity_name');
                 } catch (QueryException $_) {
                     $entities = collect([]);
                 }
 
-                $entityIds = [];
+                $matched = $entities->get($this->_lexicalEntryMorph, collect());
+                $directIds = $matched->pluck('entity_id')->unique();
+                $senseIds = $this->sensesWorthWidening($matched, $entities->get($this->_senseMorph, collect()));
 
-                // Senses are *not* supported by the search index, so with this shim, the 'sense' is resolved to
-                // whatever lexical entry it might be associated with. This ensures that all relevant lexical entries are found.
-                if ($entities->has($this->_senseMorph)) {
-                    // we've got the sense, now obtain lexical entries
-                    $entityIds = LexicalEntry::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
-                        ->pluck('id')
-                        ->all();
+                // fulltext has no notion of plurals or compounds: "trees" finds senses glossed "tree" by headword
+                $headwordSenseIds = config('ed-senses.term_search')
+                    ? $this->_senseTermRepository->senseIdsMatching($value->getWord())
+                    : collect();
+                $senseIds = $senseIds->merge($headwordSenseIds);
+
+                // WordNet's name for a meaning is often no word of the dictionary: nothing is glossed "bungalow",
+                // yet a Quenya word means one. Such a search can only be answered through the concept itself.
+                if ($senseIds->isEmpty() && $directIds->isEmpty()) {
+                    $headwordSenseIds = $this->_conceptRepository->senseIdsUnder(
+                        $this->_conceptRepository->conceptIdsForLabel($this->_senseTermRepository->keysFor($value->getWord())),
+                        /* inclusive = */ true
+                    );
+                    $senseIds = $headwordSenseIds;
                 }
 
-                if ($entities->has($this->_lexicalEntryMorph)) {
-                    $entityIds = array_merge(
-                        $entityIds,
-                        $entities[$this->_lexicalEntryMorph]->pluck('entity_id')->all()
-                    );
+                // and the taxonomy widens it further: a search for trees answers with the oaks and the alders too
+                $subjects = collect();
+                if ($headwordSenseIds->isNotEmpty()) {
+                    $subjects = $this->_conceptRepository->subjectConceptIds($headwordSenseIds->all());
+
+                    if (config('ed-senses.widening')) {
+                        $senseIds = $senseIds->merge($this->_conceptRepository->senseIdsUnder($subjects));
+                    }
                 }
 
                 $filters = [];
@@ -114,12 +140,21 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                     $filters['speech_id'] = $value->getSpeechIds();
                 }
 
-                $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
-                    $entityIds,
+                $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesBySenses(
+                    $senseIds->unique()->values()->all(),
                     $value->getLanguageId(),
                     $value->getIncludesOld(),
-                    $filters
+                    $filters,
+                    $directIds->all()
                 );
+
+                // and both ways through the taxonomy are offered: the kinds of it, and what it is a kind of
+                if (config('ed-senses.concept_search') && $subjects->isNotEmpty()) {
+                    $narrower = $this->_conceptRepository->narrowerFor($headwordSenseIds->all(),
+                        (int) config('ed-senses.concept_search_limit'));
+                    $broader = $this->_conceptRepository->broaderFor($headwordSenseIds->all(),
+                        (int) config('ed-senses.broader_limit'));
+                }
             }
         }
 
@@ -132,7 +167,54 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             : collect([]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, $lexicalEntryIds);
 
-        return $this->_bookAdapter->adaptLexicalEntries($lexicalEntries, $inflections, $comments, $value->getWord());
+        $entities = $this->_bookAdapter->adaptLexicalEntries($lexicalEntries, $inflections, $comments, $value->getWord());
+        if ($narrower->isNotEmpty()) {
+            $entities['narrower'] = $narrower->values()->all();
+        }
+
+        if ($broader->isNotEmpty()) {
+            $entities['broader'] = $broader->values()->all();
+        }
+
+        return $entities;
+    }
+
+    /**
+     * The senses of the matches that justify widening the search. A match on a word's own spelling, or on the very
+     * sense a word is glossed with, says the reader is after that meaning, so every word sharing it belongs in the
+     * answer. A match on some other word of a gloss says no such thing: "Day of the Two Trees" mentions trees, but
+     * what it means is a day.
+     *
+     * @param  Collection<int, SearchKeyword>  $entryMatches  matches against lexical entries
+     * @param  Collection<int, SearchKeyword>  $senseMatches  matches against the legacy sense rows
+     * @return Collection<int, int> sense IDs
+     */
+    private function sensesWorthWidening(Collection $entryMatches, Collection $senseMatches): Collection
+    {
+        $entries = LexicalEntry::whereIn('id', $entryMatches->pluck('entity_id'))
+            ->with('word:id,word')
+            ->get(['id', 'sense_id', 'word_id'])
+            ->keyBy('id');
+        $senseText = Word::whereIn('id', $entries->pluck('sense_id')->merge($senseMatches->pluck('entity_id')))
+            ->pluck('word', 'id');
+
+        $spelled = fn (?string $word, SearchKeyword $keyword) => $word !== null
+            && StringHelper::transliterate($word, false) === $keyword->normalized_keyword;
+
+        // plain collections of IDs: merging models with integers is not the same operation
+        $fromEntries = collect($entryMatches
+            ->filter(fn (SearchKeyword $keyword) => $entries->has($keyword->entity_id)
+                && ($spelled($entries[$keyword->entity_id]->word?->word, $keyword)
+                    || $spelled($senseText->get($entries[$keyword->entity_id]->sense_id), $keyword)))
+            ->map(fn (SearchKeyword $keyword) => $entries[$keyword->entity_id]->sense_id)
+            ->all());
+
+        $fromSenses = collect($senseMatches
+            ->filter(fn (SearchKeyword $keyword) => $spelled($senseText->get($keyword->entity_id), $keyword))
+            ->map(fn (SearchKeyword $keyword) => $keyword->entity_id)
+            ->all());
+
+        return $fromEntries->merge($fromSenses)->unique()->values();
     }
 
     public function resolveId(int $entityId): array

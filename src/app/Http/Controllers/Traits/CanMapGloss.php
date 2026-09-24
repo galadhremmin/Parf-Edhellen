@@ -6,6 +6,7 @@ use App\Helpers\StringHelper;
 use App\Models\Gloss;
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDetail;
+use App\Models\Word;
 use Illuminate\Http\Request;
 
 trait CanMapGloss
@@ -14,6 +15,7 @@ trait CanMapGloss
      * @return array{
      *     word: string,
      *     sense: string,
+     *     conceptId: int|null,
      *     keywords: string[],
      *     glosses: Gloss[],
      *     details: LexicalEntryDetail[]
@@ -22,7 +24,12 @@ trait CanMapGloss
     public function mapLexicalEntry(LexicalEntry $lexicalEntry, Request $request): array
     {
         $word = $request->input('word.word');
-        $sense = $request->input('sense.word.word');
+
+        // a sense chosen from those in use is taken by ID, so the entry joins that very sense rather than a
+        // near-identical one differing by a comma
+        $senseId = $request->input('sense.id');
+        $sense = $senseId ? Word::find($senseId)?->word : null;
+        $sense ??= $request->input('sense.word.word');
 
         $lexicalEntry->account_id = intval($request->input('account.id') ?: $request->input('account_id'));
         $lexicalEntry->language_id = intval($request->input('language_id'));
@@ -69,6 +76,9 @@ trait CanMapGloss
         return [
             'word' => $word,
             'sense' => $sense,
+            'conceptId' => $request->input('sense.concept_id') === null
+                ? null
+                : intval($request->input('sense.concept_id')),
             'keywords' => $keywords,
             'glosses' => $glosses,
             'details' => $details,

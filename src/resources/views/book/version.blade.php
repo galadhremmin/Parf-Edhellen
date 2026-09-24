@@ -50,11 +50,15 @@
     </div>
   </div>
 
+  {{-- Only the latest version accepts new posts; deprecated versions are rendered only when they
+       already carry a conversation, to avoid one request per version on entries with many versions. --}}
+  @if ($v->_is_latest || $v->_has_discussion)
   @include('discuss._standalone', [
     'entity_id'   => $v->id,
     'entity_type' => 'lex_entry_ver',
     'enabled'     => !! $v->_is_latest
   ])
+  @endif
 
   @endforeach
 </div>

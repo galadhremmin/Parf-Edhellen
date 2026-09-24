@@ -10,15 +10,19 @@ use App\Helpers\MarkdownParserWrapper;
 use App\Interfaces\IComposesWordOfTheDayTweet;
 use App\Interfaces\IExternalToInternalUrlResolver;
 use App\Interfaces\IFlashcardCandidateProvider;
+use App\Interfaces\IJudgesSenseConcepts;
 use App\Interfaces\IMarkdownParser;
 use App\Interfaces\IPostsTweet;
 use App\Interfaces\ISystemLanguageFactory;
+use App\Interfaces\IWordNetLexicon;
 use App\Models\Initialization\Morphs;
 use App\Models\LexicalEntryGroup;
 use App\Repositories\AuditTrailRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\Noop\NoopAuditTrailRepository;
+use App\Repositories\WordNetRepository;
 use App\Services\Flashcards\LexicalEntryCandidateProvider;
+use App\ThirdParty\Gemini\GeminiConceptFacade;
 use App\ThirdParty\Gemini\GeminiWordOfTheDayFacade;
 use App\ThirdParty\X\XApiClient;
 use Illuminate\Pagination\Paginator;
@@ -138,6 +142,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             IFlashcardCandidateProvider::class,
             LexicalEntryCandidateProvider::class,
+        );
+
+        $this->app->singleton(
+            IWordNetLexicon::class,
+            WordNetRepository::class,
+        );
+
+        $this->app->singleton(
+            IJudgesSenseConcepts::class,
+            GeminiConceptFacade::class,
         );
     }
 }

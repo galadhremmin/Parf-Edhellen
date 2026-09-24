@@ -10,6 +10,7 @@ import type { IInflectionResourceApi } from '@root/connectors/backend/IInflectio
 import type ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import type { ILogApi } from '@root/connectors/backend/ILogApi';
 import type IPasskeyApi from '@root/connectors/backend/IPasskeyApi';
+import type ISenseApi from '@root/connectors/backend/ISenseApi';
 import type { ISentenceResourceApi } from '@root/connectors/backend/ISentenceResourceApi';
 import type ISpeechResourceApi from '@root/connectors/backend/ISpeechResourceApi';
 import type { ISubscriptionApi } from '@root/connectors/backend/ISubscriptionApi';
@@ -35,6 +36,7 @@ export type DIContainerType = {
     [DI.LanguageApi]?: ILanguageApi;
     [DI.PasskeyApi]?: IPasskeyApi;
     [DI.RoleManager]?: IRoleManager;
+    [DI.SenseApi]?: ISenseApi;
     [DI.SentenceApi]?: ISentenceResourceApi;
     [DI.SpeechApi]?: ISpeechResourceApi;
     [DI.SubscriptionApi]?: ISubscriptionApi;

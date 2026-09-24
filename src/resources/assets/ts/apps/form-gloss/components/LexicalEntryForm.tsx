@@ -7,6 +7,7 @@ import GlossGroupSelect from '@root/components/Form/GlossGroupSelect';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import OptionalLabel from '@root/components/Form/OptionalLabel';
+import SenseSelect from '@root/components/Form/SenseSelect';
 import SpeechSelect from '@root/components/Form/SpeechSelect';
 import TagInput from '@root/components/Form/TagInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
@@ -71,12 +72,15 @@ function LexicalEntryForm(props: IProps) {
                     </div>
                     <div className="form-group">
                         <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
-                        <input type="text"
-                            className="form-control"
+                        <SenseSelect
+                            concept={lexicalEntry.sense.concept}
+                            conceptId={lexicalEntry.sense.conceptId}
                             id="ed-gloss-sense-word"
-                            value={lexicalEntry.sense.word.word}
-                            onChange={_onChangeNative('sense', senseTransformer)}
+                            name="ed-gloss-sense"
+                            onChange={_onChange('sense', senseTransformer)}
                             required={true}
+                            sense={lexicalEntry.sense.word.word}
+                            senseId={lexicalEntry.sense.id}
                         />
                     </div>
                     <div className="form-group">

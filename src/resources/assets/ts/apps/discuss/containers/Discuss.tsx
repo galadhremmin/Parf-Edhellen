@@ -228,8 +228,8 @@ const mapStateToProps = (state: RootReducer, ownProps: IProps) => {
     } as Partial<IProps>;
 };
 
-const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
-    const actions = new DiscussActions();
+const mapDispatchToProps = (dispatch: ReduxThunkDispatch, ownProps: IProps) => {
+    const actions = new DiscussActions(undefined, ownProps.historyEnabled !== false);
     return {
         onExistingPostChange: (ev) => {
             dispatch(actions.post({

@@ -44,6 +44,12 @@ export interface IEntitiesRequestData {
     word: string;
 }
 
+export interface IRelatedConcept {
+    /** How many entries there are to read under this concept. */
+    entries: number;
+    label: string;
+}
+
 export interface IGlossaryResponse<T = ILexicalEntryEntity> {
     languages: ILanguageEntity[] | null;
     /** True when the best overall match lives in an "unusual" language and no normal language has a direct
@@ -54,6 +60,10 @@ export interface IGlossaryResponse<T = ILexicalEntryEntity> {
         entities: T[];
         language: ILanguageEntity;
     }[];
+    /** What the search is a kind of: tree and plant for "birch". Absent when it is a kind of nothing. */
+    broader?: IRelatedConcept[];
+    /** The kinds of what was searched for: oak and beech for "tree". Absent when it has none. */
+    narrower?: IRelatedConcept[];
     sense: number[];
     single?: boolean;
 }

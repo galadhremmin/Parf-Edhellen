@@ -41,6 +41,21 @@ class LexicalEntryVersionContext implements IDiscussContext
         return true;
     }
 
+    public function postable($entityOrId, ?Account $account = null)
+    {
+        // Only the latest version of a lexical entry accepts new posts. Deprecated versions keep
+        // their conversations, but read-only.
+        $version = $entityOrId instanceof Model
+            ? $entityOrId
+            : $this->resolveById(intval($entityOrId));
+
+        if ($version === null) {
+            return false;
+        }
+
+        return $this->_lexicalEntryRepository->isLatestLexicalEntryVersion($version);
+    }
+
     public function getName(Model $entity)
     {
         if (! $entity) {
