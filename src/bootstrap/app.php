@@ -9,7 +9,6 @@ use App\Http\Middleware\LogExpensiveRequests;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\RejectCrawlers;
 use App\Http\Middleware\SafeSubstituteBindings;
-use App\Http\Middleware\TrimStrings;
 use App\Models\FailedJob;
 use App\Repositories\SystemErrorRepository;
 use App\Security\WebAuthnService;
@@ -25,9 +24,6 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\StartSession;
@@ -65,12 +61,8 @@ return Application::configure(basePath: dirname(__DIR__))
             StartSession::class,
             ShareErrorsFromSession::class,
             CustomValidateCsrfToken::class,
-            ValidatePostSize::class,
-            TrimStrings::class,
-            ConvertEmptyStringsToNull::class,
             InvalidUserGate::class,
             CarbonLocale::class,
-            CheckForMaintenanceMode::class,
             SafeSubstituteBindings::class,
         ]);
 
@@ -81,9 +73,6 @@ return Application::configure(basePath: dirname(__DIR__))
             ShareErrorsFromSession::class,
             IpGate::class,
             InvalidUserGate::class,
-            ValidatePostSize::class,
-            TrimStrings::class,
-            ConvertEmptyStringsToNull::class,
             SafeSubstituteBindings::class,
             LogExpensiveRequests::class,
         ]);
