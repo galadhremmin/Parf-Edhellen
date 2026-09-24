@@ -7,6 +7,7 @@ use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\CanGetLanguage;
 use App\Models\LexicalEntryGroup;
 use App\Models\SearchKeyword;
+use App\Models\Versioning\LexicalEntryVersion;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
 use Illuminate\Http\Request;
@@ -109,7 +110,12 @@ class BookController extends BookBaseController
             abort(404);
         }
 
-        $model = $this->_bookAdapter->adaptLexicalEntryVersions($lexicalEntries->getVersions(), $lexicalEntries->getLatestVersionId());
+        $versions = $lexicalEntries->getVersions();
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(
+            LexicalEntryVersion::class, $versions->pluck('id')->all()
+        );
+
+        $model = $this->_bookAdapter->adaptLexicalEntryVersions($versions, $lexicalEntries->getLatestVersionId(), $comments);
 
         return view('book.version', $model + [
             'user' => $request->user(),

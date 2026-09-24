@@ -29,6 +29,11 @@ class DiscussContext implements IDiscussContext
         return true;
     }
 
+    public function postable($entityOrId, ?Account $account = null)
+    {
+        return $this->available($entityOrId, $account);
+    }
+
     public function getName(Model $entity)
     {
         return null;

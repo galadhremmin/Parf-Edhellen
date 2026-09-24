@@ -33,6 +33,15 @@ interface IDiscussContext
     public function available($entityOrId, ?Account $account = null);
 
     /**
+     * Gets whether new posts may be created in the context of the specified entity. Conversations
+     * that already exist remain readable even when this returns false.
+     *
+     * @param  Model|int  $entity
+     * @return bool
+     */
+    public function postable($entityOrId, ?Account $account = null);
+
+    /**
      * Gets a friendly name for the route.
      *
      * @return string

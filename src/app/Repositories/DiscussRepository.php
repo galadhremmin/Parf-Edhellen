@@ -707,7 +707,7 @@ class DiscussRepository
 
         if ($originalPost->exists && ! $this->checkPostAuthorization($account, $originalPost, $thread)) {
             return false;
-        } elseif (! $originalPost->exists && ! $this->checkThreadAuthorization($account, $thread)) {
+        } elseif (! $originalPost->exists && ! $this->checkNewPostAuthorization($account, $thread)) {
             return false;
         }
 
@@ -913,6 +913,21 @@ class DiscussRepository
         $context = $this->_contextFactory->create($thread->entity_type);
 
         return $context->available($thread->entity_id, $account);
+    }
+
+    /**
+     * Gets whether the specified account may add a new post to the specified thread. This is stricter
+     * than `checkThreadAuthorization`, which governs visibility only.
+     */
+    private function checkNewPostAuthorization(?Account $account, ForumThread $thread)
+    {
+        if (! $this->checkThreadAuthorization($account, $thread)) {
+            return false;
+        }
+
+        $context = $this->_contextFactory->create($thread->entity_type);
+
+        return $context->postable($thread->entity_id, $account);
     }
 
     private function updateForumThread(ForumThread $thread)

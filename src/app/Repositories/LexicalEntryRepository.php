@@ -269,6 +269,19 @@ class LexicalEntryRepository
         ]);
     }
 
+    /**
+     * Gets whether the specified version is the most recent version of its lexical entry.
+     */
+    public function isLatestLexicalEntryVersion(LexicalEntryVersion $version): bool
+    {
+        $latestVersionId = LexicalEntryVersion::where('lexical_entry_id', $version->lexical_entry_id)
+            ->orderBy('created_at', 'desc') // order by latest
+            ->orderBy('id', 'desc')
+            ->value('id');
+
+        return $latestVersionId !== null && intval($latestVersionId) === intval($version->id);
+    }
+
     public function getSpecificLexicalEntryVersion(int $versionId)
     {
         $version = LexicalEntryVersion::with('glosses', 'lexical_entry_details', 'word')
