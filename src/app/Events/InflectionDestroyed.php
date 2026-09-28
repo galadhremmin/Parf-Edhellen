@@ -9,10 +9,6 @@ class InflectionDestroyed
 {
     use SerializesModels;
 
-    public Inflection $inflection;
-
-    public function __construct(Inflection $inflection)
-    {
-        $this->inflection = $inflection;
-    }
+    public function __construct(readonly Inflection $inflection)
+    {}
 }

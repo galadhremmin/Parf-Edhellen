@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Events\AccountAvatarChanged;
 use App\Events\AccountDestroyed;
+use App\Events\AccountMarkedAsSpammer;
 use App\Events\AccountPasswordChanged;
 use App\Events\AccountRoleRemove;
 use App\Events\AccountsMerged;
@@ -218,6 +219,8 @@ class AccountManager
         // Hide the account's existing activity from public surfaces.
         $this->_auditTrailRepository->hideForAccount($account);
         $this->_discussRepository->hidePostsForAccount($account);
+
+        event(new AccountMarkedAsSpammer($account, $actingAccountId));
     }
 
     public function updatePassword(Account $account, string $password): Account

@@ -45,6 +45,14 @@ Breadcrumbs::for('dashboard', function (BreadcrumbTrail $breadcrumbs) {
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Senses
+
+Breadcrumbs::for('sense-review.index', function (BreadcrumbTrail $breadcrumbs) {
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Senses awaiting review', route('sense-review.index'));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Speech
 
 Breadcrumbs::for('speech.index', function (BreadcrumbTrail $breadcrumbs) {

@@ -6,6 +6,7 @@ import ContributionResourceApiConnector from '@root/connectors/backend/Contribut
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
 import SenseApiConnector from '@root/connectors/backend/SenseApiConnector';
+import SenseReviewApiConnector from '@root/connectors/backend/SenseReviewApiConnector';
 import InflectionResourceApiConnector from '@root/connectors/backend/InflectionResourceApiConnector';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import PasskeyApiConnector from '@root/connectors/backend/PasskeyApiConnector';
@@ -39,6 +40,7 @@ export default function setupContainer() {
     setSingleton(DI.PasskeyApi, PasskeyApiConnector);
     setSingleton(DI.RoleManager, RoleManager);
     setSingleton(DI.SenseApi, SenseApiConnector);
+    setSingleton(DI.SenseReviewApi, SenseReviewApiConnector);
     setSingleton(DI.SentenceApi, SentenceResourceApiConnector);
     setSingleton(DI.SpeechApi, SpeechResourceApiConnector);
     setSingleton(DI.SubscriptionApi, SubscriptionApiConnector);

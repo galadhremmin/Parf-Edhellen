@@ -78,6 +78,8 @@ class AuditTrail extends ModelBase
 
     const ACTION_ACCOUNT_REMOVE_ROLE = 1002;
 
+    const ACTION_ACCOUNT_MARKED_AS_SPAMMER = 1003;
+
     const ACTION_INFLECTION_ADD = 1010; // Not implemented
 
     const ACTION_INFLECTION_EDIT = 1011; // Not implemented

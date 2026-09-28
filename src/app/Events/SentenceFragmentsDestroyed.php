@@ -9,10 +9,6 @@ class SentenceFragmentsDestroyed
 {
     use SerializesModels;
 
-    public Collection $sentence_fragments;
-
-    public function __construct(Collection $sentence_fragments)
-    {
-        $this->sentence_fragments = $sentence_fragments;
-    }
+    public function __construct(readonly Collection $sentence_fragments)
+    {}
 }

@@ -5,6 +5,7 @@
 use App\Http\Controllers\Resources\AccountController;
 use App\Http\Controllers\Resources\GlossController;
 use App\Http\Controllers\Resources\InflectionController;
+use App\Http\Controllers\Resources\SenseReviewController;
 use App\Http\Controllers\Resources\SentenceController;
 use App\Http\Controllers\Resources\SpeechController;
 use App\Http\Controllers\Resources\SystemErrorController;
@@ -30,6 +31,10 @@ Route::group([
     ]);
     Route::resource('sentence', SentenceController::class, [
         'only' => ['index', 'destroy'],
+    ]);
+
+    Route::resource('sense-review', SenseReviewController::class, [
+        'only' => ['index'],
     ]);
 
     Route::resource('dashboard', SystemErrorController::class, [

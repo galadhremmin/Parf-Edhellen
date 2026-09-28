@@ -15,6 +15,8 @@ const cottage = {
     id: 812,
     label: 'bungalow',
     lineage: [ 'house', 'building' ],
+    // "cottage" names this meaning, though the taxonomy calls it bungalow
+    named: true,
     synonyms: [ 'cottage' ],
 };
 

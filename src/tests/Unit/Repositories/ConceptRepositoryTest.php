@@ -21,6 +21,10 @@ class ConceptRepositoryTest extends TestCase
 
     private const OAK_TREE = '12288763-n';
 
+    private const THISTLE = '11964665-n';
+
+    private const TONIGHT = '15287856-n';
+
     private ConceptRepository $_repository;
 
     protected function setUp(): void
@@ -63,6 +67,18 @@ class ConceptRepositoryTest extends TestCase
 
         $this->assertFalse($this->_repository->assign($sense->id, ConceptSource::BACKFILL, collect([new ConceptAssignment($oak, 0)])));
         $this->assertSame([$oak->parent->id], SenseConcept::where('sense_id', $sense->id)->pluck('concept_id')->all());
+    }
+
+    public function test_the_word_a_search_names_is_offered_before_the_words_it_merely_begins()
+    {
+        // "this" names nothing in the taxonomy, but begins "thistle" and tonight's "this night"
+        $this->_repository->forSynset(self::THISTLE);
+        $tonight = $this->_repository->forSynset(self::TONIGHT);
+        ConceptLabel::firstOrCreate(['term_key' => 'this', 'concept_id' => $tonight->id]);
+
+        $offered = $this->_repository->suggestionsFor(collect(['this']), 10);
+
+        $this->assertSame('tonight', $offered->first()->label);
     }
 
     public function test_the_closure_links_every_concept_to_each_ancestor()

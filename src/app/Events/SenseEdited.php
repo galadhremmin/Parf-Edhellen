@@ -9,10 +9,6 @@ class SenseEdited
 {
     use SerializesModels;
 
-    public Sense $sense;
-
-    public function __construct(Sense $sense)
-    {
-        $this->sense = $sense;
-    }
+    public function __construct(readonly Sense $sense)
+    {}
 }

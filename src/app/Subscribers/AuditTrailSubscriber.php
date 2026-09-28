@@ -6,6 +6,7 @@ use App\Events\AccountAuthenticated;
 use App\Events\AccountAvatarChanged;
 use App\Events\AccountChanged;
 use App\Events\AccountDestroyed;
+use App\Events\AccountMarkedAsSpammer;
 use App\Events\AccountPasswordChanged;
 use App\Events\AccountPasswordForgot;
 use App\Events\AccountRoleAdd;
@@ -58,6 +59,7 @@ class AuditTrailSubscriber
             AccountAvatarChanged::class => 'onAccountAvatarChanged',
             AccountPasswordChanged::class => 'onAccountPasswordChanged',
             AccountPasswordForgot::class => 'onAccountPasswordForgot',
+            AccountMarkedAsSpammer::class => 'onAccountMarkedAsSpammer',
             PasswordReset::class => 'onAccountPasswordReset',
             Verified::class => 'onAccountEmailVerified',
             EmailVerificationSent::class => 'onAccountEmailVerificationSent',
@@ -174,6 +176,11 @@ class AuditTrailSubscriber
     public function onAccountPasswordForgot(AccountPasswordForgot $event): void
     {
         $this->_repository->store(AuditTrail::ACTION_PROFILE_FORGOT_PASSWORD, $event->account, $event->account->id, true);
+    }
+
+    public function onAccountMarkedAsSpammer(AccountMarkedAsSpammer $event): void 
+    {
+        $this->_repository->store(AuditTrail::ACTION_ACCOUNT_MARKED_AS_SPAMMER, $event->account, $event->actingAccountId);
     }
 
     public function onAccountPasswordReset(PasswordReset $event): void

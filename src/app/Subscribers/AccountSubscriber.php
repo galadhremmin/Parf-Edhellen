@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Cache;
 use App\Events\AccountsMerged;
 use App\Events\AccountDestroyed;
 use App\Jobs\MigrateAccountData;
-use App\Models\AuditTrail;
 
 class AccountSubscriber
 {

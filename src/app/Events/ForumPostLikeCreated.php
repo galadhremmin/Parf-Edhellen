@@ -9,13 +9,6 @@ class ForumPostLikeCreated
 {
     use SerializesModels;
 
-    public ForumPost $post;
-
-    public int $accountId;
-
-    public function __construct(ForumPost $post, int $accountId)
-    {
-        $this->post = $post;
-        $this->accountId = $accountId;
-    }
+    public function __construct(readonly ForumPost $post, readonly int $accountId)
+    {}
 }

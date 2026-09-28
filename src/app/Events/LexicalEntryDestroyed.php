@@ -9,16 +9,6 @@ class LexicalEntryDestroyed
 {
     use SerializesModels;
 
-    public LexicalEntry $lexicalEntry;
-
-    public ?LexicalEntry $replacementLexicalEntry;
-
-    public int $accountId;
-
-    public function __construct(LexicalEntry $lexicalEntry, ?LexicalEntry $replacement = null, $accountId = 0)
-    {
-        $this->lexicalEntry = $lexicalEntry;
-        $this->replacementLexicalEntry = $replacement;
-        $this->accountId = $accountId;
-    }
+    public function __construct(readonly LexicalEntry $lexicalEntry, readonly ?LexicalEntry $replacementLexicalEntry = null, readonly int $accountId = 0)
+    {}
 }

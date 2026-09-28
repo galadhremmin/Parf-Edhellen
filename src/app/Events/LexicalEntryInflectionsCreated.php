@@ -10,16 +10,6 @@ class LexicalEntryInflectionsCreated
 {
     use SerializesModels;
 
-    public LexicalEntry $lexicalEntry;
-
-    public Collection $lexicalEntryInflections;
-
-    public int $incremental;
-
-    public function __construct(LexicalEntry $lexicalEntry, Collection $inflections, bool $incremental)
-    {
-        $this->lexicalEntry = $lexicalEntry;
-        $this->lexicalEntryInflections = $inflections;
-        $this->incremental = $incremental;
-    }
+    public function __construct(readonly LexicalEntry $lexicalEntry, readonly Collection $lexicalEntryInflections, readonly bool $incremental)
+    {}
 }

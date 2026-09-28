@@ -11,6 +11,8 @@ enum ConceptOutcome: string
     case ASSIGNED_BY_RULE = 'assigned by rule';
     case INHERITED = 'inherited from the headword';
     case NOT_A_CONCEPT = 'not a concept';
+    // the sense was not a meaning but a mis-transcription: its entries were moved to the wording they should have had
+    case REWORDED = 'reworded';
     case NEEDS_REVIEW = 'waiting for an editor';
     case ALREADY_ASSIGNED = 'already assigned';
     case LEFT_AS_IS = 'left as it was';

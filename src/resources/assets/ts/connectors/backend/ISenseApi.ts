@@ -6,6 +6,8 @@ export interface IConceptSuggestion {
     label: string;
     /** What it is a kind of, nearest first: house, building. */
     lineage: string[];
+    /** Whether the search names this meaning, or merely begins one of the words it goes by. */
+    named: boolean;
     /** The other words it goes by: WordNet calls one meaning both bungalow and cottage. */
     synonyms: string[];
 }
