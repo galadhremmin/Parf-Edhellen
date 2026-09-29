@@ -469,7 +469,8 @@ class WebAuthnService
             ]);
 
             // Update account has_passkeys flag
-            $account->update(['has_passkeys' => true]);
+            $account->has_passkeys = true;
+            $account->save();
 
             // Session already deleted in transaction, no need to delete again
             return $credential;
@@ -833,7 +834,8 @@ class WebAuthnService
             }
 
             // Update account's last_passkey_auth_at
-            $masterAccount->update(['last_passkey_auth_at' => Carbon::now()]);
+            $masterAccount->last_passkey_auth_at = Carbon::now();
+            $masterAccount->save();
 
             // Session already deleted in transaction, no need to delete again
             return $masterAccount;
@@ -929,7 +931,8 @@ class WebAuthnService
         // Update has_passkeys flag if no more active credentials
         $hasActiveCredentials = $account->activeWebauthnCredentials()->count() > 0;
         if (! $hasActiveCredentials) {
-            $account->update(['has_passkeys' => false]);
+            $account->has_passkeys = false;
+            $account->save();
         }
     }
 

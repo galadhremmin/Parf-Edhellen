@@ -36,8 +36,7 @@ class SystemErrorRepository
         }
 
         $error = $exception->getFile().':'.$exception->getLine()."\n". //
-            $exception->getTraceAsString()."\n\n". //
-            print_r($request->cookie(), true)."\n";
+            $exception->getTraceAsString();
 
         if ($exception instanceof SuspiciousBotActivityException && $exception->getAssessmentResult() !== null) {
             $error .= "\n\n".'Recaptcha assessment result: '.print_r($exception->getAssessmentResult(), true);

@@ -14,7 +14,7 @@ class AccountSecurityActivity
      * Creates a new account security activity event.
      *
      */
-    public static function fromRequest(Request $request, Account $account, string $type, AccountSecurityActivityResultEnum $result, ?array $assessmentResult = null)
+    public static function fromRequest(Request $request, Account $account, string $type, AccountSecurityActivityResultEnum $result, ?array $assessmentResult = null, ?Account $authenticatedAccount = null)
     {
         return new self(
             $account,
@@ -22,13 +22,14 @@ class AccountSecurityActivity
             $result,
             $request->ip(),
             $request->userAgent(),
-            $assessmentResult
+            $assessmentResult,
+            $authenticatedAccount
         );
     }
 
     /**
      * Creates a new account security activity event.
      */
-    public function __construct(readonly Account $account, readonly string $type, readonly AccountSecurityActivityResultEnum $result, readonly ?string $ipAddress = null, readonly ?string $userAgent = null, readonly ?array $assessmentResult = null)
+    public function __construct(readonly Account $account, readonly string $type, readonly AccountSecurityActivityResultEnum $result, readonly ?string $ipAddress = null, readonly ?string $userAgent = null, readonly ?array $assessmentResult = null, readonly ?Account $authenticatedAccount = null)
     {}
 }

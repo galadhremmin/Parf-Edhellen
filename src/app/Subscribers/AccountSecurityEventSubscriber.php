@@ -30,6 +30,7 @@ class AccountSecurityEventSubscriber
         
         AccountSecurityEvent::create([
             'account_id' => $event->account->id,
+            'authenticated_account_id' => $event->authenticatedAccount?->id,
             'type' => $event->type,
             'assessment' => json_encode($assessment, JSON_PRETTY_PRINT),
             'result' => $event->result->value,

@@ -100,6 +100,13 @@ class AccountController extends Controller
         $this->blockAdministratorChanges($account, $request->user());
 
         if ($role->name === RoleConstants::Root) {
+            // Only the root account itself can grant the Root role. Without this check,
+            // any administrator could escalate themselves (or others) to Root on a
+            // deployment where no root account exists yet.
+            if (! $request->user()->isRoot()) {
+                abort(403, 'Only the root account can assign the Root role.');
+            }
+
             // There can only be one root account
             $root = $this->_accountManager->getRootAccount();
             if ($root !== null && $root->id !== $account->id) {

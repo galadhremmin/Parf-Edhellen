@@ -22,12 +22,18 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     /**
      * The attributes that are mass assignable.
      *
+     * This list is intentionally minimal: only ordinary, user-editable profile fields.
+     * Everything security-sensitive (password, identity, e-mail, role-adjacent flags,
+     * verification timestamps, ...) must be assigned explicitly in trusted code such
+     * as AccountManager.
+     *
      * @var array
      */
     protected $fillable = [
-        'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id',
-        'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'is_spammer', 'password', 'is_passworded',
-        'is_master_account', 'master_account_id', 'email_verified_at', 'has_passkeys', 'last_passkey_auth_at',
+        'nickname',
+        'profile',
+        'has_avatar',
+        'feature_background_url',
     ];
 
     /**

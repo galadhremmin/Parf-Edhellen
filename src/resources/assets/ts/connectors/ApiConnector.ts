@@ -28,7 +28,7 @@ import ValidationError from './ValidationError';
 import { ApiTimeoutInMilliseconds } from '../config';
 
 export default class ApiConnector implements IApiBaseConnector, IReportErrorApi {
-    private _abortController: AbortController;
+    private _abortController: AbortController | null = null;
     
     constructor(
         private _apiPathName: string = ApiPath,
@@ -36,7 +36,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode) {
         this._resetAbortController();
         window.addEventListener('beforeunload', () => {
-            this._abortController.abort();
+            this._abortController?.abort();
         });
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
@@ -136,16 +136,21 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Default XMLHTTPRequest configuration.
      */
     public get config() {
+        const headers: Record<string, string> = {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        };
+
+        const token = Cookies.get('XSRF-TOKEN');
+        if (token) {
+            headers['X-XSRF-TOKEN'] = token;
+        }
+
         const cfg: FetchRequestConfig = {
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
-                'X-Requested-With': 'XMLHttpRequest',
-            },
+            headers,
             timeout: ApiTimeoutInMilliseconds,
             withCredentials: true,
-            signal: this._abortController.signal,
+            signal: this._abortController?.signal,
         };
         return cfg;
     }

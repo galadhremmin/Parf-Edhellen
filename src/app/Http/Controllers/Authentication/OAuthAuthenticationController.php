@@ -57,28 +57,39 @@ class OAuthAuthenticationController extends AuthenticationController
             $provider = self::getProvider($providerName);
             $providerUser = FacadesSocialite::driver($provider->name_identifier)->user();
 
+            $subject = $providerUser->getId();
+            $email = $providerUser->getEmail();
+
             $user = Account::where([
-                ['email', '=', $providerUser->getEmail()],
                 ['authorization_provider_id', '=', $provider->id],
+                ['identity', '=', $subject],
             ])->first();
 
             $first = false;
             if ($user === null) {
+                if (empty($email)) {
+                    return redirect()->route('login')->with('error',
+                        'Your '.$provider->name.' account did not share an e-mail address. '.
+                        'Please sign in with another method.');
+                }
+
                 $user = $this->_accountManager->createAccount(
-                    $providerUser->getEmail(),
-                    $providerUser->getId(),
+                    $email,
+                    $subject,
                     $provider->id,
                     null,
                     $providerUser->getName()
                 );
 
                 $first = true;
-            }
-
-            if ($first) {
                 event(AccountSecurityActivity::fromRequest($request, $user, 'registration', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult));
             } else {
-                event(AccountSecurityActivity::fromRequest($request, $user, 'login', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult));
+                $authenticatedAs = $user;
+                if ($user->master_account_id !== null) {
+                    $user = $user->master_account;
+                }
+
+                event(AccountSecurityActivity::fromRequest($request, $user, 'login', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult, $authenticatedAs));
             }
 
             return $this->doLogin($request, $user, $first, /* remember: */ true);

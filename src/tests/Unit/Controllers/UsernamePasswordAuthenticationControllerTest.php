@@ -74,7 +74,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
             ->with('test@example.com', 'password123')
             ->andReturn(true);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -122,7 +122,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
             ->with('test@example.com', 'wrongpassword')
             ->andReturn(false);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -163,7 +163,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
             ->with('test@example.com', 'password123')
             ->andReturn(true);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -214,7 +214,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('newuser@example.com')
             ->andReturn(null);
         $accountManager
@@ -287,7 +287,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('existing@example.com')
             ->andReturn($existingAccount);
 
@@ -320,7 +320,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
     {
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('nonexistent@example.com')
             ->andReturn(null);
 
@@ -343,7 +343,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -367,7 +367,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 

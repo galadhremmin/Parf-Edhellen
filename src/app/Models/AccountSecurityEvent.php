@@ -10,6 +10,7 @@ class AccountSecurityEvent extends ModelBase
 
     protected $fillable = [
         'account_id',
+        'authenticated_account_id',
         'type',
         'assessment',
         'result',
@@ -23,6 +24,17 @@ class AccountSecurityEvent extends ModelBase
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * The account that actually authenticated, when the security event is
+     * recorded against a different (e.g. master) account. Null otherwise.
+     *
+     * @return BelongsTo<Account>
+     */
+    public function authenticatedAccount(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'authenticated_account_id');
     }
 }
 

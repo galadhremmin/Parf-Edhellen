@@ -728,7 +728,7 @@ class DiscussRepository
                     'number_of_likes' => 0,
 
                     'content' => $originalPost->content,
-                    'parent_form_post_id' => $originalPost->parent_form_post_id,
+                    'parent_forum_post_id' => $originalPost->parent_forum_post_id,
                 ]);
 
                 // Abandon the original post by pointing at the post we just created.

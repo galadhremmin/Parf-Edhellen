@@ -57,10 +57,7 @@ class AccountManager
 
     public function createAccount(string $username, ?string $identity = null, ?int $providerId = null, ?string $password = null, ?string $name = null): Account
     {
-        $firstAccountThusAdmin = Account::count() === 0;
-        $nickname = $firstAccountThusAdmin
-            ? 'Administrator'
-            : $this->getNextAvailableNickname($name);
+        $nickname = $this->getNextAvailableNickname($name);
 
         if ($providerId !== null) {
             AuthorizationProvider::findOrFail($providerId);
@@ -74,23 +71,17 @@ class AccountManager
             return $user;
         }
 
-        $user = Account::create([
-            'email' => $username,
-            'identity' => $identity,
-            'nickname' => $nickname,
-
-            'authorization_provider_id' => $providerId,
-            'is_passworded' => ! empty($password),
-            'is_master_account' => ! empty($password),
-            'password' => ! empty($password) ? Hash::make($password) : null,
-        ]);
-
-        // Important!
-        // The first user ever created is assumed to have been created by an administrator
-        // of the website, and thus assigned the role Administrator.
-        if ($firstAccountThusAdmin) {
-            $user->addMembershipTo(RoleConstants::Administrators);
-        }
+        // Security-sensitive attributes are assigned explicitly rather than through mass
+        // assignment (Account::$fillable is intentionally minimal).
+        $user = new Account();
+        $user->nickname = $nickname;
+        $user->email = $username;
+        $user->identity = $identity;
+        $user->authorization_provider_id = $providerId;
+        $user->is_passworded = ! empty($password);
+        $user->is_master_account = ! empty($password);
+        $user->password = ! empty($password) ? Hash::make($password) : null;
+        $user->save();
 
         $user->addMembershipTo(RoleConstants::Users);
 
@@ -107,24 +98,26 @@ class AccountManager
             throw new Exception('Attempting to create a master account for a master account. There can only be one master account per account.');
         }
 
-        if ($this->getAccountByUsername($account->email) !== null) {
+        if ($this->getMasterAccountByEmail($account->email) !== null) {
             throw new Exception(sprintf('A master account already exists for account %d.', $account->id));
         }
 
-        $masterAccount = Account::create([
-            'email' => $account->email,
-            'nickname' => $account->nickname,
-            'tengwar' => $account->tengwar,
-            'profile' => $account->profile,
-            'has_avatar' => $account->has_avatar,
-            'feature_background_url' => $account->feature_background_url,
-            'email_verified_at' => $account->email_verified_at,
-            'authorization_provider_id' => null,
-            'master_account_id' => null,
-            'identity' => 'MASTER|'.$account->email,
-            'is_master_account' => 1,
-            'is_passworded' => 0,
-        ]);
+        // Security-sensitive attributes are assigned explicitly rather than through mass
+        // assignment (Account::$fillable is intentionally minimal).
+        $masterAccount = new Account();
+        $masterAccount->email = $account->email;
+        $masterAccount->nickname = $account->nickname;
+        $masterAccount->tengwar = $account->tengwar;
+        $masterAccount->profile = $account->profile;
+        $masterAccount->has_avatar = $account->has_avatar;
+        $masterAccount->feature_background_url = $account->feature_background_url;
+        $masterAccount->email_verified_at = $account->email_verified_at;
+        $masterAccount->authorization_provider_id = null;
+        $masterAccount->master_account_id = null;
+        $masterAccount->identity = 'MASTER|'.$account->email;
+        $masterAccount->is_master_account = true;
+        $masterAccount->is_passworded = false;
+        $masterAccount->save();
 
         foreach ($account->roles as $role) {
             $masterAccount->addMembershipTo($role->name);
@@ -240,7 +233,7 @@ class AccountManager
         return $account;
     }
 
-    public function getAccountByUsername(?string $username): ?Account
+    public function getMasterAccountByEmail(?string $username): ?Account
     {
         if (empty($username)) {
             return null;
@@ -253,7 +246,7 @@ class AccountManager
 
     public function checkPasswordWithUsername(string $username, string $password): bool
     {
-        $account = self::getAccountByUsername($username);
+        $account = self::getMasterAccountByEmail($username);
         if ($account === null) {
             return false;
         }

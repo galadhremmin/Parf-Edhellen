@@ -35,7 +35,6 @@
   <meta name="twitter:title" content="@yield('title') - {{ config('ed.title') }}">
   <meta name="twitter:description" content="@yield('description', config('ed.description'))">
   <meta name="twitter:image" content="@yield('og_image', asset('/img/favicons/android-chrome-192x192.png'))">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
   <meta name="google" content="notranslate"> {{-- Remedies 'Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node' --}}

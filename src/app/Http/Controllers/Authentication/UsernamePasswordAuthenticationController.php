@@ -43,7 +43,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     if (empty($username)) {
                         $fail('You need to specify an e-mail address.');
                     } else if (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
-                        $account = $this->_accountManager->getAccountByUsername($username);
+                        $account = $this->_accountManager->getMasterAccountByEmail($username);
                         if ($account !== null) {
                             event(AccountSecurityActivity::fromRequest($request, $account, 'login', AccountSecurityActivityResultEnum::FAILURE));
                         }
@@ -55,7 +55,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         ]);
 
         $data = $validator->validate();
-        $account = $this->_accountManager->getAccountByUsername($data['username']);
+        $account = $this->_accountManager->getMasterAccountByEmail($data['username']);
         if ($account === null) {
             throw ValidationException::withMessages([
                 'username' => ['We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.'],
@@ -98,7 +98,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                 'required',
                 'email',
                 function (string $attribute, mixed $value, Closure $fail) {
-                    if ($this->_accountManager->getAccountByUsername($value) !== null) {
+                    if ($this->_accountManager->getMasterAccountByEmail($value) !== null) {
                         $fail('An account already exists with that e-mail address.');
                     }
                 },
@@ -131,7 +131,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
             'username' => [
                 'required',
                 function (string $attribute, mixed $value, Closure $fail) {
-                    $account = $this->_accountManager->getAccountByUsername($value);
+                    $account = $this->_accountManager->getMasterAccountByEmail($value);
                     if ($account === null || ! $account->is_passworded) {
                         $fail('We cannot find an account with that e-mail address.');
                     }
