@@ -1,0 +1,214 @@
+// ============================================================
+// Panels: leaves of the book
+// ============================================================
+//
+// Every Bootstrap card is a leaf, and so is `Panel`, which renders one: an
+// elevated page with a hairline border and a soft shadow, rather than a
+// white box. Inside, the same parts recur: an `ed-label` eyebrow, a
+// display-face title, a muted lead, rows of `ed-list`, and a footer that
+// pairs a short note with the panel's action.
+
+.card {
+  --bs-card-bg: var(--ed-bg-elevated);
+  --bs-card-color: var(--ed-text);
+  --bs-card-border-color: var(--ed-border);
+  --bs-card-border-radius: #{$border-radius-lg};
+  --bs-card-inner-border-radius: #{$border-radius-lg};
+  --bs-card-cap-bg: var(--ed-bg-surface);
+  --bs-card-spacer-y: 1.5rem;
+  --bs-card-spacer-x: 1.75rem;
+  box-shadow: 0 2px 10px var(--ed-shadow);
+
+  // A leaf lies on the page; the heavier Bootstrap shadows lift it off.
+  &.shadow,
+  &.shadow-sm,
+  &.shadow-lg {
+    box-shadow: 0 2px 10px var(--ed-shadow) !important;
+  }
+
+  @media (max-width: 575.98px) {
+    --bs-card-spacer-y: 1.25rem;
+    --bs-card-spacer-x: 1rem;
+  }
+}
+
+.card-title,
+.panel-title {
+  font-family: $font-family-display;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 1.25rem + 0.9vw, 1.9rem);
+  line-height: 1.2;
+  text-align: left; // the discuss app centres headings site-wide
+  text-wrap: balance;
+  margin: 0 0 0.5rem;
+}
+
+.ed-panel__lead {
+  color: var(--ed-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.ed-panel__empty {
+  margin: 0;
+  color: var(--ed-text-muted);
+  font-style: italic;
+}
+
+.ed-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-top: 1.25rem;
+
+  @media (max-width: 575.98px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.ed-panel__note {
+  max-width: 34rem;
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ed-text-muted);
+}
+
+// ------------------------------------------------------------
+// Rows: one thing per line -- what it is, then where it stands
+// ------------------------------------------------------------
+
+.ed-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--ed-border-light);
+}
+
+.ed-list__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 1rem;
+  padding: 0.85rem 0.5rem;
+  border-bottom: 1px solid var(--ed-border-light);
+  transition: background-color 0.15s ease;
+
+  &:has(input:checked) {
+    background: rgba(201, 164, 76, 0.09);
+  }
+
+  @media (max-width: 575.98px) {
+    grid-template-columns: minmax(0, 1fr);
+
+    .ed-list__status {
+      justify-content: flex-start;
+      margin-top: 0.4rem;
+    }
+  }
+}
+
+// A leading column for checkboxes, only when there is something to select.
+.ed-list--selectable .ed-list__item {
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+
+  @media (max-width: 575.98px) {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+
+    .ed-list__status {
+      grid-column: 2;
+    }
+  }
+}
+
+.ed-list__select {
+  display: flex;
+  justify-content: center;
+  color: var(--ed-text-faint);
+
+  .form-check-input {
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.ed-list__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  cursor: default;
+
+  &[for] {
+    cursor: pointer;
+  }
+}
+
+// What kind of thing the row is: a small-caps gilded kicker over its name.
+.ed-list__kind {
+  font-family: $font-family-sans-serif;
+  font-size: 0.8rem;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+  color: var(--ed-gild-text);
+}
+
+.ed-list__name {
+  overflow-wrap: anywhere;
+
+  .ed-ui {
+    margin-left: 0.35rem;
+  }
+}
+
+.ed-list__status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  text-align: right;
+
+  form {
+    margin: 0;
+  }
+}
+
+.ed-list__item.is-muted {
+  .ed-list__kind,
+  .ed-list__name {
+    color: var(--ed-text-muted);
+  }
+}
+
+// ------------------------------------------------------------
+// Chips: a state in a word
+// ------------------------------------------------------------
+
+.ed-chip {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  font-family: $font-family-tiny;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--ed-text);
+  border: 1px solid var(--ed-border);
+  border-radius: 999px;
+
+  &--gild {
+    color: var(--ed-gild-text);
+    background: rgba(201, 164, 76, 0.16);
+    border-color: transparent;
+  }
+
+  &--muted {
+    color: var(--ed-text-faint);
+  }
+
+  // Needs a person's attention: rust, as elsewhere for things people did.
+  &--warn {
+    color: var(--ed-link);
+    border-color: currentColor;
+  }
+}

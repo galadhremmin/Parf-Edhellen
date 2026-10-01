@@ -54,4 +54,8 @@ Route::middleware(['reject.crawlers', 'auth', 'verified', 'throttle:6,1'])->pref
 
     Route::post('merge/{requestId}/cancel', [AccountMergeController::class, 'cancelMerge'])
         ->name('account.cancel-merge');
+
+    Route::post('release-email/{accountId}', [AccountMergeController::class, 'releaseEmail'])
+        ->where(['accountId' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('account.release-email');
 });

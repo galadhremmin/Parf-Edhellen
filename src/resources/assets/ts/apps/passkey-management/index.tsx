@@ -46,19 +46,23 @@ const PasskeyManagement = (props: IPasskeyManagementProps) => {
     }, [passkeyApi]);
 
     useEffect(() => {
-        loadPasskeys();
+        void loadPasskeys();
     }, [loadPasskeys]);
 
     return (
         <Panel
+            eyebrow="Signing in without a password"
             title="Passkeys"
+            headingLevel={2}
             className="PasskeyManagement"
-            shadow={true}
         >
+            <p className="ed-panel__lead">
+                Sign in with your fingerprint, face or a security key. A passkey never leaves your device,
+                so there is nothing to forget, leak or phish.
+            </p>
+
             {error && (
-                <StaticAlert
-                    type="danger"
-                >
+                <StaticAlert type="danger">
                     <strong>Error:</strong> {error}
                 </StaticAlert>
             )}
@@ -69,54 +73,58 @@ const PasskeyManagement = (props: IPasskeyManagementProps) => {
                 <>
                     <PasskeyList
                         passkeys={passkeys}
-                        onPasskeyDeleted={loadPasskeys}
+                        onPasskeyDeleted={() => void loadPasskeys()}
                         passkeyApi={passkeyApi}
                     />
 
-                    <div className="PasskeyManagement__actions m-2 text-center">
-                        {! showAddForm && (
-                            <button
-                                className="btn btn-primary"
-                                onClick={() => setShowAddForm(true)}
-                            >
-                                Create Passkey
-                            </button>
-                        )}
+                    <div className="ed-panel__footer">
+                        <p className="ed-panel__note">
+                            {passkeys.length === 0
+                                ? 'You haven\'t added a passkey yet.'
+                                : 'Add one for each device you sign in from.'}
+                        </p>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => setShowAddForm(true)}
+                            disabled={showAddForm}
+                        >
+                            Add a passkey
+                        </button>
+                    </div>
 
-                        {showAddForm && (
-                            <Dialog
-                                title="Create Passkey"
-                                open={true}
-                                confirmButtonText="Start Registration"
-                                cancelButtonText="Close"
-                                onDismiss={() => {
+                    {showAddForm && (
+                        <Dialog
+                            title="Add a passkey"
+                            open={true}
+                            confirmButtonText="Start registration"
+                            cancelButtonText="Close"
+                            onDismiss={() => {
+                                setShowAddForm(false);
+                                setCanSubmitForm(false);
+                            }}
+                            onConfirm={() => {
+                                formRef.current?.requestSubmit();
+                            }}
+                            valid={canSubmitForm}
+                        >
+                            <AddPasskeyForm
+                                formRef={formRef}
+                                account={account}
+                                passkeyApi={passkeyApi}
+                                existingPasskeys={passkeys}
+                                onValidationChange={(ev) => setCanSubmitForm(ev.value)}
+                                onSuccess={() => {
+                                    setShowAddForm(false);
+                                    setCanSubmitForm(false);
+                                    void loadPasskeys();
+                                }}
+                                onCancel={() => {
                                     setShowAddForm(false);
                                     setCanSubmitForm(false);
                                 }}
-                                onConfirm={() => {
-                                    formRef.current?.requestSubmit();
-                                }}
-                                valid={canSubmitForm}
-                            >
-                                <AddPasskeyForm
-                                    formRef={formRef}
-                                    account={account}
-                                    passkeyApi={passkeyApi}
-                                    existingPasskeys={passkeys}
-                                    onValidationChange={(ev) => setCanSubmitForm(ev.value)}
-                                    onSuccess={() => {
-                                        setShowAddForm(false);
-                                        setCanSubmitForm(false);
-                                        loadPasskeys();
-                                    }}
-                                    onCancel={() => {
-                                        setShowAddForm(false);
-                                        setCanSubmitForm(false);
-                                    }}
-                                />
-                            </Dialog>
-                        )}
-                    </div>
+                            />
+                        </Dialog>
+                    )}
                 </>
             )}
         </Panel>

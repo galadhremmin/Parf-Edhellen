@@ -55,10 +55,10 @@ function Log(props: IProps) {
     }, []);
 
     return <>
-        {viewsPerDay && viewsPerDay.length > 0 && <Panel title={<>Search views per hour <small className="text-muted fs-6 fw-normal">last 30 days</small></>} shadow={true}>
+        {viewsPerDay && viewsPerDay.length > 0 && <Panel title={<>Search views per hour <small className="text-muted fs-6 fw-normal">last 30 days</small></>}>
             <ViewsGraph data={viewsPerDay} />
         </Panel>}
-        <Panel title="Exception log" shadow={true}>
+        <Panel title="Exception log">
             {errorsByWeek && <section>
                 <ErrorsByWeekBarGraph 
                     data={errorsByWeek} 

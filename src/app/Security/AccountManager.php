@@ -109,7 +109,7 @@ class AccountManager
         $masterAccount->nickname = $account->nickname;
         $masterAccount->tengwar = $account->tengwar;
         $masterAccount->profile = $account->profile;
-        $masterAccount->has_avatar = $account->has_avatar;
+        $masterAccount->has_avatar = (bool) $account->has_avatar;
         $masterAccount->feature_background_url = $account->feature_background_url;
         $masterAccount->email_verified_at = $account->email_verified_at;
         $masterAccount->authorization_provider_id = null;
@@ -137,25 +137,40 @@ class AccountManager
         return $masterAccount;
     }
 
-    public function mergeAccounts(Collection $accounts): ?Account
+    /**
+     * Links the accounts to the master account that owns their e-mail address, creating one from
+     * `$initiator` when there is none. `$initiator` must have verified the address.
+     */
+    public function mergeAccounts(Account $initiator, Collection $accounts): ?Account
     {
         if ($accounts->count() < 2) {
             return null;
+        }
+
+        if ($initiator->email_verified_at === null) {
+            throw new InvalidArgumentException('Only an account with a verified e-mail address can link accounts.');
+        }
+
+        if (! $accounts->contains('id', $initiator->id)) {
+            throw new InvalidArgumentException('The initiator must be one of the accounts being linked.');
+        }
+
+        if ($this->getUnverifiedMasterAccountFor($initiator) !== null) {
+            throw new InvalidArgumentException(sprintf('An unverified principal account holds %s.', $initiator->email));
         }
 
         foreach ($accounts as $account) {
             if ($account->is_deleted || $account->is_spammer) {
                 throw new InvalidArgumentException('Accounts flagged as deleted or spammers cannot be merged.');
             }
+
+            if ($account->email !== $initiator->email) {
+                throw new InvalidArgumentException('Only accounts that share an e-mail address can be merged.');
+            }
         }
 
-        $masterAccount = Account::where('email', $accounts->first()->email)
-            ->where('is_master_account', true)
-            ->first();
-
-        if ($masterAccount === null) {
-            $masterAccount = $this->createMasterAccount($accounts->first());
-        }
+        $masterAccount = $this->getVerifiedMasterAccountByEmail($initiator->email)
+            ?? $this->createMasterAccount($initiator);
 
         foreach ($accounts as $account) {
             if ($account->id !== $masterAccount->id) {
@@ -242,6 +257,68 @@ class AccountManager
         return Account::where('email', $username)
             ->where('is_master_account', true)
             ->first();
+    }
+
+    /**
+     * Gets the master account that owns the e-mail address. Only a verified master owns its address.
+     */
+    public function getVerifiedMasterAccountByEmail(?string $email): ?Account
+    {
+        if (empty($email)) {
+            return null;
+        }
+
+        return Account::where('email', $email)
+            ->where('is_master_account', true)
+            ->whereNotNull('email_verified_at')
+            ->first();
+    }
+
+    /**
+     * Gets an unverified master account, other than `$account`, that holds `$account`'s e-mail address.
+     */
+    public function getUnverifiedMasterAccountFor(Account $account): ?Account
+    {
+        if (empty($account->email)) {
+            return null;
+        }
+
+        return Account::where('email', $account->email)
+            ->where('is_master_account', true)
+            ->whereNull('email_verified_at')
+            ->where('id', '<>', $account->id)
+            ->first();
+    }
+
+    /**
+     * Strips an unverified master account of the e-mail address that `$claimant` has verified. The
+     * account and its content remain, but it can no longer sign in with a password or a passkey,
+     * since both look the account up by its address.
+     */
+    public function releaseEmailAddress(Account $holder, Account $claimant): void
+    {
+        if ($claimant->email_verified_at === null || $claimant->email !== $holder->email) {
+            throw new InvalidArgumentException('Only an account that has verified the address can release it.');
+        }
+
+        if (! $holder->is_master_account || $holder->email_verified_at !== null || $holder->id === $claimant->id) {
+            throw new InvalidArgumentException(sprintf('Account %d does not hold an unverified claim to the address.', $holder->id));
+        }
+
+        // Accounts linked to the holder may belong to the claimant; that needs a person to untangle.
+        if ($holder->linked_accounts()->exists()) {
+            throw new InvalidArgumentException(sprintf('Account %d has linked accounts and cannot be released automatically.', $holder->id));
+        }
+
+        $holder->email = null;
+        $holder->identity = 'RELEASED|'.$holder->id; // frees `MASTER|<e-mail>` for the owner's master account
+        $holder->is_master_account = false;
+        $holder->setRememberToken(Str::random(60));
+        $holder->save();
+
+        if (config('session.driver') === 'database') {
+            DB::table(config('session.table', 'sessions'))->where('user_id', $holder->id)->delete();
+        }
     }
 
     public function checkPasswordWithUsername(string $username, string $password): bool

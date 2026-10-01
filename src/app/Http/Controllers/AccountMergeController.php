@@ -81,6 +81,11 @@ class AccountMergeController extends Controller
                         $fail('Verify your e-mail address before creating a linking request.');
                         return;
                     }
+
+                    if ($this->_accountManager->getUnverifiedMasterAccountFor($account) !== null) {
+                        $fail('An unverified account also uses your e-mail address. Verify it or release it before linking your accounts.');
+                        return;
+                    }
                 },
             ],
         ]);
@@ -170,6 +175,30 @@ class AccountMergeController extends Controller
         return redirect()->route('account.security');
     }
 
+    /**
+     * Takes the e-mail address back from an unverified password account that holds it. The signed-in
+     * account has verified the address, which is the proof of ownership the holder never gave.
+     */
+    public function releaseEmail(Request $request, int $accountId)
+    {
+        $account = $request->user();
+        $holder = $this->_accountManager->getUnverifiedMasterAccountFor($account);
+        if ($holder === null || $holder->id !== $accountId) {
+            abort(404);
+        }
+
+        if ($holder->linked_accounts()->exists()) {
+            return redirect()->route('account.security')->withErrors([
+                'release' => 'That account has other accounts linked to it, so we cannot release it automatically. Please contact us and we will sort it out.',
+            ]);
+        }
+
+        $this->_accountManager->releaseEmailAddress($holder, $account);
+        event(AccountSecurityActivity::fromRequest($request, $holder, 'email-released', AccountSecurityActivityResultEnum::SUCCESS, null, $account));
+
+        return redirect()->route('account.security', ['released' => 1]);
+    }
+
     public function confirmMerge(Request $request)
     {
         $account = $request->user();
@@ -207,7 +236,7 @@ class AccountMergeController extends Controller
         try {
             $accountIds = collect(json_decode($request->account_ids))->merge([$account->id]);
             $accounts = Account::whereIn('id', $accountIds)->get();
-            $masterAccount = $this->_accountManager->mergeAccounts($accounts);
+            $masterAccount = $this->_accountManager->mergeAccounts($account, $accounts);
             if ($masterAccount === null) {
                 throw new Exception('Failed to merge accounts '.$accountIds->join(', '));
             }

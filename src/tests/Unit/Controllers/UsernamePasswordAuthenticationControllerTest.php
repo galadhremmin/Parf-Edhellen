@@ -280,16 +280,11 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
     public function test_register_with_password_existing_username()
     {
-        // Create partial mock account to avoid database operations
-        $existingAccount = Mockery::mock(Account::class)->makePartial();
-        $existingAccount->id = 1;
-        $existingAccount->email = 'existing@example.com';
-
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
             ->shouldReceive('getMasterAccountByEmail')
             ->with('existing@example.com')
-            ->andReturn($existingAccount);
+            ->andReturn(new Account());
 
         $controller = $this->createController($accountManager);
 

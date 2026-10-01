@@ -89,6 +89,9 @@
     <input type="hidden" name="recaptcha_token" id="recaptcha-token">
     @endif
   </form>
+  <p class="text-center mt-3">
+    Already have an account? <a href="{{ route('login') }}">Sign in</a>.
+  </p>
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">

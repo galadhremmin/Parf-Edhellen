@@ -46,7 +46,7 @@ export default function FeedUnit(props: IProps<IForumFeedRecord | ILexicalEntryV
         <div className={classNames('timeline--line', {'first': first})}>
             <span></span>
         </div>
-        <Panel type={PanelType.Info} className="flex-fill" shadow>
+        <Panel type={PanelType.Info} className="flex-fill">
             {unit.contentType === 'forum'         && <ForumFeedUnit unit={unit} visible={visible} />}
             {unit.contentType === 'lex_entry_ver' && <GlossVersionFeedUnit unit={unit} visible={visible} />}
             {unit.contentType === 'sentence'      && <SentenceFeedUnit unit={unit} visible={visible} />}

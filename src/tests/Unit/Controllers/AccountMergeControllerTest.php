@@ -315,7 +315,7 @@ class AccountMergeControllerTest extends TestCase
     {
         $email    = 'merge-test-shared@example.com';
         $account1 = $this->makeAccount($email);
-        $account2 = $this->makeAccount($email);
+        $account2 = $this->makeAccount($email, verified: true);
 
         $mail = Mail::fake();
 

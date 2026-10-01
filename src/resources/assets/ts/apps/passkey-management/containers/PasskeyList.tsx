@@ -4,27 +4,22 @@ import type { IProps } from './PasskeyList._types';
 const PasskeyList = (props: IProps) => {
     const { passkeys, onPasskeyDeleted, passkeyApi } = props;
 
+    // The empty state is the panel's footer note, next to the button that fills it.
     if (passkeys.length === 0) {
-        return (
-            <div className="PasskeyList PasskeyList--empty">
-                <p>You haven't added any passkeys yet. Add one to enhance your account security.</p>
-            </div>
-        );
+        return null;
     }
 
     return (
-        <div className="PasskeyList">
-            <div className="PasskeyList__items">
-                {passkeys.map((passkey) => (
-                    <PasskeyListItem
-                        key={passkey.id}
-                        passkey={passkey}
-                        onDeleted={onPasskeyDeleted}
-                        passkeyApi={passkeyApi}
-                    />
-                ))}
-            </div>
-        </div>
+        <ul className="ed-list PasskeyList">
+            {passkeys.map((passkey) => (
+                <PasskeyListItem
+                    key={passkey.id}
+                    passkey={passkey}
+                    onDeleted={onPasskeyDeleted}
+                    passkeyApi={passkeyApi}
+                />
+            ))}
+        </ul>
     );
 };
 
