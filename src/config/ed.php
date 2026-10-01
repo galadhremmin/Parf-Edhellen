@@ -57,6 +57,23 @@ return [
     'forum_pagination_max_pages' => 6,
     'forum_pagination_first_page_number' => 1, // This should really never have to change.
 
+    // Identity providers: name_identifier => implementation of App\Interfaces\IIdentityProvider. Each also
+    // needs its row in `authorization_providers` (name, logo) to appear on the login page; a provider missing
+    // here can't be signed in with, which is how a retired one (Facebook) is retired.
+    'identity_providers' => array_filter([
+        'google' => App\Security\Identity\GoogleIdentityProvider::class, // vouches through `email_verified`
+        'live' => App\Security\Identity\SocialiteIdentityProvider::class, // Microsoft: never trusted with the address
+        'discord' => App\Security\Identity\SocialiteIdentityProvider::class,
+        'twitter' => App\Security\Identity\SocialiteIdentityProvider::class,
+
+        // A sign-in form that lets you be anyone: for trying out account linking and e-mail verification
+        // locally. Off unless ED_TEST_IDENTITY_PROVIDER=true, and refuses to run outside APP_ENV=local.
+        // Run `php artisan ed:test-identity-provider` once to add it to the login page.
+        'test' => env('ED_TEST_IDENTITY_PROVIDER', false)
+            ? App\Security\Identity\TestIdentityProvider::class
+            : null,
+    ]),
+
     // book configuration, including resolvers.
     // NOTE: when adding new entities, ensure that the following files are available:
     //       1. resources/views/book/<morph alias>/index.blade.php
