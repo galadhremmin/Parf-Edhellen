@@ -398,6 +398,12 @@ hr.next-overlaps {
         color: var(--ed-text);
       }
 
+      // Waiting on the person: rust, like other things that need their attention.
+      &.ed-user-menu__confirm {
+        color: var(--ed-link);
+        font-weight: 600;
+      }
+
       &.active {
         font-weight: bold;
         background: var(--ed-bg-surface-hover);

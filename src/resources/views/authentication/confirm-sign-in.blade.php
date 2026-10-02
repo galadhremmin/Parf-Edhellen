@@ -3,7 +3,7 @@
 @section('title', 'Confirm it\'s you')
 
 @section('body')
-<section class="card mb-4 sign-in-challenge">
+<section class="card mb-4 inbox-code-page">
   <div class="card-body">
     <p class="ed-label mb-1">One more step</p>
     <h1 class="card-title">Check your inbox</h1>
@@ -20,7 +20,7 @@
     <form method="post" action="{{ route('auth.confirm-sign-in.check') }}">
       @csrf
       <label for="sign-in-code" class="form-label">Code</label>
-      <input type="text" name="code" id="sign-in-code" class="form-control sign-in-challenge__code @error('code') is-invalid @enderror"
+      <input type="text" name="code" id="sign-in-code" class="form-control inbox-code-page__code @error('code') is-invalid @enderror"
         inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]*" maxlength="16" autofocus required>
       @error('code')
       <div class="invalid-feedback">{{ $message }}</div>

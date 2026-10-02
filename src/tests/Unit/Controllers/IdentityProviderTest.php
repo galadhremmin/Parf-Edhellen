@@ -198,8 +198,11 @@ class IdentityProviderTest extends TestCase
 
     public function test_the_command_refuses_outside_local()
     {
+        $before = AuthorizationProvider::withTrashed()->where('name_identifier', 'test')->first()?->toArray();
+
         $this->artisan('ed:test-identity-provider')->assertFailed();
-        $this->assertFalse(AuthorizationProvider::withTrashed()->where('name_identifier', 'test')->exists());
+
+        $this->assertSame($before, AuthorizationProvider::withTrashed()->where('name_identifier', 'test')->first()?->toArray());
     }
 
     /**

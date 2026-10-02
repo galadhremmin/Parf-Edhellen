@@ -6,17 +6,17 @@ function ValidateEmailAlert() {
         <strong>
             <TextIcon icon="info-sign" />
             {' '}
-            Please validate your email address to participate in discussions.
+            Confirm your e-mail address to join the conversation.
         </strong>
         {' '}
-        We've had to disable posting for accounts with an unverified email address because of spam.{' '}
-        Fortunately, it's easy to fix: just click the link in the email we sent you when you registered.
+        Posting is only open to confirmed addresses, which keeps spam out. It takes a minute: we'll e-mail you a
+        code to enter.
         <div className="mt-2 text-center">
             <button
                 className="btn btn-primary"
                 onClick={() => window.location.href = '/account/verification-required'}
             >
-                Didn't receive the email?
+                Confirm my e-mail address
             </button>
         </div>
     </StaticAlert>;

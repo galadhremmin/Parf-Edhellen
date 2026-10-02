@@ -6,7 +6,6 @@ use App\Mail\SignInCodeMail;
 use App\Models\Account;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -21,11 +20,16 @@ use Illuminate\Support\Facades\Mail;
  */
 class SignInChallenge
 {
-    private const SESSION_KEY = 'auth.sign-in-challenge';
+    public const LIFETIME_MINUTES = InboxCode::LIFETIME_MINUTES;
 
-    public const LIFETIME_MINUTES = 10;
+    public const MAX_ATTEMPTS = InboxCode::MAX_ATTEMPTS;
 
-    public const MAX_ATTEMPTS = 5;
+    private InboxCode $_code;
+
+    public function __construct()
+    {
+        $this->_code = new InboxCode('sign-in');
+    }
 
     public function isRequiredFor(Account $account): bool
     {
@@ -37,15 +41,7 @@ class SignInChallenge
      */
     public function issue(Request $request, Account $account, bool $remember): void
     {
-        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-        $request->session()->put(self::SESSION_KEY, [
-            'account_id' => $account->id,
-            'code_hash' => Hash::make($code),
-            'expires_at' => Carbon::now()->addMinutes(self::LIFETIME_MINUTES)->getTimestamp(),
-            'attempts' => 0,
-            'remember' => $remember,
-        ]);
+        $code = $this->_code->issue($request, $account->id, ['remember' => $remember]);
 
         Mail::to($account->email)->queue(new SignInCodeMail(
             $code,
@@ -59,17 +55,14 @@ class SignInChallenge
      */
     public function pendingAccount(Request $request): ?Account
     {
-        $challenge = $request->session()->get(self::SESSION_KEY);
-        if (! is_array($challenge) || $challenge['expires_at'] < Carbon::now()->getTimestamp()) {
-            return null;
-        }
+        $pending = $this->_code->pending($request);
 
-        return Account::find($challenge['account_id']);
+        return $pending === null ? null : Account::find($pending['account_id']);
     }
 
     public function remember(Request $request): bool
     {
-        return (bool) ($request->session()->get(self::SESSION_KEY)['remember'] ?? false);
+        return (bool) ($this->_code->pending($request)['context']['remember'] ?? false);
     }
 
     /**
@@ -78,29 +71,13 @@ class SignInChallenge
      */
     public function verify(Request $request, string $code): ChallengeOutcome
     {
-        $challenge = $request->session()->get(self::SESSION_KEY);
-        if (! is_array($challenge) || $challenge['expires_at'] < Carbon::now()->getTimestamp()) {
-            $request->session()->forget(self::SESSION_KEY);
-
-            return ChallengeOutcome::Expired;
+        $pending = $this->_code->pending($request);
+        $outcome = $this->_code->check($request, $code);
+        if ($outcome !== ChallengeOutcome::Passed) {
+            return $outcome;
         }
 
-        if (! Hash::check(preg_replace('/\s+/', '', $code), $challenge['code_hash'])) {
-            $challenge['attempts'] += 1;
-            if ($challenge['attempts'] >= self::MAX_ATTEMPTS) {
-                $request->session()->forget(self::SESSION_KEY);
-
-                return ChallengeOutcome::Exhausted;
-            }
-
-            $request->session()->put(self::SESSION_KEY, $challenge);
-
-            return ChallengeOutcome::Wrong;
-        }
-
-        $request->session()->forget(self::SESSION_KEY);
-
-        $account = Account::find($challenge['account_id']);
+        $account = Account::find($pending['account_id'] ?? 0);
         if ($account === null) {
             return ChallengeOutcome::Expired;
         }

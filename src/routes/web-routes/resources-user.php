@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'contribute',
-    'middleware' => ['reject.crawlers', 'auth'],
+    'middleware' => ['reject.crawlers', 'auth', 'verified'],
 ], function () {
     // Discuss
     Route::resource('discuss', DiscussController::class, [

@@ -110,13 +110,13 @@
   color: var(--ed-link);
 }
 
-// Confirm it's you: a single narrow leaf, centred.
-.sign-in-challenge {
+// "Check your inbox" pages (sign-in code, confirming an address): a single narrow leaf, centred.
+.inbox-code-page {
   max-width: 36rem;
   margin: 2rem auto;
 }
 
-.sign-in-challenge__code {
+.inbox-code-page__code {
   max-width: 12rem;
   font-family: $font-family-tiny;
   font-size: 1.5rem;

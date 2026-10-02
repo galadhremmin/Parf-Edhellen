@@ -142,6 +142,14 @@ class AuthenticationController extends Controller
 
         event(new AccountAuthenticated($user, $first));
 
+        if (! $user->hasVerifiedEmail()) {
+            if ($request->session()->has('auth.redirect')) {
+                $request->session()->put('url.intended', url($request->session()->pull('auth.redirect')));
+            }
+
+            return redirect()->route('verification.notice');
+        }
+
         if ($request->session()->has('auth.redirect')) {
             $path = $request->session()->pull('auth.redirect');
 

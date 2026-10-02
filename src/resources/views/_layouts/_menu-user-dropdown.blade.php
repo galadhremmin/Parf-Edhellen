@@ -5,6 +5,15 @@
     <span class="ed-user-menu-label">{{ auth()->user()->nickname }}</span>
   </a>
   <ul class="dropdown-menu dropdown-menu-end ed-user-menu" aria-label="@lang('community.profile')">
+    @if (! auth()->user()->hasVerifiedEmail())
+    <li>
+      <a class="dropdown-item ed-user-menu__confirm {{ active('verification.notice') }}" href="{{ route('verification.notice') }}">
+        <span class="TextIcon TextIcon--envelope" aria-hidden="true"></span>
+        @lang('community.confirm-email')
+      </a>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    @endif
     <li>
       <a class="dropdown-item {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
         <span class="TextIcon TextIcon--person" aria-hidden="true"></span>

@@ -209,7 +209,7 @@ class AccountEmailOwnershipTest extends TestCase
                 'new-password' => 'A-strong-password-123!',
                 'new-password_confirmation' => 'A-strong-password-123!',
             ])
-            ->assertSessionHasErrors('new-password');
+            ->assertRedirect(route('verification.notice')); // held until the address is confirmed
 
         $this->assertNull($account->refresh()->master_account_id);
     }

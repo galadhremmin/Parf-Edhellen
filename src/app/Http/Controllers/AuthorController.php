@@ -56,6 +56,12 @@ class AuthorController extends Controller
 
     public function index(Request $request, ?int $id = null, $nickname = '')
     {
+        // Your own profile is personal: it waits until you've confirmed your e-mail address.
+        $user = $request->user();
+        if (! $id && $user !== null && ! $user->hasVerifiedEmail()) {
+            return redirect()->guest(route('verification.notice'));
+        }
+
         $author = $this->getAccount($request, $id);
         $profile = '';
         $stats = null;
