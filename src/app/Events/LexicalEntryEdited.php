@@ -9,13 +9,6 @@ class LexicalEntryEdited
 {
     use SerializesModels;
 
-    public LexicalEntry $lexicalEntry;
-
-    public int $accountId;
-
-    public function __construct(LexicalEntry $lexicalEntry, int $accountId)
-    {
-        $this->lexicalEntry = $lexicalEntry;
-        $this->accountId = $accountId;
-    }
+    public function __construct(readonly LexicalEntry $lexicalEntry, readonly int $accountId)
+    {}
 }

@@ -1,0 +1,22 @@
+.WelcomeProgress {
+  max-width: 34rem;
+  margin: 1rem auto 1.5rem;
+  text-align: center;
+
+  .WelcomeProgress--caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.25rem 0.75rem;
+    margin: 0;
+  }
+
+  .WelcomeProgress--mark {
+    color: var(--ed-gild);
+  }
+
+  .WelcomeProgress--hide {
+    color: var(--ed-text-faint);
+  }
+}

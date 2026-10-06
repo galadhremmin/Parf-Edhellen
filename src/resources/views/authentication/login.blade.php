@@ -91,6 +91,13 @@
   <p>
     Forgot your password? <a href="{{ route('auth.forgot-password') }}">Request a password reset by e-mail</a>.
   </p>
+
+  <hr class="mt-5">
+  <div class="text-center">
+    <h2 class="mt-4">New to {{ config('ed.title') }}?</h2>
+    <p>Create an account with your e-mail address and a password.</p>
+    <a href="{{ route('register') }}" class="btn btn-primary">Create a free account</a>
+  </div>
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">

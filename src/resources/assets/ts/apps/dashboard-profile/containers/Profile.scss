@@ -13,3 +13,77 @@ $ed-profile-body-maximum-width: 50rem;
         }
     }
 }
+
+// A new member's own page: its empty spaces, shown as invitations to fill them.
+.Profile--container {
+    .Avatar--picture {
+        position: relative;
+    }
+
+    .Profile--invite-avatar {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.15rem;
+        border: 2px dashed var(--ed-gild);
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--ed-bg-elevated) 82%, transparent);
+        color: var(--ed-gild-text);
+        font-size: 0.8rem;
+        line-height: 1.15;
+        text-align: center;
+        text-decoration: none;
+
+        span {
+            padding: 0 0.4rem;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background: color-mix(in srgb, var(--ed-bg-elevated) 95%, transparent);
+        }
+    }
+
+    // The band the background will fill: invited from its corner, out of the header's row of avatar and name.
+    .Jumbotron {
+        position: relative;
+    }
+
+    .Profile--invite-background {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1;
+        padding: 0.35rem 1rem;
+        border: 1px dashed var(--ed-gild);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--ed-bg-elevated) 82%, transparent);
+        color: var(--ed-gild-text);
+        font-size: 0.9rem;
+        text-decoration: none;
+    }
+
+    .Profile--invite-name {
+        display: inline-block;
+        margin: -0.25rem 0 0.75rem;
+        color: var(--ed-gild-text);
+        font-size: 0.95rem;
+    }
+
+    .Profile--join-in {
+        margin: 1.5rem 0 2rem;
+
+        h2 {
+            text-align: left;
+        }
+    }
+
+    .Profile--join-in-invitations {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+        gap: 1rem;
+    }
+}

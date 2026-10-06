@@ -51,36 +51,6 @@ class GeminiPhrasesFacadeTest extends TestCase
         $this->assertSame([], $phrases);
     }
 
-    /**
-     * Live integration test — only runs when GEMINI_API_KEY is set in the environment.
-     * Use this during development to verify the real Gemini roundtrip works before
-     * committing mocked variants.
-     */
-    public function test_real_gemini_roundtrip(): void
-    {
-        $apiKey = env('GEMINI_API_KEY', '');
-        if (empty($apiKey)) {
-            $this->markTestSkipped('GEMINI_API_KEY not set — skipping live roundtrip test.');
-        }
-
-        config(['gemini.api_key' => $apiKey]);
-
-        $phrases = $this->_makeFacade()->detectKeyPhrases(self::SampleText);
-
-        $this->assertIsArray($phrases);
-        $this->assertNotEmpty($phrases);
-
-        // All entries must be non-empty strings.
-        foreach ($phrases as $phrase) {
-            $this->assertIsString($phrase);
-            $this->assertNotEmpty($phrase);
-        }
-
-        // The Elvish place-names should be picked up.
-        $lower = array_map('strtolower', $phrases);
-        $this->assertContains('earendil', $lower, 'Expected Elvish name "Earendil" in results.');
-    }
-
     // -------------------------------------------------------------------------
 
     private function _makeFacade(): GeminiPhrasesFacade

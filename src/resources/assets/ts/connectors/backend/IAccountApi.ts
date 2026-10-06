@@ -104,7 +104,27 @@ export interface ISentenceFeedRecord extends IFeedRecord<'sentence', ISentenceEn
     sentenceTransformations: Record<string, Record<string, Array<[number, string?] | string>>>;
 }> {}
 
+/**
+ * One step of the welcome a new member sees on their own profile (WelcomeChecklist on the server).
+ */
+export interface IWelcomeStep {
+    group: 'profile' | 'community';
+    title: string;
+    text: string;
+    action: string;
+    url: string;
+    done: boolean;
+}
+
+export interface IWelcome {
+    done: number;
+    total: number;
+    steps: Record<string, IWelcomeStep>;
+}
+
 export default interface IAccountApi {
+    dismissWelcome(): Promise<void>;
+    restoreWelcome(): Promise<IWelcome | null>;
     find(args: IFindRequest): Promise<FindResponse>;
     getAvatar(args: IGetAvatarRequest): Promise<IGetAvatarResponse>;
     getFeed(args: IGetFeedRequest): Promise<IGetFeedResponse>;

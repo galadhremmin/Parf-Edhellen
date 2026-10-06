@@ -21,6 +21,9 @@
       <a class="dropdown-item {{ active('gloss.index') }}" href="{{ route('gloss.index') }}">Glossary</a>
     </li>
     <li>
+      <a class="dropdown-item {{ active('sense-review.index') }}" href="{{ route('sense-review.index') }}">Senses awaiting review</a>
+    </li>
+    <li>
       <a class="dropdown-item {{ active('account.index') }}" href="{{ route('account.index') }}">Accounts</a>
     </li>
     <li>

@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\Authentication\AuthenticationController;
 use App\Http\Controllers\Authentication\OAuthAuthenticationController;
+use App\Http\Controllers\Authentication\SignInChallengeController;
 use App\Http\Controllers\Authentication\UsernamePasswordAuthenticationController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,15 @@ Route::group([
         ->name('auth.redirect');
     Route::get('/federated-auth/callback/{providerName}', [OAuthAuthenticationController::class, 'callback'])
         ->where(['providerName' => REGULAR_EXPRESSION_SEO_STRING]);
+
+    Route::get('/login/confirm', [SignInChallengeController::class, 'show'])
+        ->name('auth.confirm-sign-in');
+    Route::post('/login/confirm', [SignInChallengeController::class, 'confirm'])
+        ->middleware('throttle:10,1')
+        ->name('auth.confirm-sign-in.check');
+    Route::post('/login/confirm/resend', [SignInChallengeController::class, 'resend'])
+        ->middleware('throttle:3,10')
+        ->name('auth.confirm-sign-in.resend');
 
     Route::post('/login/password', [UsernamePasswordAuthenticationController::class, 'loginWithPassword'])
         ->middleware('throttle:20,1')

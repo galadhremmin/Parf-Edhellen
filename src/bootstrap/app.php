@@ -71,6 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
+            CustomValidateCsrfToken::class,
             IpGate::class,
             InvalidUserGate::class,
             SafeSubstituteBindings::class,
@@ -79,14 +80,14 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->call(function (SystemErrorRepository $systemErrorRepository) {
-            $systemErrorRepository->deleteOlderThan(Carbon::now()->addDays(-90));
+            $systemErrorRepository->deleteOlderThan(Carbon::now()->addDays(-30));
         }) //
             ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
                 $systemErrorRepository->saveException(new Exception(
                     sprintf('Failed to delete old SystemErrors. Output: %s', $output)
                 ), 'scheduler');
             }) //
-            ->name('Delete SystemError entities older than 90 days.') //
+            ->name('Delete SystemError entities older than 30 days.') //
             ->hourly();
 
         $schedule->call(function () {

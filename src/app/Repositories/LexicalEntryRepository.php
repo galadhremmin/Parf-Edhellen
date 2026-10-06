@@ -25,6 +25,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -911,15 +912,15 @@ class LexicalEntryRepository
         try {
             DB::beginTransaction();
 
-            $version = LexicalEntryVersion::create($data);
+            $version = LexicalEntryVersion::create(self::versionAttributes(LexicalEntryVersion::class, $data));
             $version->lexical_entry_details()->saveMany(
                 $lexicalEntry->lexical_entry_details->map(function ($d) {
-                    return new LexicalEntryDetailVersion($d->getAttributes());
+                    return new LexicalEntryDetailVersion(self::versionAttributes(LexicalEntryDetailVersion::class, $d->getAttributes()));
                 })
             );
             $version->glosses()->saveMany(
                 $lexicalEntry->glosses->map(function ($t) {
-                    return new GlossVersion($t->getAttributes());
+                    return new GlossVersion(self::versionAttributes(GlossVersion::class, $t->getAttributes()));
                 })
             );
 
@@ -931,5 +932,16 @@ class LexicalEntryRepository
             DB::rollBack();
             throw $ex;
         }
+    }
+
+    /**
+     * Narrows a live model's attributes to what its version model keeps; the rest (ids,
+     * timestamps, loaded relations) is deliberately left behind.
+     *
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $versionClass
+     */
+    private static function versionAttributes(string $versionClass, array $attributes): array
+    {
+        return Arr::only($attributes, (new $versionClass)->getFillable());
     }
 }

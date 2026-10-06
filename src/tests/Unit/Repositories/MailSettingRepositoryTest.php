@@ -43,17 +43,17 @@ class MailSettingRepositoryTest extends TestCase
         $this->setUpAuth();
 
         $this->_accounts = [
-            Account::create([
+            Account::factory()->createOne([
                 'nickname' => 'unit-test-1',
                 'email' => 'unit-test-1@localhost.com',
                 'identity' => 'unit-test-1',
             ]),
-            Account::create([
+            Account::factory()->createOne([
                 'nickname' => 'unit-test-2',
                 'email' => 'unit-test-2@localhost.com',
                 'identity' => 'unit-test-2',
             ]),
-            Account::create([
+            Account::factory()->createOne([
                 'nickname' => 'unit-test-3',
                 'email' => 'unit-test-3@localhost.com',
                 'identity' => 'unit-test-3',

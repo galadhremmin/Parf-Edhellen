@@ -10,23 +10,11 @@ class AccountSecurityActivity
 {
     use SerializesModels;
 
-    public Account $account;
-    public string $type;
-    public AccountSecurityActivityResultEnum $result;
-    public ?string $ipAddress = null;
-    public ?string $userAgent = null;
-    public ?array $assessmentResult = null;
-
     /**
      * Creates a new account security activity event.
      *
-     * @param Account $account
-     * @param string $type
-     * @param ?string $ipAddress
-     * @param ?string $userAgent
-     * @param ?array $assessmentResult
      */
-    public static function fromRequest(Request $request, Account $account, string $type, AccountSecurityActivityResultEnum $result, ?array $assessmentResult = null)
+    public static function fromRequest(Request $request, Account $account, string $type, AccountSecurityActivityResultEnum $result, ?array $assessmentResult = null, ?Account $authenticatedAccount = null)
     {
         return new self(
             $account,
@@ -34,26 +22,14 @@ class AccountSecurityActivity
             $result,
             $request->ip(),
             $request->userAgent(),
-            $assessmentResult
+            $assessmentResult,
+            $authenticatedAccount
         );
     }
 
     /**
      * Creates a new account security activity event.
-     *
-     * @param Account $account
-     * @param string $type
-     * @param ?string $ipAddress
-     * @param ?string $userAgent
-     * @param ?array $assessmentResult
      */
-    public function __construct(Account $account, string $type, AccountSecurityActivityResultEnum $result, ?string $ipAddress = null, ?string $userAgent = null, ?array $assessmentResult = null)
-    {
-        $this->account = $account;
-        $this->type = $type;
-        $this->result = $result;
-        $this->ipAddress = $ipAddress;
-        $this->userAgent = $userAgent;
-        $this->assessmentResult = $assessmentResult;
-    }
+    public function __construct(readonly Account $account, readonly string $type, readonly AccountSecurityActivityResultEnum $result, readonly ?string $ipAddress = null, readonly ?string $userAgent = null, readonly ?array $assessmentResult = null, readonly ?Account $authenticatedAccount = null)
+    {}
 }

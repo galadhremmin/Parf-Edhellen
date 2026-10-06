@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -19,9 +17,8 @@ class EventServiceProvider extends ServiceProvider
             \SocialiteProviders\Live\LiveExtendSocialite::class.'@handle',
             \SocialiteProviders\Discord\DiscordExtendSocialite::class.'@handle',
         ],
-        Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
+        // No verification e-mail on Registered: the "confirm your e-mail" interstitial sends one
+        // (code and link) the moment a new account arrives there.
     ];
 
     /**

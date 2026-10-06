@@ -45,6 +45,7 @@
 // Custom capabilities to ElfDict
 @import "./_scss/_fx";
 @import "./_scss/_typography";
+@import "./_scss/_panel";
 
 // Custom components that are used throughout Parf Edhellen
 @import './_scss/autosuggest';
@@ -395,6 +396,12 @@ hr.next-overlaps {
       &:hover {
         background: var(--ed-bg-surface-hover);
         color: var(--ed-text);
+      }
+
+      // Waiting on the person: rust, like other things that need their attention.
+      &.ed-user-menu__confirm {
+        color: var(--ed-link);
+        font-weight: 600;
       }
 
       &.active {

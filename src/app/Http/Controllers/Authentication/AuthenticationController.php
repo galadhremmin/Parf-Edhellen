@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\AuthorizationProvider;
 use App\Repositories\SystemErrorRepository;
 use App\Security\AccountManager;
+use App\Security\Identity\IdentityProviderRegistry;
 use App\Security\RoleConstants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +20,14 @@ class AuthenticationController extends Controller
 
     protected AccountManager $_accountManager;
 
-    public function __construct(SystemErrorRepository $systemErrorRepository, AccountManager $passwordManager)
+    protected IdentityProviderRegistry $_identityProviders;
+
+    public function __construct(SystemErrorRepository $systemErrorRepository, AccountManager $passwordManager,
+        ?IdentityProviderRegistry $identityProviders = null)
     {
         $this->_systemErrorRepository = $systemErrorRepository;
         $this->_accountManager = $passwordManager;
+        $this->_identityProviders = $identityProviders ?? resolve(IdentityProviderRegistry::class);
     }
 
     public function login(Request $request, $isNew = false)
@@ -70,7 +75,9 @@ class AuthenticationController extends Controller
         // was successful and that they now can log in.
         $status = session('status', null);
 
-        $providers = AuthorizationProvider::orderBy('name')->get();
+        $providers = AuthorizationProvider::whereIn('name_identifier', $this->_identityProviders->availableNameIdentifiers())
+            ->orderBy('name')
+            ->get();
 
         return view($isNew ? 'authentication.register' : 'authentication.login', [
             'providers' => $providers,
@@ -134,6 +141,14 @@ class AuthenticationController extends Controller
         Auth::login($user, $remember);
 
         event(new AccountAuthenticated($user, $first));
+
+        if (! $user->hasVerifiedEmail()) {
+            if ($request->session()->has('auth.redirect')) {
+                $request->session()->put('url.intended', url($request->session()->pull('auth.redirect')));
+            }
+
+            return redirect()->route('verification.notice');
+        }
 
         if ($request->session()->has('auth.redirect')) {
             $path = $request->session()->pull('auth.redirect');

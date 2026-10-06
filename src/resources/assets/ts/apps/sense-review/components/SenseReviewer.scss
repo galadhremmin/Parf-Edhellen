@@ -1,0 +1,151 @@
+.SenseReviewer {
+  // stays in sight while the card below is read, so the sense under review is never in doubt — which is what
+  // lets a decision leave the viewport where it is
+  &--header {
+    align-items: center;
+    background-color: var(--ed-bg-elevated);
+    border-bottom: 1px solid var(--ed-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  &--header-sense {
+    display: inline-block;
+    font-weight: 600;
+    margin-right: 0.75rem;
+    max-width: 22rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+
+  &--sense {
+    // the card is replaced, not edited: a short fade says so where a scroll used to
+    @media (prefers-reduced-motion: no-preference) {
+      animation: SenseReviewer--appear 220ms ease-out;
+    }
+  }
+
+  &--guide {
+    background-color: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    border-radius: var(--bs-border-radius);
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    p {
+      margin-bottom: 0.5rem;
+      margin-top: 0.75rem;
+      max-width: 70ch;
+    }
+  }
+
+  &--wording {
+    margin-bottom: 0.5rem;
+    // clears the sticky bar when the heading is scrolled to
+    scroll-margin-top: 3.5rem;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &--facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  &--usages {
+    background-color: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    border-radius: var(--bs-border-radius);
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+
+    ul {
+      margin-bottom: 0;
+      padding-left: 1.25rem;
+    }
+  }
+
+  &--candidates {
+    margin-bottom: 1.5rem;
+  }
+
+  &--candidate {
+    background-color: var(--ed-bg-surface);
+    border-color: var(--ed-border);
+  }
+
+  &--candidate-title {
+    margin-bottom: 0.35rem;
+  }
+
+  &--definition {
+    margin-bottom: 0.35rem;
+  }
+
+  &--shortcut {
+    font-size: 0.75em;
+  }
+
+  &--search {
+    margin-bottom: 1.5rem;
+    max-width: 40rem;
+  }
+
+  &--search-result {
+    align-items: center;
+    border-bottom: 1px solid var(--ed-border);
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &--reword {
+    border-top: 1px solid var(--ed-border);
+    margin-bottom: 1.5rem;
+    max-width: 40rem;
+    padding-top: 1rem;
+  }
+
+  &--actions {
+    align-items: center;
+    border-top: 1px solid var(--ed-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1rem;
+  }
+}
+
+@keyframes SenseReviewer--appear {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

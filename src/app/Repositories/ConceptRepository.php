@@ -161,14 +161,19 @@ class ConceptRepository
             return collect();
         }
 
-        $conceptIds = ConceptLabel::where(function ($query) use ($termKeys) {
+        $labels = ConceptLabel::where(function ($query) use ($termKeys) {
             $termKeys->each(fn (string $key) => $query->orWhere('term_key', 'like', $key.'%'));
         })
             ->distinct()
             ->limit(config('ed-senses.suggestion_candidates'))
-            ->pluck('concept_id');
+            ->get(['concept_id', 'term_key']);
 
-        return Concept::whereIn('id', $conceptIds)
+        // the concepts the search names outright, as against the ones it merely begins
+        $named = $labels->filter(fn (ConceptLabel $label) => $termKeys->contains($label->term_key))
+            ->pluck('concept_id')
+            ->flip();
+
+        return Concept::whereIn('id', $labels->pluck('concept_id')->unique())
             ->with('synset:id,definition')
             ->get()
             ->map(fn (Concept $concept) => new ConceptSuggestion(
@@ -178,8 +183,14 @@ class ConceptRepository
                 $this->synonymsOf($concept),
                 $this->lineageOf($concept),
                 $this->entriesUnder([$concept->id], /* inclusive = */ true),
+                $named->has($concept->id),
             ))
-            ->sortByDesc(fn (ConceptSuggestion $suggestion) => $suggestion->entries)
+            // what the word actually names comes first: a search for "this" is answered by "this", if anything is,
+            // and never by "thistle" merely because more entries sit under it
+            ->sortBy(fn (ConceptSuggestion $suggestion) => [
+                $named->has($suggestion->id) ? 0 : 1,
+                -$suggestion->entries,
+            ])
             ->take($limit)
             ->values();
     }

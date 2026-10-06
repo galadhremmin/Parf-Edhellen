@@ -9,16 +9,6 @@ class AccountDestroyed
 {
     use SerializesModels;
 
-    public Account $account;
-
-    public string $friendlyName;
-
-    public int $accountId;
-
-    public function __construct(Account $account, string $friendlyName, int $accountId)
-    {
-        $this->account = $account;
-        $this->friendlyName = $friendlyName;
-        $this->accountId = $accountId;
-    }
+    public function __construct(readonly Account $account, readonly string $friendlyName, readonly int $accountId)
+    {}
 }

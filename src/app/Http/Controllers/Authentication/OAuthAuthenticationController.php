@@ -4,8 +4,13 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Models\Account;
 use App\Models\AuthorizationProvider;
+use App\Repositories\SystemErrorRepository;
+use App\Security\AccountManager;
+use App\Security\SignInChallenge;
 use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite as FacadesSocialite;
+use App\Interfaces\IIdentityProvider;
+use App\Security\Identity\ProviderIdentity;
+use Carbon\Carbon;
 use App\Helpers\RecaptchaHelper;
 use App\Exceptions\SuspiciousBotActivityException;
 use App\Events\AccountSecurityActivity;
@@ -14,6 +19,14 @@ use App\Events\AccountSecurityActivityResultEnum;
 class OAuthAuthenticationController extends AuthenticationController
 {    
     private const RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY = 'recaptcha_assessment_result';
+
+    public function __construct(
+        SystemErrorRepository $systemErrorRepository,
+        AccountManager $accountManager,
+        protected readonly SignInChallenge $_signInChallenge,
+    ) {
+        parent::__construct($systemErrorRepository, $accountManager);
+    }
 
     public function redirect(Request $request, string $providerName)
     {
@@ -30,9 +43,7 @@ class OAuthAuthenticationController extends AuthenticationController
         );
 
         try {
-            $provider = self::getProvider($providerName);
-
-            return FacadesSocialite::driver($provider->name_identifier)->redirect();
+            return $this->identityProviderFor(self::getProvider($providerName))->redirect($request);
         } catch (\Exception $ex) {
             $this->log('redirect', $providerName, $ex);
 
@@ -55,30 +66,52 @@ class OAuthAuthenticationController extends AuthenticationController
         $user = null;
         try {
             $provider = self::getProvider($providerName);
-            $providerUser = FacadesSocialite::driver($provider->name_identifier)->user();
+            $identity = $this->identityProviderFor($provider)->resolveIdentity($request);
+
+            $subject = $identity->subject;
+            $email = $identity->email;
 
             $user = Account::where([
-                ['email', '=', $providerUser->getEmail()],
                 ['authorization_provider_id', '=', $provider->id],
+                ['identity', '=', $subject],
             ])->first();
 
             $first = false;
             if ($user === null) {
+                if (empty($email)) {
+                    return redirect()->route('login')->with('error',
+                        'Your '.$provider->name.' account did not share an e-mail address. '.
+                        'Please sign in with another method.');
+                }
+
                 $user = $this->_accountManager->createAccount(
-                    $providerUser->getEmail(),
-                    $providerUser->getId(),
+                    $email,
+                    $subject,
                     $provider->id,
                     null,
-                    $providerUser->getName()
+                    $identity->name
                 );
+                $this->acceptVouchedAddress($user, $identity);
 
                 $first = true;
-            }
-
-            if ($first) {
                 event(AccountSecurityActivity::fromRequest($request, $user, 'registration', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult));
             } else {
-                event(AccountSecurityActivity::fromRequest($request, $user, 'login', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult));
+                $this->acceptVouchedAddress($user, $identity);
+
+                $authenticatedAs = $user;
+                if ($user->master_account_id !== null) {
+                    $user = $user->master_account;
+                }
+
+                // The provider vouches for the person, not for the address: prove the inbox first.
+                if ($this->_signInChallenge->isRequiredFor($authenticatedAs)) {
+                    $this->_signInChallenge->issue($request, $authenticatedAs, /* remember: */ true);
+                    event(AccountSecurityActivity::fromRequest($request, $user, 'login-challenge', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult, $authenticatedAs));
+
+                    return redirect()->route('auth.confirm-sign-in');
+                }
+
+                event(AccountSecurityActivity::fromRequest($request, $user, 'login', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult, $authenticatedAs));
             }
 
             return $this->doLogin($request, $user, $first, /* remember: */ true);
@@ -91,6 +124,24 @@ class OAuthAuthenticationController extends AuthenticationController
 
             return $this->redirectOnSystemError($providerName);
         }
+    }
+
+    /**
+     * The provider's own word that the person controls the address counts as our verification, as
+     * long as it's about the address we hold.
+     */
+    private function acceptVouchedAddress(Account $account, ProviderIdentity $identity): void
+    {
+        if ($account->email_verified_at === null && $identity->vouchesFor($account->email)) {
+            $account->email_verified_at = Carbon::now();
+            $account->save();
+        }
+    }
+
+    private function identityProviderFor(AuthorizationProvider $provider): IIdentityProvider
+    {
+        return $this->_identityProviders->find($provider->name_identifier)
+            ?? throw new \UnexpectedValueException('The identity provider "'.$provider->name_identifier.'" is not available.');
     }
 
     public static function getProvider(string $providerName)

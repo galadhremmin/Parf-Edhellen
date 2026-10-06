@@ -9,10 +9,6 @@ class EmailVerificationSent
 {
     use SerializesModels;
 
-    public Account $user;
-
-    public function __construct(Account $user)
-    {
-        $this->user = $user;
-    }
+    public function __construct(readonly Account $user)
+    {}
 }

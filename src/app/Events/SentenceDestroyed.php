@@ -9,13 +9,6 @@ class SentenceDestroyed
 {
     use SerializesModels;
 
-    public Sentence $sentence;
-
-    public int $accountId;
-
-    public function __construct(Sentence $sentence, int $accountId = 0)
-    {
-        $this->sentence = $sentence;
-        $this->accountId = $accountId;
-    }
+    public function __construct(readonly Sentence $sentence, readonly int $accountId = 0)
+    {}
 }

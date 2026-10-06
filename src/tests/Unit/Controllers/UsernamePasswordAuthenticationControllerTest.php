@@ -74,7 +74,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
             ->with('test@example.com', 'password123')
             ->andReturn(true);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -122,7 +122,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
             ->with('test@example.com', 'wrongpassword')
             ->andReturn(false);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -163,7 +163,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
             ->with('test@example.com', 'password123')
             ->andReturn(true);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -214,7 +214,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('newuser@example.com')
             ->andReturn(null);
         $accountManager
@@ -280,16 +280,11 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
     public function test_register_with_password_existing_username()
     {
-        // Create partial mock account to avoid database operations
-        $existingAccount = Mockery::mock(Account::class)->makePartial();
-        $existingAccount->id = 1;
-        $existingAccount->email = 'existing@example.com';
-
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('existing@example.com')
-            ->andReturn($existingAccount);
+            ->andReturn(new Account());
 
         $controller = $this->createController($accountManager);
 
@@ -320,7 +315,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
     {
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('nonexistent@example.com')
             ->andReturn(null);
 
@@ -343,7 +338,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 
@@ -367,7 +362,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
 
         $accountManager = Mockery::mock(AccountManager::class);
         $accountManager
-            ->shouldReceive('getAccountByUsername')
+            ->shouldReceive('getMasterAccountByEmail')
             ->with('test@example.com')
             ->andReturn($account);
 

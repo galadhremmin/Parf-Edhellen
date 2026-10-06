@@ -25,6 +25,7 @@ use App\Services\Flashcards\LexicalEntryCandidateProvider;
 use App\ThirdParty\Gemini\GeminiConceptFacade;
 use App\ThirdParty\Gemini\GeminiWordOfTheDayFacade;
 use App\ThirdParty\X\XApiClient;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
@@ -44,6 +45,8 @@ class AppServiceProvider extends ServiceProvider
         Morphs::map();
         // https://laravel.com/docs/8.x/upgrade#pagination-defaults
         Paginator::useBootstrap();
+        // Surface mass assignment of guarded attributes instead of dropping them silently.
+        Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
 
         // @markdown method injection
         Blade::directive('markdown', function (string $expression) {

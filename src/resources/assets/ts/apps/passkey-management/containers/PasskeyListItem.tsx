@@ -2,8 +2,24 @@ import { useState } from 'react';
 import StaticAlert from '@root/components/StaticAlert';
 import Dialog from '@root/components/Dialog';
 import { fireEvent } from '@root/components/Component';
-import './PasskeyListItem.scss';
 import type { IProps } from './PasskeyListItem._types';
+
+// What the authenticator reported about how it connects, in words people recognise.
+const TransportNames: Record<string, string> = {
+    internal: 'This device',
+    hybrid: 'Phone',
+    usb: 'Security key',
+    nfc: 'Security key',
+    ble: 'Security key',
+};
+
+const describeTransport = (transport: string | null | undefined) => {
+    const names = (transport ?? '').split(',')
+        .map((t) => TransportNames[t.trim()])
+        .filter((name) => name !== undefined);
+
+    return names[0] ?? 'Passkey';
+};
 
 const PasskeyListItem = (props: IProps) => {
     const { passkey, onDeleted, passkeyApi } = props;
@@ -58,57 +74,46 @@ const PasskeyListItem = (props: IProps) => {
     };
 
     return (
-        <div className="PasskeyListItem">
-            {error && (
-                <StaticAlert type="danger">
-                    <strong>Error:</strong> {error}
-                </StaticAlert>
-            )}
+        <li className="ed-list__item PasskeyListItem">
+            <span className="ed-list__body">
+                <span className="ed-list__kind">{describeTransport(passkey.transport)}</span>
+                <span className="ed-list__name">{passkey.displayName}</span>
+                <span className="ed-ui">
+                    Added {formatDate(passkey.createdAt)}
+                    {' · '}
+                    {passkey.lastUsedAt ? `last used ${formatDate(passkey.lastUsedAt)}` : 'not used yet'}
+                </span>
+                {error && ! showDeleteDialog && (
+                    <span className="text-danger ed-ui">{error}</span>
+                )}
+            </span>
 
-            <div className="PasskeyListItem__content">
-                <div className="PasskeyListItem__header">
-                    <h4 className="PasskeyListItem__name">{passkey.displayName}</h4>
-                </div>
-
-                <div className="PasskeyListItem__metadata">
-                    <p>
-                        <strong>Created:</strong> {formatDate(passkey.createdAt)}
-                    </p>
-                    {passkey.lastUsedAt && (
-                        <p>
-                            <strong>Last used:</strong> {formatDate(passkey.lastUsedAt)}
-                        </p>
-                    )}
-                </div>
-            </div>
-
-            <div className="PasskeyListItem__actions">
-                {passkey.transport && <span className="PasskeyListItem__transport">{passkey.transport}</span>}
+            <span className="ed-list__status">
                 <button
-                    className="btn btn-sm btn-danger"
+                    className="btn btn-link btn-sm p-0 PasskeyListItem__remove"
                     onClick={handleDeleteClick}
                     disabled={loading}
                 >
-                    Delete
+                    Remove
                 </button>
-            </div>
+            </span>
 
             <Dialog<string>
                 open={showDeleteDialog}
-                title="Delete Passkey"
-                confirmButtonText="Delete"
+                title="Remove passkey"
+                confirmButtonText="Remove"
                 cancelButtonText="Cancel"
                 onDismiss={handleDeleteDialogDismiss}
                 onConfirm={handleDeleteConfirm}
                 valid={deletePassword.trim().length > 0}
             >
                 <p>
-                    For security purposes, please enter your password to confirm deletion of this passkey.
-                    {passkey.displayName && ` This will permanently delete "${passkey.displayName}".`}
+                    Enter your password to remove this passkey.
+                    {passkey.displayName && ` You won't be able to sign in with "${passkey.displayName}" again.`}
                 </p>
                 <div className="form-group">
                     <label htmlFor="delete-password" className="form-label">
-                        Password:
+                        Password
                     </label>
                     <form method="post" action="#">
                         <input
@@ -130,7 +135,7 @@ const PasskeyListItem = (props: IProps) => {
                     </form>
                 </div>
             </Dialog>
-        </div>
+        </li>
     );
 };
 

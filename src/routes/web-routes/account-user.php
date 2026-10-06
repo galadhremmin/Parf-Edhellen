@@ -9,13 +9,15 @@ use App\Http\Controllers\AccountSecurityController;
 use App\Http\Controllers\AccountVerificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['reject.crawlers', 'auth', 'throttle:6,1'])->prefix('account')->group(function () {
+Route::middleware(['reject.crawlers', 'auth'])->prefix('account')->group(function () {
 
     // User profile
     Route::get('security', [AccountSecurityController::class, 'security'])
+        ->middleware('verified')
         ->name('account.security');
 
     Route::post('password', [AccountPasswordController::class, 'createPassword'])
+        ->middleware('verified')
         ->name('account.password');
 
     Route::post('resend-verification', [AccountVerificationController::class, 'verifyAccount'])
@@ -28,6 +30,9 @@ Route::middleware(['reject.crawlers', 'auth', 'throttle:6,1'])->prefix('account'
 
     Route::get('verification-required', [AccountVerificationController::class, 'verificationNotice'])
         ->name('verification.notice');
+
+    Route::post('verification-required', [AccountVerificationController::class, 'checkCode'])
+        ->name('verification.check');
 });
 
 Route::middleware(['reject.crawlers', 'auth', 'verified', 'throttle:6,1'])->prefix('account')->group(function () {
@@ -54,4 +59,8 @@ Route::middleware(['reject.crawlers', 'auth', 'verified', 'throttle:6,1'])->pref
 
     Route::post('merge/{requestId}/cancel', [AccountMergeController::class, 'cancelMerge'])
         ->name('account.cancel-merge');
+
+    Route::post('release-email/{accountId}', [AccountMergeController::class, 'releaseEmail'])
+        ->where(['accountId' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('account.release-email');
 });

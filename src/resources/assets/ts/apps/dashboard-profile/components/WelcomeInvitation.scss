@@ -1,0 +1,22 @@
+@import "../../../_scss/_variables";
+
+// An invitation to fill in part of your page: a dashed, gilded outline of what isn't there yet.
+.WelcomeInvitation {
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--ed-gild);
+  border-radius: $border-radius-lg;
+  background: rgba(201, 164, 76, 0.06);
+
+  .WelcomeInvitation--title {
+    font-family: $font-family-display;
+    font-weight: 400;
+    font-size: 1.25rem;
+    text-align: left; // the discuss app centres headings site-wide
+    margin: 0 0 0.25rem;
+  }
+
+  .WelcomeInvitation--text {
+    color: var(--ed-text-muted);
+    margin-bottom: 0.75rem;
+  }
+}

@@ -112,7 +112,7 @@ class AccountMergeControllerTest extends TestCase
 
         // Simulate $target already being linked to a master account
         $master = $this->makeAccount($email, verified: true);
-        $target->update(['master_account_id' => $master->id]);
+        $target->forceFill(['master_account_id' => $master->id])->save();
 
         Mail::fake();
 
@@ -315,7 +315,7 @@ class AccountMergeControllerTest extends TestCase
     {
         $email    = 'merge-test-shared@example.com';
         $account1 = $this->makeAccount($email);
-        $account2 = $this->makeAccount($email);
+        $account2 = $this->makeAccount($email, verified: true);
 
         $mail = Mail::fake();
 
@@ -323,7 +323,7 @@ class AccountMergeControllerTest extends TestCase
             ->post(route('account.merge'), ['account_id' => [$account1->id, $account2->id]])
             ->assertRedirect(route('verification.notice'));
 
-        $account1->update(['email_verified_at' => Carbon::now()]);
+        $account1->forceFill(['email_verified_at' => Carbon::now()])->save();
 
         $this->actingAs($account1)
             ->post(route('account.merge'), ['account_id' => [$account1->id, $account2->id]])

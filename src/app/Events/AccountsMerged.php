@@ -10,13 +10,6 @@ class AccountsMerged
 {
     use SerializesModels;
 
-    public Account $masterAccount;
-
-    public Collection $accountsMerged;
-
-    public function __construct(Account $masterAccount, Collection $accountsMerged)
-    {
-        $this->masterAccount = $masterAccount;
-        $this->accountsMerged = $accountsMerged;
-    }
+    public function __construct(readonly Account $masterAccount, readonly Collection $accountsMerged)
+    {}
 }

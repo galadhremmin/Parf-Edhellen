@@ -18,6 +18,8 @@ class ConceptSuggestion implements \JsonSerializable
         public readonly array $synonyms,
         public readonly array $lineage,
         public readonly int $entries,
+        // whether the search names this meaning, as against merely beginning one of the words it goes by
+        public readonly bool $named = true,
     ) {}
 
     /**
@@ -32,6 +34,7 @@ class ConceptSuggestion implements \JsonSerializable
             'synonyms' => $this->synonyms,
             'lineage' => $this->lineage,
             'entries' => $this->entries,
+            'named' => $this->named,
         ];
     }
 }

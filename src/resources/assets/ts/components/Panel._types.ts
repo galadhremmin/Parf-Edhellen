@@ -12,8 +12,11 @@ export const enum PanelType {
 export interface IProps {
     children?: ReactNode;
     className?: string;
+    /** A small-caps line over the title naming what the panel is about. */
+    eyebrow?: ReactNode;
+    /** The title's heading level; 2 when the panel is a section of the page. */
+    headingLevel?: 2 | 3;
     title?: ReactNode;
     titleButton?: ReactNode;
     type?: PanelType;
-    shadow?: boolean;
 }

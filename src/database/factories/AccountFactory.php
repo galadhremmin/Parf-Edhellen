@@ -3,12 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Account;
-use App\Models\AuthorizationProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Account>
+ * @extends Factory<Account>
  */
 class AccountFactory extends Factory
 {
@@ -27,6 +26,16 @@ class AccountFactory extends Factory
             'identity' => (string) Str::uuid(),
             'authorization_provider_id' => null, // Default to 0 for testing
             'profile' => 'Lots of personal data.',
+            // A working account: unconfirmed addresses are held at the "confirm your e-mail" interstitial.
+            'email_verified_at' => now(),
         ];
+    }
+
+    /**
+     * An account that hasn't confirmed its e-mail address yet.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn () => ['email_verified_at' => null]);
     }
 }
