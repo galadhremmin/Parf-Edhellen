@@ -67,13 +67,13 @@ const PasskeyLoginButton = (props: IProps) => {
 
             // Step 2: Convert challenge data to WebAuthn format
             const allowCredentials = challengeData.allowCredentials.map(cred => ({
-                id: base64urlToArrayBuffer(cred.id) as BufferSource,
+                id: base64urlToArrayBuffer(cred.id),
                 type: 'public-key' as const,
                 transports: (cred.transports || []) as AuthenticatorTransport[],
             }));
 
             const publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions = {
-                challenge: base64urlToArrayBuffer(challengeData.challenge) as BufferSource,
+                challenge: base64urlToArrayBuffer(challengeData.challenge),
                 allowCredentials: allowCredentials,
                 userVerification: challengeData.userVerification as UserVerificationRequirement || 'preferred',
                 timeout: challengeData.timeout || 60000,

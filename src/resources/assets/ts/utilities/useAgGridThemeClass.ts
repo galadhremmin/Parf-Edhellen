@@ -24,9 +24,9 @@ export function useAgGridThemeClass(): string {
             const next = e.detail?.theme === 'dark' ? 'dark' : 'light';
             setTheme(next);
         };
-        document.documentElement.addEventListener('ed-theme-changed', handleChange as EventListener);
+        document.documentElement.addEventListener('ed-theme-changed', handleChange);
         return () => {
-            document.documentElement.removeEventListener('ed-theme-changed', handleChange as EventListener);
+            document.documentElement.removeEventListener('ed-theme-changed', handleChange);
         };
     }, []);
 

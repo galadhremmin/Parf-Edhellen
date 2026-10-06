@@ -233,7 +233,7 @@ export default function CrosswordGridZoom({ cols, children, activeRow, activeCol
             outer.removeEventListener('mousemove',   onMouseMove);
             outer.removeEventListener('mouseup',     onMouseUp);
             outer.removeEventListener('mouseleave',  onMouseUp);
-            outer.removeEventListener('click',       onClickCapture, { capture: true } as EventListenerOptions);
+            outer.removeEventListener('click',       onClickCapture, { capture: true });
         };
     }, []);
 

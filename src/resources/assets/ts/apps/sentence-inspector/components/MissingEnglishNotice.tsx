@@ -33,7 +33,7 @@ export default function MissingEnglishNotice(props: IProps) {
      * ever landed -- which made the call to action unclickable.
      */
     const _onBlur = useCallback((ev: FocusEvent<HTMLElement>) => {
-        if (! _rootRef.current?.contains(ev.relatedTarget as Node)) {
+        if (! _rootRef.current?.contains(ev.relatedTarget)) {
             setIsOpen(false);
         }
     }, []);

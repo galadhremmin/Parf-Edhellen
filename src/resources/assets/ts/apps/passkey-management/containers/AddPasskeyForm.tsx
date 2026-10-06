@@ -53,10 +53,10 @@ const AddPasskeyForm = (props: IProps) => {
 
             // Convert challenge data to PublicKeyCredentialCreationOptions format
             const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
-                challenge: base64urlToArrayBuffer(challengeData.challenge) as BufferSource,
+                challenge: base64urlToArrayBuffer(challengeData.challenge),
                 rp: challengeData.rp,
                 user: {
-                    id: base64urlToArrayBuffer(challengeData.user.id) as BufferSource,
+                    id: base64urlToArrayBuffer(challengeData.user.id),
                     name: challengeData.user.name,
                     displayName: challengeData.user.displayName,
                 },

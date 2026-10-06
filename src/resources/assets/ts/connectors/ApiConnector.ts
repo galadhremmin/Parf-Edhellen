@@ -240,7 +240,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         try {
             const response = await request;
             if (! response) {
-                return undefined as unknown as T;
+                return undefined;
             }
             if (! response.ok) {
                 // Simulate axios-like error handling via throwing with status
@@ -347,8 +347,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 return Promise.reject(error instanceof Error ? error : new Error('Network offline'));
             }
             
-            const errorMessage = (error as Error).message || 'Unknown error';
-            const errorName = (error as Error).name || 'Unknown';
+            const errorMessage = error.message || 'Unknown error';
+            const errorName = error.name || 'Unknown';
             const baseUrl = typeof window === 'object' ? window.location.origin : 'unknown';
             const isOnline = typeof navigator === 'object' ? navigator.onLine : 'unknown';
             if (errorMessage.includes('Failed to fetch')) {

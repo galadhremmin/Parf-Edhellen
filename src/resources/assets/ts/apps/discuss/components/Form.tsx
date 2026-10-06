@@ -51,7 +51,7 @@ function Form(props: IProps) {
         const args = {
             content,
             subject,
-        } as IFormOutput;
+        };
         void fireEventAsync(name, onSubmit, args);
     }, [ content, name, onSubmit, subject ]);
 

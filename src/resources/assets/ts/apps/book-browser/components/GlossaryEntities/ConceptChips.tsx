@@ -35,9 +35,9 @@ function ConceptChips(props: IProps) {
 
         ev.preventDefault();
 
-        const concept = (ev.currentTarget as HTMLAnchorElement).dataset.concept;
+        const concept = ev.currentTarget.dataset.concept;
         globalEvents?.fire(globalEvents.loadReference, {
-            languageShortName: null as string,
+            languageShortName: null,
             normalizedWord: concept,
             word: concept,
         });

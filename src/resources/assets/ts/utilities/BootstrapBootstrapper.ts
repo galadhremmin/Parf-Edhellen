@@ -1,7 +1,7 @@
 function shimRequestIdleCallback() {
     // Currently not supported by Safari, so shimming it to make it work as intended (kind of...)
-    window.requestIdleCallback = window.requestIdleCallback ||
-        function (cb: IdleRequestCallback): number {
+    if (typeof window.requestIdleCallback !== 'function') {
+        window.requestIdleCallback = function (cb: IdleRequestCallback): number {
             const start = Date.now();
             return setTimeout(function () {
                 cb({
@@ -12,11 +12,13 @@ function shimRequestIdleCallback() {
                 });
             }, 1) as unknown as number;
         };
+    }
 
-    window.cancelIdleCallback = window.cancelIdleCallback || //
-        function (id) {
+    if (typeof window.cancelIdleCallback !== 'function') {
+        window.cancelIdleCallback = function (id) {
             clearTimeout(id);
-        }
+        };
+    }
 }
 
 function closeOtherDropdowns(excludeMenu: HTMLUListElement) {
