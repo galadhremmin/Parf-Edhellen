@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers\Authentication;
 
+use App\Events\AccountSecurityActivity;
+use App\Events\AccountSecurityActivityResultEnum;
+use App\Exceptions\SuspiciousBotActivityException;
+use App\Helpers\RecaptchaHelper;
+use App\Interfaces\IIdentityProvider;
 use App\Models\Account;
 use App\Models\AuthorizationProvider;
 use App\Repositories\SystemErrorRepository;
 use App\Security\AccountManager;
-use App\Security\SignInChallenge;
-use Illuminate\Http\Request;
-use App\Interfaces\IIdentityProvider;
 use App\Security\Identity\ProviderIdentity;
+use App\Security\SignInChallenge;
 use Carbon\Carbon;
-use App\Helpers\RecaptchaHelper;
-use App\Exceptions\SuspiciousBotActivityException;
-use App\Events\AccountSecurityActivity;
-use App\Events\AccountSecurityActivityResultEnum;
+use Illuminate\Http\Request;
 
 class OAuthAuthenticationController extends AuthenticationController
-{    
+{
     private const RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY = 'recaptcha_assessment_result';
 
     public function __construct(
@@ -33,6 +33,7 @@ class OAuthAuthenticationController extends AuthenticationController
         $assessmentResult = [];
         if (config('ed.recaptcha.sitekey') && ! RecaptchaHelper::createAssessment($request->query('recaptcha_token'), 'LOGIN', $assessmentResult)) {
             $this->log('redirect', $providerName, new SuspiciousBotActivityException($request, 'user login', $assessmentResult));
+
             return redirect()->route('login')->with('error', 'Recaptcha error - are you a bot?');
         }
 
@@ -54,7 +55,7 @@ class OAuthAuthenticationController extends AuthenticationController
     public function callback(Request $request, string $providerName)
     {
         $assessmentResult = [];
-        
+
         if ($request->session()->has(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY)) {
             $assessmentResult = json_decode(
                 $request->session()->get(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY),
@@ -74,7 +75,7 @@ class OAuthAuthenticationController extends AuthenticationController
             $user = Account::where([
                 ['authorization_provider_id', '=', $provider->id],
                 ['identity', '=', $subject],
-            ])->first();
+            ])->first() ?? $this->_accountManager->claimLegacyIdentity($provider->id, $subject, $email);
 
             $first = false;
             if ($user === null) {
