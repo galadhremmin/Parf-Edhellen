@@ -17,6 +17,7 @@ import type {
     ISaveProfileRequest,
     ISaveProfileResponse,
     IUploadFeatureBackgroundRequest,
+    IWelcome,
 } from './IAccountApi';
 
 export default class AccountApiConnector implements IAccountApi {
@@ -61,5 +62,13 @@ export default class AccountApiConnector implements IAccountApi {
 
     public saveProfile(args: ISaveProfileRequest) {
         return this._api.post<ISaveProfileResponse>(`account/edit/${args.accountId}`, args);
+    }
+
+    public dismissWelcome() {
+        return this._api.post<void>('account/welcome/dismiss', {});
+    }
+
+    public restoreWelcome() {
+        return this._api.post<IWelcome | null>('account/welcome/restore', {});
     }
 }

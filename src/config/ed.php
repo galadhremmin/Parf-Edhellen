@@ -74,6 +74,21 @@ return [
             : null,
     ]),
 
+    // The welcome checklist on a new member's own profile (App\Services\WelcomeChecklist), shown in this
+    // order. Each step names where its action leads; its wording is in lang/<locale>/welcome.php.
+    'welcome' => [
+        'profile' => [
+            'name' => ['route' => 'author.edit-profile'],
+            'avatar' => ['route' => 'author.edit-profile'],
+            'introduction' => ['route' => 'author.edit-profile'],
+            'background' => ['route' => 'author.edit-profile'],
+        ],
+        'community' => [
+            'contribution' => ['route' => 'contribution.create', 'parameters' => ['morph' => 'lexical_entry']],
+            'discuss' => ['route' => 'discuss.index'],
+        ],
+    ],
+
     // book configuration, including resolvers.
     // NOTE: when adding new entities, ensure that the following files are available:
     //       1. resources/views/book/<morph alias>/index.blade.php

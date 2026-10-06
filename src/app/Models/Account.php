@@ -44,7 +44,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     protected $hidden = [
         'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted',
         'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
-        'has_passkeys', 'last_passkey_auth_at', 'is_spammer',
+        'has_passkeys', 'last_passkey_auth_at', 'is_spammer', 'shows_welcome', 'welcome_dismissed_at',
     ];
 
     /**
@@ -54,6 +54,8 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
      */
     protected $casts = [
         'is_spammer' => 'boolean',
+        'shows_welcome' => 'boolean',
+        'welcome_dismissed_at' => 'datetime',
     ];
 
     /**

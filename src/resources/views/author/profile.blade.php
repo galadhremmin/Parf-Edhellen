@@ -24,6 +24,8 @@
     'account'       => $author,
     'statistics'    => $stats,
     'wordLists'     => $wordLists,
+    'welcome'       => $welcome,
+    'welcomePending' => $welcomePending,
     'showJumbotron' => 'true',
     'showDiscuss'   => 'true',
     'showProfile'   => 'true'

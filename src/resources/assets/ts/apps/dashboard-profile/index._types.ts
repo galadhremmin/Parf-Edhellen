@@ -1,3 +1,4 @@
+import type { IWelcome } from '@root/connectors/backend/IAccountApi';
 import type { IAccountEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 import type { IProfileWordList } from './components/ProfileWordLists._types';
@@ -21,4 +22,10 @@ export interface IProps {
     showDiscuss?: boolean;
     statistics?: IAccountStatistics;
     wordLists?: IProfileWordList[];
+    /** Only on your own profile, while there's still something to do. */
+    welcome?: IWelcome | null;
+    /** On your own profile after hiding the welcome: how many steps are left, so it can be offered back. */
+    welcomePending?: number;
 }
+
+export type { IWelcome, IWelcomeStep } from '@root/connectors/backend/IAccountApi';

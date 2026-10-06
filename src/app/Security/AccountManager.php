@@ -81,6 +81,7 @@ class AccountManager
         $user->is_passworded = ! empty($password);
         $user->is_master_account = ! empty($password);
         $user->password = ! empty($password) ? Hash::make($password) : null;
+        $user->shows_welcome = true; // a new member gets the welcome checklist on their profile
         $user->save();
 
         $user->addMembershipTo(RoleConstants::Users);

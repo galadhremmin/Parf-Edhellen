@@ -9,6 +9,7 @@ use App\Helpers\StorageHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Account;
 use App\Security\AccountManager;
+use App\Services\WelcomeChecklist;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -82,6 +83,27 @@ class AccountApiController extends Controller
         return [
             'avatar' => $this->_storageHelper->accountAvatar($account, true),
         ];
+    }
+
+    /**
+     * "Hide this" on the welcome a new member sees on their own profile.
+     */
+    public function dismissWelcome(Request $request, WelcomeChecklist $welcomeChecklist)
+    {
+        $welcomeChecklist->dismiss($request->user());
+
+        return response()->noContent();
+    }
+
+    /**
+     * Brings back the welcome someone hid, and returns it to be shown again.
+     */
+    public function restoreWelcome(Request $request, WelcomeChecklist $welcomeChecklist)
+    {
+        $account = $request->user();
+        $welcomeChecklist->restore($account);
+
+        return response()->json($welcomeChecklist->for($account, $account));
     }
 
     public function getFeatureBackgrounds(Request $request)

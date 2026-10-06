@@ -14,6 +14,7 @@ use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use App\Models\WordList;
 use App\Repositories\StatisticsRepository;
+use App\Services\WelcomeChecklist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,7 +45,8 @@ class AuthorController extends Controller
 
     public function __construct(BookAdapter $bookAdapter, DiscussAdapter $discussAdapter,
         StatisticsRepository $statisticsRepository, StorageHelper $storageHelper,
-        IMarkdownParser $markdownParser, WordListAdapter $wordListAdapter)
+        IMarkdownParser $markdownParser, WordListAdapter $wordListAdapter,
+        protected readonly WelcomeChecklist $_welcomeChecklist)
     {
         $this->_bookAdapter = $bookAdapter;
         $this->_discussAdapter = $discussAdapter;
@@ -78,6 +80,8 @@ class AuthorController extends Controller
             'profile' => $profile,
             'stats' => $stats,
             'wordLists' => $wordLists,
+            'welcome' => $author ? $this->_welcomeChecklist->for($author, $user) : null,
+            'welcomePending' => $author ? $this->_welcomeChecklist->pendingAfterDismissal($author, $user) : 0,
         ]);
     }
 

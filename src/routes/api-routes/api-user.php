@@ -33,6 +33,10 @@ Route::group([
         ->name('api.account.delete');
 
     Route::get('account/backgrounds', [AccountApiController::class, 'getFeatureBackgrounds']);
+    Route::post('account/welcome/dismiss', [AccountApiController::class, 'dismissWelcome'])
+        ->name('api.account.welcome.dismiss');
+    Route::post('account/welcome/restore', [AccountApiController::class, 'restoreWelcome'])
+        ->name('api.account.welcome.restore');
     Route::put('account/background/edit/{id}', [AccountApiController::class, 'updateFeatureBackground'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->middleware('throttle:6,1');
