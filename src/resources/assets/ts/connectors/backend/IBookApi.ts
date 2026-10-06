@@ -36,11 +36,11 @@ export interface IEntitiesRequestData {
      * `word` (the entry's real headword) — e.g. searching "lond-" navigates here with `word: "lon(de)"`
      * and `inflection: "lond-"`. Not consumed by the backend search itself; carried through purely so
      * the UI can (in the future) indicate "you searched for the inflected form X". */
-    inflection?: string;
-    inflections?: boolean;
-    languageId?: number;
-    normalizedWord?: string;
-    speechIds?: number[];
+    inflection?: string | null;
+    inflections?: boolean | null;
+    languageId?: number | null;
+    normalizedWord?: string | null;
+    speechIds?: number[] | null;
     word: string;
 }
 

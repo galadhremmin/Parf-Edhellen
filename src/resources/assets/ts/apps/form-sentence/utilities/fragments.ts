@@ -192,7 +192,7 @@ export const createFragment = async (fragment: string, type: SentenceFragmentTyp
         sentenceNumber,
         tengwar,
         type,
-    } as ISentenceFragmentEntity;
+    };
 };
 
 export const parseFragments = async (text: string, tengwarMode: string = null) => {

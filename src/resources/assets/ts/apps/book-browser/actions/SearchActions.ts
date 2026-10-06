@@ -165,7 +165,9 @@ export default class SearchActions {
                 return;
             }
 
-            let selectedIndex = resultIds.indexOf(selectedId) + direction;
+            let selectedIndex = (selectedId === null)
+                ? 0
+                : resultIds.indexOf(selectedId) + direction;
             if (selectedIndex < 0) {
                 selectedIndex = resultIds.length - 1;
             } else if (selectedIndex >= resultIds.length) {
@@ -259,22 +261,28 @@ export default class SearchActions {
             const inflection = isInflection ? matchedKeyword : undefined;
             const normalizedWord = isInflection ? args.searchResult.originalWord : args.searchResult.normalizedWord;
 
-            let language: ILanguageEntity = null;
-            let languageShortName: string = null;
+            let language: ILanguageEntity | null = null;
+            let languageShortName: string | null = null;
 
-            if (languageId !== 0) {
+            if (! word) {
+                // Word is a required parameter and there's no point in trying to look
+                // something up without it.
+                return;
+            }
+
+            if (languageId) {
                 language = await this._languages.find(languageId, 'id');
-                languageShortName = language.shortName;
+                languageShortName = language.shortName ?? null;
             }
 
             const request: IEntitiesRequest = {
                 data: {
                     inflection,
                     lexicalEntryGroupIds,
-                    includeOld,
+                    includeOld: includeOld ?? true,
                     inflections: true,
                     languageId,
-                    normalizedWord,
+                    normalizedWord: normalizedWord ?? null,
                     speechIds,
                     word,
                 },
@@ -285,6 +293,12 @@ export default class SearchActions {
                 address,
                 title,
             } = this._prepareAddress(request, groupIdMap, languageShortName);
+
+            if (address === null || title === null) {
+                // This link isn't resolvable. Break.
+                // TODO: should add logging here to capture when this happens.
+                return;
+            }
 
             // When navigating using the browser's back and forward buttons,
             // the state needn't be modified.
@@ -378,7 +392,7 @@ export default class SearchActions {
             const nextState: IBrowserHistoryState = {
                 glossary: true,
                 groupId: SearchResultGlossaryGroupId,
-                languageShortName: entity.language?.shortName || null,
+                languageShortName: entity.language?.shortName ?? null,
                 lexicalEntryId,
                 normalizedWord: entity.normalizedWord,
                 word,
@@ -414,12 +428,12 @@ export default class SearchActions {
             // Attempt to find the selected search result, first by looking at the `selected` property,
             // and secondarily by comparing the values of the `word` property. Lastly, if the search
             // result does not exist, create a fake search result (id = 0) for the glossary.
-            let searchResult: ISearchResult;
+            let searchResult: ISearchResult | null = null;
             if (selectedId !== null) {
                 searchResult = resultsById[selectedId] || null;
             }
             if (searchResult === null) {
-                searchResult = Object.values(resultsById).find((r) => r.word === entities.word) || null;
+                searchResult = Object.values(resultsById).find((r: ISearchResult) => r.word === entities.word) || null;
             }
             if (searchResult === null) {
                 const word = entities.word;
@@ -462,7 +476,7 @@ export default class SearchActions {
                     id: 0,
                     groupId: SearchResultGlossaryGroupId,
                     normalizedWord,
-                    originalWord: null as string,
+                    originalWord: null,
                     word,
                 },
                 updateBrowserHistory,
@@ -487,7 +501,7 @@ export default class SearchActions {
         };
     }
 
-    private _prepareAddress(args: IEntitiesRequest, groupIdMap: ISearchGroups, languageShortName: string = null) {
+    private _prepareAddress(args: IEntitiesRequest, groupIdMap: ISearchGroups, languageShortName: string | null = null) {
         const {
             groupId,
         } = args;
@@ -496,6 +510,14 @@ export default class SearchActions {
             normalizedWord,
             word,
         } = args.data;
+
+        if (! normalizedWord) {
+            // This is a required parameter, and we frankly can't materialize any URL without it.
+            return {
+                address: null,
+                title: null,
+            };
+        }
 
         const uriEncodedWord = encodeURIComponent(normalizedWord);
         const capitalizedWord = capitalize(word);

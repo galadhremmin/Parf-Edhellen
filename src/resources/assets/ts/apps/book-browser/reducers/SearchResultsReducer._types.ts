@@ -5,7 +5,7 @@ export interface ISearchResult {
     id: number;
     groupId?: number;
     normalizedWord: string;
-    originalWord: string;
+    originalWord: string | null;
     word: string;
 }
 

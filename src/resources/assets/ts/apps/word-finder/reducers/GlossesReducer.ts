@@ -17,14 +17,14 @@ const GlossesReducer = (state = InitialState, action: IGameAction) => {
                 word: g.word,
                 wordForComparison: preprocessWordForSplitting(g.word),
                 wordLength: g.word.replace(/[\s-]/g, '').length,
-            }) as IGameGloss);
+            }));
         case Actions.DiscoverWord:
             return state.map((g) => {
                 if (g.id === action.lexicalEntryId) {
                     return {
                         ...g,
                         available: false,
-                    } as IGameGloss;
+                    };
                 }
                 return g;
             });
