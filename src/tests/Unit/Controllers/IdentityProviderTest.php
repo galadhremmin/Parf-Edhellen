@@ -169,6 +169,50 @@ class IdentityProviderTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
+    // Pre-2017 accounts, whose identity is a hash of the subject
+    // -------------------------------------------------------------------------
+
+    public function test_a_legacy_account_is_claimed_by_the_subject_its_hash_proves()
+    {
+        $provider = $this->makeProvider(GoogleIdentityProvider::class);
+        $legacy = $this->makeLegacyAccount($provider, 'g-legacy', 'legacy@example.com');
+        $this->fakeSocialiteUser($provider, 'g-legacy', 'legacy@example.com', ['email_verified' => true]);
+
+        $this->signIn($provider)->assertRedirect();
+
+        $this->assertAuthenticatedAs($legacy);
+        $this->assertSame('g-legacy', $legacy->refresh()->identity);
+        $this->assertSame(1, Account::where('email', 'legacy@example.com')->count());
+    }
+
+    public function test_a_legacy_account_is_not_claimed_by_another_subject_on_its_address()
+    {
+        $provider = $this->makeProvider(GoogleIdentityProvider::class);
+        $legacy = $this->makeLegacyAccount($provider, 'g-legacy', 'legacy@example.com');
+        $hash = $legacy->identity;
+        $this->fakeSocialiteUser($provider, 'g-impostor', 'legacy@example.com', ['email_verified' => true]);
+
+        $this->signIn($provider)->assertRedirect();
+
+        $this->assertSame($hash, $legacy->refresh()->identity);
+        $this->assertNotSame($legacy->id, auth()->id());
+    }
+
+    private function makeLegacyAccount(AuthorizationProvider $provider, string $subject, string $email): Account
+    {
+        /** @var Account */
+        $account = Account::factory()->createOne([
+            'email' => $email,
+            'authorization_provider_id' => $provider->id,
+            'identity' => password_hash($provider->id.'_'.$subject, PASSWORD_BCRYPT, ['cost' => 4]),
+            'email_verified_at' => null,
+        ]);
+        $account->addMembershipTo(RoleConstants::Users);
+
+        return $account;
+    }
+
+    // -------------------------------------------------------------------------
     // The local test provider
     // -------------------------------------------------------------------------
 

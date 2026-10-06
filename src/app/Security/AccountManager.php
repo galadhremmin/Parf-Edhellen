@@ -73,7 +73,7 @@ class AccountManager
 
         // Security-sensitive attributes are assigned explicitly rather than through mass
         // assignment (Account::$fillable is intentionally minimal).
-        $user = new Account();
+        $user = new Account;
         $user->nickname = $nickname;
         $user->email = $username;
         $user->identity = $identity;
@@ -105,7 +105,7 @@ class AccountManager
 
         // Security-sensitive attributes are assigned explicitly rather than through mass
         // assignment (Account::$fillable is intentionally minimal).
-        $masterAccount = new Account();
+        $masterAccount = new Account;
         $masterAccount->email = $account->email;
         $masterAccount->nickname = $account->nickname;
         $masterAccount->tengwar = $account->tengwar;
@@ -249,6 +249,31 @@ class AccountManager
         return $account;
     }
 
+    /**
+     * Accounts from before 2017 hold `password_hash('<provider id>_<subject>')` instead of the subject.
+     * Finds the one the subject proves, by provider and e-mail address as the old code did, and swaps
+     * the hash for the subject.
+     */
+    public function claimLegacyIdentity(int $providerId, string $subject, ?string $email): ?Account
+    {
+        if (empty($email)) {
+            return null;
+        }
+
+        $account = Account::where('authorization_provider_id', $providerId)
+            ->where('email', $email)
+            ->where('identity', 'like', '$2y$%')
+            ->get()
+            ->first(fn (Account $candidate) => password_verify($providerId.'_'.$subject, $candidate->identity));
+
+        if ($account !== null) {
+            $account->identity = $subject;
+            $account->save();
+        }
+
+        return $account;
+    }
+
     public function getMasterAccountByEmail(?string $username): ?Account
     {
         if (empty($username)) {
@@ -371,7 +396,7 @@ class AccountManager
             }
 
             DB::commit();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             DB::rollBack();
             throw $ex;
         }
