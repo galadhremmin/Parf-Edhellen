@@ -13,7 +13,7 @@ use App\Services\WelcomeChecklist;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Image;
 
 class AccountApiController extends Controller
 {
@@ -168,17 +168,16 @@ class AccountApiController extends Controller
         $maxSizeInPixels = config('ed.avatar_size');
 
         try {
-            $image = Image::make($file->getRealPath());
+            $image = Image::fromUpload($file);
 
             if ($image->width() < $image->height()) {
-                $image->resize($maxSizeInPixels, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($localPath);
+                $image = $image->resize($maxSizeInPixels, null);
             } else {
-                $image->resize(null, $maxSizeInPixels, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($localPath);
+                $image = $image->resize(null, $maxSizeInPixels);
             }
+
+            // Avatars are always stored as PNG (see StorageHelper::getAvatarPath).
+            file_put_contents($localPath, $image->toPng()->toBytes());
 
             $account->has_avatar = true;
             $account->save();
@@ -239,17 +238,13 @@ class AccountApiController extends Controller
         Storage::makeDirectory('public/profile-backgrounds');
 
         try {
-            $image = Image::make($file->getRealPath());
-            $image->resize($desktopWidth, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save($desktopPath);
+            $image = Image::fromUpload($file);
 
-            $image = Image::make($file->getRealPath());
-            $image->resize($mobileWidth, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save($mobilePath);
+            // Backgrounds are always stored as PNG (see StorageHelper). scale()
+            // keeps the aspect ratio and never enlarges a smaller image,
+            // matching the old aspectRatio + upsize constraints.
+            file_put_contents($desktopPath, $image->scale($desktopWidth)->toPng()->toBytes());
+            file_put_contents($mobilePath, $image->scale($mobileWidth)->toPng()->toBytes());
 
             $account->feature_background_url = $this->_storageHelper->getCustomFeatureBackgroundUrl($accountId);
             $account->feature_background_mobile_url = $this->_storageHelper->getCustomFeatureBackgroundMobileUrl($accountId);

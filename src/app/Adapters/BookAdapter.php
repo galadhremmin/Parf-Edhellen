@@ -263,7 +263,7 @@ class BookAdapter
      * (an array of inflections associated with the entity), comment_count (an integer representing the number of
      * comments associated with the entity). The method also formats the lexical entry's date properties accordingly.
      *
-     * @param  LexicalEntry|stdClass  $lexicalEntry
+     * @param  LexicalEntry|\stdClass  $lexicalEntry
      * @param  Collection  $languages  - an Eloquent collection of languages.
      * @param  Collection  $inflections  - an array of inflections with valid *lexical_entry_id*.
      * @param  array  $commentsById  - an associative array with the entity ID as key, and the number of comments as value.

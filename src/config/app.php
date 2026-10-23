@@ -169,7 +169,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Image' => Intervention\Image\ImageServiceProvider::class,
+        'Image' => Illuminate\Support\Facades\Image::class,
     ],
 
 ];
