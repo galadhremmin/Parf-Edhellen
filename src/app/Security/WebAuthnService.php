@@ -80,17 +80,14 @@ class WebAuthnService
         $securedRps = $this->getSecuredRelyingPartyIds($rpId);
         $ceremonyStepManagerFactory = new CeremonyStepManagerFactory();
         $ceremonyStepManagerFactory->setSecuredRelyingPartyId($securedRps);
+        $ceremonyStepManagerFactory->setAttestationStatementSupportManager($attestationStatementSupportManager);
         $creationCSM = $ceremonyStepManagerFactory->creationCeremony();
         $requestCSM = $ceremonyStepManagerFactory->requestCeremony();
 
-        // Create validators
-        $this->_attestationValidator = AuthenticatorAttestationResponseValidator::create(
-            $attestationStatementSupportManager,
-            ceremonyStepManager: $creationCSM
-        );
-        $this->_assertionValidator = AuthenticatorAssertionResponseValidator::create(
-            ceremonyStepManager: $requestCSM
-        );
+        // Create validators (5.x: the validators take only the ceremony step manager;
+        // the attestation statement support manager now lives on the factory)
+        $this->_attestationValidator = AuthenticatorAttestationResponseValidator::create($creationCSM);
+        $this->_assertionValidator = AuthenticatorAssertionResponseValidator::create($requestCSM);
     }
     /**
      * Validate session ID format (must be UUID)
