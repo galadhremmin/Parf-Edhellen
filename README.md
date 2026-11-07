@@ -5,8 +5,8 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 ## Technology Stack
 
 ### Backend
-- **Framework**: Laravel 12.x
-- **PHP**: 8.2+
+- **Framework**: [Laravel 13.x](https://laravel.com/)
+- **PHP**: 8.5
 - **Database**: MariaDB
 - **Testing**: PHPUnit, PHPStan (level 1)
 
@@ -20,9 +20,12 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 
 ### Key Dependencies
 - AWS SDK (for Comprehend services)
-- Laravel Socialite (OAuth authentication)
+- Google Gemini (LLM)
+- [Laravel Socialite](https://laravel.com/framework/docs/socialite) (OAuth authentication)
 - Server-side rendering (SSR) support
 - Intervention Image (image processing)
+- [Glaemscribe](https://glaemscrafu.jrrvf.com/english/glaemscribe.html) (Tengwar transcription)
+- [WordNet](https://wordnet.princeton.edu/)
 
 ## Service Configuration
 
