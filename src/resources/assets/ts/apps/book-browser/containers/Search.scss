@@ -20,12 +20,6 @@
 }
 
 #ed-search-component {
-  min-height: 116px;
-
-  @media (max-width: 430px) {
-    min-height: 135px;
-  }
-
   .search-result-wrapper {
     margin-top: 5px;
     margin-bottom: 5px;
