@@ -1,4 +1,4 @@
-import { lazy, useEffect, Suspense, useState } from 'react';
+import { lazy, useEffect, useLayoutEffect, Suspense, useState } from 'react';
 import type { ComponentType } from 'react';
 import { connect } from 'react-redux';
 
@@ -32,7 +32,6 @@ function Entities(props: IEntitiesComponentProps) {
             const actions = new SearchActions();
             dispatch(actions.setEntities(preloadedEntities));
         }
-        _removeEntitiesForBots();
     }, []);
 
     useEffect(() => {
@@ -52,8 +51,19 @@ function Entities(props: IEntitiesComponentProps) {
     const LoadingComponent = <LoadingIndicator text="Setting things up..." />;
 
     return <Suspense fallback={LoadingComponent}>
-        {componentGroupName !== groupName ? LoadingComponent : <Component {...props} />}
+        {componentGroupName !== groupName ? LoadingComponent : <>
+            <Component {...props} />
+            <EntitiesForBotsRemover />
+        </>}
     </Suspense>;
+}
+
+/**
+ * Commits alongside the lazily loaded entities, so the server's markup is swapped for them in one frame.
+ */
+function EntitiesForBotsRemover(): null {
+    useLayoutEffect(_removeEntitiesForBots, []);
+    return null;
 }
 
 /**

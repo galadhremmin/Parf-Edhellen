@@ -513,6 +513,15 @@ hr.next-overlaps {
   }
 }
 
+// Reserves the search box's height before its app loads; lives here because the app's own CSS arrives too late.
+#ed-search-component {
+  min-height: 116px;
+
+  @media (max-width: 430px) {
+    min-height: 135px;
+  }
+}
+
 .ed-home-activity-list {
   list-style: none;
   margin: 0;
