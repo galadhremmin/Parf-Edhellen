@@ -2,7 +2,7 @@
 @inject('storage', 'App\Helpers\StorageHelper')
 
 <!DOCTYPE html>
-<html lang="{{ config('ed.view_locale') }}" prefix="og: http://ogp.me/ns#">
+<html lang="{{ config('ed.view_locale') }}" translate="no" prefix="og: http://ogp.me/ns#">
 <head>
   <script>
     (function(){
@@ -37,7 +37,7 @@
   <meta name="twitter:image" content="@yield('og_image', asset('/img/favicons/android-chrome-192x192.png'))">
   <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
-  <meta name="google" content="notranslate"> {{-- Remedies 'Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node' --}}
+  <meta name="google" content="notranslate"> {{-- With translate="no" above: page translators break React with "removeChild … not a child of this node". The meta covers older Chrome, the attribute covers Edge and the rest. --}}
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
