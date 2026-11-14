@@ -7,7 +7,6 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Models\ForumGroup;
 use App\Models\LexicalEntry;
 use App\Models\Sentence;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SitemapController extends Controller
@@ -87,19 +86,22 @@ class SitemapController extends Controller
             return;
         }
 
-        $glosses = LexicalEntry::active()
+        // One row per word with its date pre-formatted by SQL: no models, no Carbon.
+        $words = LexicalEntry::active()
             ->join('words', 'words.id', 'lexical_entries.word_id')
-            ->select('words.normalized_word', 'lexical_entries.updated_at', 'lexical_entries.created_at')
-            ->distinct()
+            ->selectRaw('words.normalized_word, DATE(MAX(COALESCE(lexical_entries.updated_at, lexical_entries.created_at))) AS last_modified')
+            ->groupBy('words.normalized_word')
+            ->orderBy('words.normalized_word')
             ->skip($from)
             ->take($to - $from)
-            ->get();
+            ->toBase()
+            ->cursor();
 
-        foreach ($glosses as $gloss) {
+        foreach ($words as $word) {
             $this->addNode($xml,
-                $this->_domain.'/w/'.urlencode($gloss->normalized_word),
+                $this->_domain.'/w/'.urlencode($word->normalized_word),
                 'monthly',
-                $gloss->updated_at ?: $gloss->created_at
+                $word->last_modified
             );
         }
     }
@@ -126,7 +128,7 @@ class SitemapController extends Controller
             $this->addNode($xml,
                 $this->_linkHelper->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name),
                 'monthly',
-                $sentence->updated_at ?: $sentence->created_at
+                ($sentence->updated_at ?: $sentence->created_at)?->format('Y-m-d')
             );
         }
     }
@@ -144,11 +146,11 @@ class SitemapController extends Controller
         }
     }
 
-    private function addNode(string &$xml, string $location, string $changeFrequency = 'monthly', ?Carbon $lastModified = null)
+    private function addNode(string &$xml, string $location, string $changeFrequency = 'monthly', ?string $lastModified = null)
     {
         $xml .= '<url>'.
             '<loc>'.$location.'</loc>'.
-            ($lastModified !== null ? '<lastmod>'.$lastModified->format('Y-m-d').'</lastmod>' : '').
+            ($lastModified !== null ? '<lastmod>'.$lastModified.'</lastmod>' : '').
             '<changefreq>'.$changeFrequency.'</changefreq>'.
             '</url>';
     }

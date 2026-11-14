@@ -5,8 +5,8 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 ## Technology Stack
 
 ### Backend
-- **Framework**: Laravel 12.x
-- **PHP**: 8.2+
+- **Framework**: [Laravel 13.x](https://laravel.com/)
+- **PHP**: 8.5
 - **Database**: MariaDB
 - **Testing**: PHPUnit, PHPStan (level 1)
 
@@ -20,16 +20,19 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 
 ### Key Dependencies
 - AWS SDK (for Comprehend services)
-- Laravel Socialite (OAuth authentication)
+- Google Gemini (LLM)
+- [Laravel Socialite](https://laravel.com/framework/docs/socialite) (OAuth authentication)
 - Server-side rendering (SSR) support
 - Intervention Image (image processing)
+- [Glaemscribe](https://glaemscrafu.jrrvf.com/english/glaemscribe.html) (Tengwar transcription)
+- [WordNet](https://wordnet.princeton.edu/)
 
 ## Service Configuration
 
 Ensure that the following PHP dependencies are installed:
 
 ```
-php8.2-curl php8.2-gd php8.2-intl php8.2-mbstring php8.2-mysql php8.2-readline php8.2-xml php8.2-zip
+php8.5-curl php8.5-gd php8.5-intl php8.5-mbstring php8.5-mysql php8.5-readline php8.5-xml php8.5-zip
 ```
 
 ### MariaDB Fulltext Search Configuration
@@ -229,7 +232,7 @@ $customer = $fruit instanceof Apple
 #### Type Declarations
 - Always use type hints for method parameters and return types
 - Use PHPDoc comments for complex types and additional documentation
-- Leverage PHP 8.2+ features (readonly properties, enums, etc.) where appropriate
+- Leverage PHP 8.5+ features (readonly properties, enums, etc.) where appropriate
 
 #### Dependency Injection
 - All dependencies must be injected via constructor
