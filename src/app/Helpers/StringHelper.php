@@ -221,6 +221,19 @@ class StringHelper
         return rtrim(strtr($base64, '+/', '-_'), '=');
     }
 
+    /**
+     * Cleans a key phrase detected in free text for the search index: only letters, digits, apostrophes,
+     * hyphens and single spaces survive, so no Markdown or fulltext syntax gets stored.
+     */
+    public static function cleanKeyPhrase(string $phrase): string
+    {
+        // Emphasis markers can sit inside a word (`athae**v**uig`), so they go without leaving a gap.
+        $phrase = preg_replace('/[*_`~]+/u', '', $phrase);
+        $phrase = preg_replace('/[^\p{L}\p{M}\p{N}\'\-]+/u', ' ', $phrase);
+
+        return trim(preg_replace('/\s+/u', ' ', $phrase), " -'");
+    }
+
     public static function prepareQuotedFulltextTerm(string $term): string
     {
         return '"'.str_replace('"', '\\"', $term).'"';

@@ -136,5 +136,14 @@ class StringHelperTest extends TestCase
         $this->assertEquals('óo', StringHelper::reverseNormalization('ooo', false));
         $this->assertEquals('áa', StringHelper::reverseNormalization('aaa', false));
     }
-}
 
+    public function testCleanKeyPhraseStripsMarkdownAndSyntax()
+    {
+        $this->assertSame('círan númenna quenya nu i arano lantanna',
+            StringHelper::cleanKeyPhrase("círan númenna**\n> @quenya|nu i arano lantanna"));
+        $this->assertSame('athaevuig', StringHelper::cleanKeyPhrase('*ath**ae**vuig*'));
+        $this->assertSame('arwen-undomiel', StringHelper::cleanKeyPhrase('`arwen-undomiel`'));
+        $this->assertSame("ú-chebin", StringHelper::cleanKeyPhrase('(ú-chebin)'));
+        $this->assertSame('', StringHelper::cleanKeyPhrase('** > *'));
+    }
+}
